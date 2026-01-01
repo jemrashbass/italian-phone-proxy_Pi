@@ -1,0 +1,408 @@
+{
+  "identity": {
+    "name": "JEREMY RASHBASS",
+    "codice_fiscale": "RSHJMY61H29Z114D",
+    "opening_phrase": "Mi scusi, sono inglese e il mio italiano non è perfetto"
+  },
+  "location": {
+    "address": {
+      "via": "VIA PAOLO BARACHINI",
+      "numero": "86",
+      "cap": "56017",
+      "comune": "SAN GIULIANO TERME",
+      "provincia": "PI"
+    },
+    "address_variants": [
+      "VIA PAOLO BARACHINI 86, 56017 SAN GIULIANO TERME PI",
+      "VIA P BARACHINI ASCIANO 86, 56017 SAN GIULIANO TERME PI",
+      "VIA BARACHINI 86, 56017 SAN GIULIANO TERME PI"
+    ],
+    "directions": {
+      "from_main_road": "",
+      "landmarks": [],
+      "house_description": ""
+    },
+    "coordinates": {
+      "lat": "",
+      "lon": ""
+    },
+    "google_maps_url": "",
+    "gate_code": ""
+  },
+  "accounts": {
+    "acque_spa_water": {
+      "provider": "ACQUE SPA",
+      "type": "water",
+      "identifiers": {
+        "codice_cliente": "1500732095",
+        "numero_contratto": "3500776340",
+        "pod": null,
+        "pdr": null,
+        "codice_utenza": "250000869849"
+      },
+      "meter": {
+        "matricola": "903642",
+        "readings": {
+          "date": "2025-09-09",
+          "value": "3713",
+          "unit": "m³"
+        }
+      },
+      "contract": {
+        "type": "Domestico non residente",
+        "power_kw": null,
+        "start_date": null
+      },
+      "contact": {
+        "phone": "800 982 982",
+        "email": "reclami@pec.acquespa.it",
+        "website": "www.acque.net"
+      },
+      "current_bill": {
+        "amount": 25.43,
+        "currency": "EUR",
+        "period_start": "2025-06-14",
+        "period_end": "2025-09-09",
+        "due_date": "2025-10-18",
+        "payment_method": "Addebito su CC Banca Popolare di Lajatico"
+      },
+      "history": [
+        {
+          "document_date": "2025-09-18",
+          "period_start": "2025-06-14",
+          "period_end": "2025-09-09",
+          "amount": 25.43,
+          "due_date": "2025-10-18",
+          "reading": "3713",
+          "reading_date": "2025-09-09",
+          "extracted_at": "2026-01-01T12:16:41.090511"
+        },
+        {
+          "document_date": "2025-06-24",
+          "period_start": "2025-03-18",
+          "period_end": "2025-06-13",
+          "amount": 25.43,
+          "due_date": "2025-07-24",
+          "reading": "3706",
+          "reading_date": "2025-06-13",
+          "extracted_at": "2026-01-01T12:16:53.102158"
+        }
+      ],
+      "updated": "2026-01-01T12:16:53.102170"
+    },
+    "vodafone_italia_isp": {
+      "provider": "Vodafone Italia S.p.A.",
+      "type": "isp",
+      "identifiers": {
+        "codice_cliente": "244311541",
+        "numero_contratto": "TF82459599",
+        "pod": null,
+        "pdr": null,
+        "codice_utenza": null
+      },
+      "meter": {
+        "matricola": null,
+        "readings": null
+      },
+      "contract": {
+        "type": "Internet Unlimited + Giga Speed Plus 100",
+        "power_kw": null,
+        "start_date": null
+      },
+      "contact": {
+        "phone": "190",
+        "email": "servizioclienti@vodafone.pec.it",
+        "website": "voda.it"
+      },
+      "current_bill": {
+        "amount": 57.91,
+        "currency": "EUR",
+        "period_start": "2025-10-01",
+        "period_end": "2025-10-31",
+        "due_date": "2025-10-28",
+        "payment_method": "Addebito s.b.f. su IBAN IT84T0523225300*********985"
+      },
+      "history": [
+        {
+          "document_date": "2025-10-08",
+          "period_start": "2025-10-01",
+          "period_end": "2025-10-31",
+          "amount": 57.91,
+          "due_date": "2025-10-28",
+          "reading": null,
+          "reading_date": null,
+          "extracted_at": "2026-01-01T12:16:34.388521"
+        },
+        {
+          "document_date": "2025-09-07",
+          "period_start": "2025-09-01",
+          "period_end": "2025-09-30",
+          "amount": 57.91,
+          "due_date": "2025-09-27",
+          "reading": null,
+          "reading_date": null,
+          "extracted_at": "2026-01-01T12:16:44.706169"
+        }
+      ],
+      "updated": "2026-01-01T12:16:44.706184"
+    },
+    "eni_plenitude_gas": {
+      "provider": "Eni Plenitude",
+      "type": "gas",
+      "identifiers": {
+        "codice_cliente": "505501979460",
+        "numero_contratto": null,
+        "pod": null,
+        "pdr": "15104203586742",
+        "codice_utenza": null
+      },
+      "meter": {
+        "matricola": null,
+        "readings": {
+          "date": "2025-10-31",
+          "value": "2666",
+          "unit": "smc"
+        }
+      },
+      "contract": {
+        "type": "Eni Plenitude Placet Del. 100-23 variabile gas domestico",
+        "power_kw": null,
+        "start_date": null
+      },
+      "contact": {
+        "phone": "800 900 700",
+        "email": null,
+        "website": "eniplenitude.com/info"
+      },
+      "current_bill": {
+        "amount": 176.7,
+        "currency": "EUR",
+        "period_start": "2025-10-01",
+        "period_end": "2025-11-30",
+        "due_date": "2025-12-29",
+        "payment_method": "Addebito diretto salvo buon fine sul conto corrente che termina con 19985 presso BANCA POPOLARE DI LAJATICO SCPA"
+      },
+      "history": [
+        {
+          "document_date": "2025-12-09",
+          "period_start": "2025-10-01",
+          "period_end": "2025-11-30",
+          "amount": 176.7,
+          "due_date": "2025-12-29",
+          "reading": "2666",
+          "reading_date": "2025-10-31",
+          "extracted_at": "2026-01-01T10:18:54.683337"
+        }
+      ],
+      "updated": "2026-01-01T10:18:54.683337"
+    },
+    "eni_plenitude_electricity": {
+      "provider": "Eni Plenitude SpA Società Benefit",
+      "type": "electricity",
+      "identifiers": {
+        "codice_cliente": "505501979650",
+        "numero_contratto": null,
+        "pod": "IT001E45152459",
+        "pdr": null,
+        "codice_utenza": null
+      },
+      "meter": {
+        "matricola": null,
+        "readings": {
+          "date": "2025-10-31",
+          "value": "6641",
+          "unit": "kWh"
+        }
+      },
+      "contract": {
+        "type": "Trend Casa Base Luce - Mercato libero",
+        "power_kw": "6 kW",
+        "start_date": null
+      },
+      "contact": {
+        "phone": "800 900 700",
+        "email": null,
+        "website": "eniplenitude.com/info"
+      },
+      "current_bill": {
+        "amount": 180.02,
+        "currency": "EUR",
+        "period_start": "2025-10-01",
+        "period_end": "2025-11-30",
+        "due_date": "2025-12-30",
+        "payment_method": "Addebito diretto sul conto corrente che termina con 19985 presso BANCA POPOLARE DI LAJATICO SCPA"
+      },
+      "history": [
+        {
+          "document_date": "2025-12-10",
+          "period_start": "2025-10-01",
+          "period_end": "2025-11-30",
+          "amount": 180.02,
+          "due_date": "2025-12-30",
+          "reading": "6641",
+          "reading_date": "2025-10-31",
+          "extracted_at": "2026-01-01T10:25:47.359330"
+        },
+        {
+          "document_date": "2025-10-22",
+          "period_start": "2025-08-01",
+          "period_end": "2025-09-30",
+          "amount": 116.69,
+          "due_date": "2025-11-13",
+          "reading": "6535",
+          "reading_date": "2025-09-30",
+          "extracted_at": "2026-01-01T12:16:48.977054"
+        }
+      ],
+      "updated": "2026-01-01T12:16:48.977068"
+    }
+  },
+  "house": {
+    "neighbour_name": "",
+    "neighbour_relation": "",
+    "safe_place": "",
+    "meter_locations": {
+      "water": {
+        "matricola": "903642",
+        "location": ""
+      }
+    }
+  },
+  "preferences": {
+    "available_days": [],
+    "preferred_time": "",
+    "unavailable_dates": []
+  },
+  "verification_data": {
+    "acque_codice_cliente": {
+      "provider": "ACQUE SPA",
+      "question": "Qual è il codice cliente?",
+      "answer": "1500732095",
+      "updated": "2026-01-01T12:16:53"
+    },
+    "acque_matricola": {
+      "provider": "ACQUE SPA",
+      "question": "Qual è il numero di matricola del contatore?",
+      "answer": "903642",
+      "updated": "2026-01-01T12:16:53"
+    },
+    "acque_codice_utenza": {
+      "provider": "ACQUE SPA",
+      "question": "Qual è il codice utenza?",
+      "answer": "250000869849",
+      "updated": "2026-01-01T12:16:53"
+    },
+    "acque_importo": {
+      "provider": "ACQUE SPA",
+      "question": "Qual è l'importo dell'ultima bolletta?",
+      "answer": "25,43 euro",
+      "updated": "2026-01-01T12:16:53"
+    },
+    "vodafone_codice_cliente": {
+      "provider": "Vodafone Italia S.p.A.",
+      "question": "Qual è il codice cliente?",
+      "answer": "244311541",
+      "updated": "2026-01-01T12:16:44"
+    },
+    "vodafone_importo": {
+      "provider": "Vodafone Italia S.p.A.",
+      "question": "Qual è l'importo dell'ultima fattura?",
+      "answer": "57,91 euro",
+      "updated": "2026-01-01T12:16:44"
+    },
+    "vodafone_telefono_fisso": {
+      "provider": "Vodafone Italia S.p.A.",
+      "question": "Qual è il numero della linea fissa?",
+      "answer": "0503141397",
+      "updated": "2026-01-01T12:16:44"
+    },
+    "vodafone_sim_dati": {
+      "provider": "Vodafone Italia S.p.A.",
+      "question": "Qual è il numero della SIM dati?",
+      "answer": "3482341783",
+      "updated": "2026-01-01T12:16:44"
+    },
+    "eni_gas_codice_cliente": {
+      "provider": "Eni Plenitude",
+      "question": "Qual è il codice cliente gas?",
+      "answer": "505501979460",
+      "updated": "2026-01-01T10:18:54"
+    },
+    "eni_gas_pdr": {
+      "provider": "Eni Plenitude",
+      "question": "Qual è il PDR della fornitura gas?",
+      "answer": "15104203586742",
+      "updated": "2026-01-01T10:18:54"
+    },
+    "eni_gas_importo": {
+      "provider": "Eni Plenitude",
+      "question": "Qual è l'importo dell'ultima bolletta gas?",
+      "answer": "176,70 euro",
+      "updated": "2026-01-01T10:18:54"
+    },
+    "eni_elettricita_codice_cliente": {
+      "provider": "Eni Plenitude SpA",
+      "question": "Qual è il codice cliente elettricità?",
+      "answer": "505501979650",
+      "updated": "2026-01-01T12:16:48"
+    },
+    "eni_elettricita_pod": {
+      "provider": "Eni Plenitude SpA",
+      "question": "Qual è il POD della fornitura elettrica?",
+      "answer": "IT001E45152459",
+      "updated": "2026-01-01T12:16:48"
+    },
+    "eni_elettricita_importo": {
+      "provider": "Eni Plenitude SpA",
+      "question": "Qual è l'importo dell'ultima bolletta elettricità?",
+      "answer": "180,02 euro",
+      "updated": "2026-01-01T12:16:48"
+    },
+    "eni_elettricita_potenza": {
+      "provider": "Eni Plenitude SpA",
+      "question": "Qual è la potenza impegnata?",
+      "answer": "6 kW",
+      "updated": "2026-01-01T12:16:48"
+    }
+  },
+  "metadata": {
+    "last_updated": "2026-01-01T12:16:53.102197",
+    "extraction_history": [
+      {
+        "date": "2026-01-01T10:16:30",
+        "document_type": "water",
+        "provider": "ACQUE SPA"
+      },
+      {
+        "date": "2026-01-01T10:18:48",
+        "document_type": "isp",
+        "provider": "Vodafone Italia S.p.A."
+      },
+      {
+        "date": "2026-01-01T10:18:54",
+        "document_type": "gas",
+        "provider": "Eni Plenitude"
+      },
+      {
+        "date": "2026-01-01T10:25:47",
+        "document_type": "electricity",
+        "provider": "Eni Plenitude SpA"
+      },
+      {
+        "date": "2026-01-01T12:16:34",
+        "document_type": "isp",
+        "provider": "Vodafone Italia S.p.A."
+      },
+      {
+        "date": "2026-01-01T12:16:41",
+        "document_type": "water",
+        "provider": "ACQUE SPA"
+      },
+      {
+        "date": "2026-01-01T12:16:48",
+        "document_type": "electricity",
+        "provider": "Eni Plenitude SpA"
+      }
+    ]
+  }
+}

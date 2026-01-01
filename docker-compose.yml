@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./api
+    container_name: phone-proxy-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY:-}
+    volumes:
+      - ./data/config:/app/data/config
+      - ./data/documents:/app/data/documents
+      - ./data/extractions:/app/data/extractions
+      - ./data/transcripts:/app/data/transcripts
+    networks:
+      - phone-proxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  whatsapp:
+    build: ./whatsapp
+    container_name: phone-proxy-whatsapp
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./data/whatsapp-session:/app/session
+    networks:
+      - phone-proxy
+    profiles:
+      - whatsapp
+
+  # Future: Email watcher for automatic bill ingestion
+  # email-watcher:
+  #   build: ./email-watcher
+  #   container_name: phone-proxy-email
+  #   restart: unless-stopped
+  #   environment:
+  #     - IMAP_SERVER=${IMAP_SERVER}
+  #     - IMAP_USER=${IMAP_USER}
+  #     - IMAP_PASSWORD=${IMAP_PASSWORD}
+  #     - CHECK_INTERVAL=300
+  #   volumes:
+  #     - ./data/documents/raw:/app/output
+  #   networks:
+  #     - phone-proxy
+  #   profiles:
+  #     - email
+
+networks:
+  phone-proxy:
+    driver: bridge

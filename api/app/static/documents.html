@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents - Italian Phone Proxy</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5; 
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 { margin-bottom: 20px; color: #333; }
+        
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .panel h2 { 
+            margin-bottom: 15px; 
+            font-size: 1.1em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #007AFF;
+            background: #f0f7ff;
+        }
+        .drop-zone.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .drop-zone input { display: none; }
+        .drop-zone p { color: #666; }
+        .drop-zone small { color: #999; }
+        
+        /* Progress indicator */
+        .progress-container {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .progress-container.active {
+            display: block;
+        }
+        .progress-filename {
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 0.9em;
+        }
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 40px;
+            right: 40px;
+            height: 3px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            color: #999;
+            transition: all 0.3s;
+        }
+        .step-circle.active {
+            background: #007AFF;
+            color: white;
+            animation: pulse-step 1.5s infinite;
+        }
+        .step-circle.complete {
+            background: #28a745;
+            color: white;
+        }
+        .step-circle.error {
+            background: #dc3545;
+            color: white;
+        }
+        @keyframes pulse-step {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,122,255,0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(0,122,255,0); }
+        }
+        .step-label {
+            margin-top: 6px;
+            font-size: 0.75em;
+            color: #666;
+        }
+        .progress-message {
+            margin-top: 12px;
+            font-size: 0.85em;
+            color: #666;
+            text-align: center;
+        }
+        .progress-message.error {
+            color: #dc3545;
+        }
+        .progress-message.success {
+            color: #28a745;
+        }
+        
+        .document-list { list-style: none; }
+        .document-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            gap: 10px;
+        }
+        .document-item:last-child { border-bottom: none; }
+        .document-item .name {
+            flex: 1;
+            font-size: 0.85em;
+            word-break: break-all;
+        }
+        
+        .status {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .status.uploaded { background: #fff3cd; color: #856404; }
+        .status.extracted { background: #d4edda; color: #155724; }
+        .status.processing { background: #cce5ff; color: #004085; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-primary { background: #007AFF; color: white; }
+        .btn-primary:hover:not(:disabled) { background: #0056b3; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover:not(:disabled) { background: #1e7e34; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover:not(:disabled) { background: #c82333; }
+        .btn-sm { padding: 4px 10px; font-size: 0.8em; }
+        
+        .extraction-preview {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8em;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .actions { 
+            display: flex; 
+            gap: 10px; 
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .nav a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: #007AFF;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #007AFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/">🏠 Dashboard</a>
+        <a href="/documents.html">📄 Documents</a>
+        <a href="/config.html">⚙️ Config</a>
+        <a href="/calls.html">📞 Call History</a>
+    </nav>
+    
+    <h1>📄 Document Extraction</h1>
+    
+    <div class="container">
+        <div class="panel">
+            <h2>Upload Document</h2>
+            <div class="drop-zone" id="dropZone">
+                <p>Drop PDF or image here</p>
+                <small>PDF, JPEG, PNG, or WebP</small>
+                <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp">
+            </div>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-filename" id="progressFilename"></div>
+                <div class="progress-steps">
+                    <div class="progress-step">
+                        <div class="step-circle" id="step1">1</div>
+                        <div class="step-label">Upload</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle" id="step2">2</div>
+                        <div class="step-label">Extract</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle" id="step3">✓</div>
+                        <div class="step-label">Ready</div>
+                    </div>
+                </div>
+                <div class="progress-message" id="progressMessage"></div>
+            </div>
+            
+            <h2 style="margin-top: 20px;">Pending Documents</h2>
+            <ul class="document-list" id="documentList">
+                <li class="empty-state">Loading...</li>
+            </ul>
+        </div>
+        
+        <div class="panel">
+            <h2>Extraction Preview</h2>
+            <div id="selectedDoc" style="margin-bottom: 15px; color: #666;">
+                Select a document to view extraction
+            </div>
+            <div class="extraction-preview" id="extractionPreview">
+                No extraction loaded
+            </div>
+            <div class="actions" id="actions" style="display: none;">
+                <button class="btn btn-success" onclick="approveExtraction()">
+                    ✓ Accept & Merge to Knowledge
+                </button>
+                <button class="btn btn-danger" onclick="discardExtraction()">
+                    ✗ Discard
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentDocId = null;
+        let isProcessing = false;
+        
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFilename = document.getElementById('progressFilename');
+        const progressMessage = document.getElementById('progressMessage');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        // Progress indicator functions
+        function showProgress(filename) {
+            progressContainer.classList.add('active');
+            progressFilename.textContent = `📄 ${filename}`;
+            progressMessage.textContent = '';
+            progressMessage.className = 'progress-message';
+            resetSteps();
+        }
+        
+        function hideProgress() {
+            setTimeout(() => {
+                progressContainer.classList.remove('active');
+            }, 3000);
+        }
+        
+        function resetSteps() {
+            [step1, step2, step3].forEach(s => {
+                s.className = 'step-circle';
+            });
+        }
+        
+        function setStep(stepNum, state) {
+            const steps = [step1, step2, step3];
+            // Mark previous steps as complete
+            for (let i = 0; i < stepNum - 1; i++) {
+                steps[i].className = 'step-circle complete';
+            }
+            // Set current step
+            if (stepNum <= 3) {
+                steps[stepNum - 1].className = `step-circle ${state}`;
+            }
+        }
+        
+        function setMessage(msg, type = '') {
+            progressMessage.textContent = msg;
+            progressMessage.className = `progress-message ${type}`;
+        }
+        
+        // Drop zone handling
+        dropZone.addEventListener('click', () => {
+            if (!isProcessing) fileInput.click();
+        });
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (!isProcessing) dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (!isProcessing && e.dataTransfer.files.length) {
+                uploadFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length && !isProcessing) {
+                uploadFile(fileInput.files[0]);
+                fileInput.value = '';
+            }
+        });
+        
+        async function uploadFile(file) {
+            if (isProcessing) return;
+            
+            isProcessing = true;
+            dropZone.classList.add('disabled');
+            showProgress(file.name);
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                // Step 1: Upload
+                setStep(1, 'active');
+                setMessage('Uploading document...');
+                
+                const uploadRes = await fetch('/api/documents/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!uploadRes.ok) {
+                    const err = await uploadRes.json();
+                    throw new Error(err.detail || 'Upload failed');
+                }
+                
+                const uploadData = await uploadRes.json();
+                setStep(1, 'complete');
+                
+                // Step 2: Extract
+                setStep(2, 'active');
+                setMessage('Extracting with Claude Vision... (this may take 10-20s)');
+                
+                const extractRes = await fetch(`/api/documents/extract/${uploadData.document_id}`, {
+                    method: 'POST'
+                });
+                
+                if (!extractRes.ok) {
+                    const err = await extractRes.json();
+                    throw new Error(err.detail || 'Extraction failed');
+                }
+                
+                setStep(2, 'complete');
+                
+                // Step 3: Complete
+                setStep(3, 'complete');
+                setMessage('✓ Ready for review!', 'success');
+                
+                loadPendingDocuments();
+                viewExtraction(uploadData.document_id);
+                hideProgress();
+                
+            } catch (err) {
+                const currentStep = step2.classList.contains('active') ? 2 : 1;
+                setStep(currentStep, 'error');
+                setMessage('✗ ' + err.message, 'error');
+            } finally {
+                isProcessing = false;
+                dropZone.classList.remove('disabled');
+            }
+        }
+        
+        async function loadPendingDocuments() {
+            try {
+                const res = await fetch('/api/documents/pending');
+                const data = await res.json();
+                
+                const list = document.getElementById('documentList');
+                
+                if (data.pending.length === 0) {
+                    list.innerHTML = '<li class="empty-state">No pending documents.<br>Upload a utility bill to get started.</li>';
+                    return;
+                }
+                
+                list.innerHTML = data.pending.map(doc => `
+                    <li class="document-item">
+                        <span class="name">${doc.document_id}</span>
+                        <span class="status ${doc.status}">${doc.status}</span>
+                        <button class="btn btn-primary btn-sm" onclick="viewExtraction('${doc.document_id}')">
+                            View
+                        </button>
+                    </li>
+                `).join('');
+                
+            } catch (err) {
+                document.getElementById('documentList').innerHTML = 
+                    '<li class="empty-state" style="color: #dc3545;">Failed to load documents</li>';
+            }
+        }
+        
+        async function viewExtraction(docId) {
+            currentDocId = docId;
+            document.getElementById('selectedDoc').textContent = `📄 ${docId}`;
+            document.getElementById('extractionPreview').textContent = 'Loading...';
+            document.getElementById('actions').style.display = 'none';
+            
+            try {
+                const res = await fetch(`/api/documents/extraction/${docId}`);
+                
+                if (!res.ok) {
+                    throw new Error('Extraction not found');
+                }
+                
+                const data = await res.json();
+                
+                document.getElementById('extractionPreview').textContent = 
+                    JSON.stringify(data, null, 2);
+                document.getElementById('actions').style.display = 'flex';
+                
+            } catch (err) {
+                document.getElementById('extractionPreview').textContent = 
+                    'Failed to load extraction: ' + err.message;
+            }
+        }
+        
+        async function approveExtraction() {
+            if (!currentDocId) return;
+            
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Merging...';
+            
+            try {
+                const res = await fetch(`/api/documents/approve/${currentDocId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await res.json();
+                
+                resetPreview();
+                loadPendingDocuments();
+                
+                // Show brief success in progress area
+                showProgress('Merge complete');
+                setStep(3, 'complete');
+                setMessage(data.conflicts?.length > 0 
+                    ? `✓ Merged with ${data.conflicts.length} conflict(s)` 
+                    : '✓ Merged into knowledge base!', 'success');
+                hideProgress();
+                
+            } catch (err) {
+                showProgress('Merge failed');
+                setStep(3, 'error');
+                setMessage('✗ ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✓ Accept & Merge to Knowledge';
+            }
+        }
+        
+        async function discardExtraction() {
+            if (!currentDocId) return;
+            
+            if (!confirm('Discard this document and extraction?')) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/documents/discard/${currentDocId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (res.ok) {
+                    resetPreview();
+                    loadPendingDocuments();
+                } else {
+                    throw new Error('Failed to discard');
+                }
+                
+            } catch (err) {
+                alert('Failed to discard: ' + err.message);
+            }
+        }
+        
+        function resetPreview() {
+            currentDocId = null;
+            document.getElementById('selectedDoc').textContent = 'Select a document to view extraction';
+            document.getElementById('extractionPreview').textContent = 'No extraction loaded';
+            document.getElementById('actions').style.display = 'none';
+        }
+        
+        // Initial load
+        loadPendingDocuments();
+    </script>
+</body>
+</html>

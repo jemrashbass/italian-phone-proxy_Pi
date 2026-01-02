@@ -18,9 +18,9 @@
       "VIA BARACHINI 86, 56017 SAN GIULIANO TERME PI"
     ],
     "directions": {
-      "from_main_road": "",
+      "from_main_road": "Follow via Paolo Barachini from the centre of Asciano with the butcher's shop is on the left - continue straight. and turn left up the hill - you will see the aqueduct water tap on the corner - keep going.  The house numbering is confusing...82 is marked down a side road to the right - and 101 is on the left ... keep going.",
       "landmarks": [],
-      "house_description": ""
+      "house_description": "86 is the pink house on the right hand side at the top of the hill."
     },
     "coordinates": {
       "lat": "",
@@ -366,7 +366,7 @@
     }
   },
   "metadata": {
-    "last_updated": "2026-01-01T12:16:53.102197",
+    "last_updated": "2026-01-01T16:26:58.738282",
     "extraction_history": [
       {
         "date": "2026-01-01T10:16:30",

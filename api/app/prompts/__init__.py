@@ -1,6 +1,4 @@
-"""
-Prompts package.
-"""
-from .extraction import EXTRACTION_PROMPT
+"""System prompts for AI agents."""
+from .system import build_system_prompt, get_quick_response
 
-__all__ = ["EXTRACTION_PROMPT"]
+__all__ = ["build_system_prompt", "get_quick_response"]

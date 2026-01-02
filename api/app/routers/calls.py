@@ -1,128 +1,142 @@
 """
-Call history and management routes.
+Call history and outbound call management.
 """
-from fastapi import APIRouter, HTTPException
-from pathlib import Path
-from datetime import datetime
-import json
+import os
+import logging
 from typing import Optional
+from datetime import datetime
+
+from fastapi import APIRouter, Request, HTTPException
+from pydantic import BaseModel
+from twilio.rest import Client as TwilioClient
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
-TRANSCRIPTS_DIR = Path("/app/data/transcripts")
+# In-memory call log (future: persist to file/database)
+call_log: list[dict] = []
+
+
+class OutboundCallRequest(BaseModel):
+    """Request to initiate an outbound call."""
+    to_number: str
+    scenario: Optional[str] = None
+    notes: Optional[str] = None
 
 
 @router.get("/history")
-async def get_call_history(limit: int = 20, offset: int = 0):
-    """Get call history with transcripts."""
+async def get_call_history(limit: int = 20):
+    """
+    Get recent call history.
     
-    TRANSCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
+    Returns list of calls with transcripts and status.
+    """
+    # Import active calls from twilio router
+    from app.routers.twilio import active_calls
     
-    # Get all transcript files, sorted by modification time (newest first)
-    files = sorted(
-        TRANSCRIPTS_DIR.glob("*.json"),
-        key=lambda p: p.stat().st_mtime,
+    # Combine with historical log
+    all_calls = list(active_calls.values()) + call_log
+    
+    # Sort by start time, most recent first
+    all_calls.sort(
+        key=lambda x: x.get("started_at", ""),
         reverse=True
     )
     
-    # Paginate
-    paginated = files[offset:offset + limit]
-    
-    calls = []
-    for path in paginated:
-        with open(path) as f:
-            call_data = json.load(f)
-            calls.append({
-                "call_id": path.stem,
-                "timestamp": call_data.get("timestamp"),
-                "caller": call_data.get("caller"),
-                "duration": call_data.get("duration"),
-                "summary": call_data.get("summary", ""),
-                "status": call_data.get("status", "completed")
-            })
-    
     return {
-        "calls": calls,
-        "total": len(files),
-        "limit": limit,
-        "offset": offset
+        "calls": all_calls[:limit],
+        "total": len(all_calls)
     }
 
 
-@router.get("/history/{call_id}")
-async def get_call_detail(call_id: str):
-    """Get full details and transcript for a specific call."""
+@router.post("/outbound")
+async def initiate_outbound_call(call_request: OutboundCallRequest, request: Request):
+    """
+    Initiate an outbound call.
     
-    path = TRANSCRIPTS_DIR / f"{call_id}.json"
+    The AI will handle the call according to the specified scenario.
+    """
+    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+    from_number = os.getenv("TWILIO_PHONE_NUMBER")
     
-    if not path.exists():
+    if not all([account_sid, auth_token, from_number]):
+        raise HTTPException(status_code=500, detail="Twilio not configured")
+    
+    try:
+        client = TwilioClient(account_sid, auth_token)
+        
+        # Build webhook URL for this server
+        host = request.headers.get("host", "phone.rashbass.org")
+        voice_url = f"https://{host}/api/twilio/voice"
+        status_url = f"https://{host}/api/twilio/status"
+        
+        # Initiate the call
+        call = client.calls.create(
+            to=call_request.to_number,
+            from_=from_number,
+            url=voice_url,
+            status_callback=status_url,
+            status_callback_event=["initiated", "ringing", "answered", "completed"]
+        )
+        
+        logger.info(f"📞 Outbound call initiated: {call.sid} to {call_request.to_number}")
+        
+        # Log the call
+        call_log.append({
+            "call_sid": call.sid,
+            "direction": "outbound",
+            "to": call_request.to_number,
+            "from": from_number,
+            "scenario": call_request.scenario,
+            "notes": call_request.notes,
+            "started_at": datetime.now().isoformat(),
+            "status": "initiated"
+        })
+        
+        return {
+            "success": True,
+            "call_sid": call.sid,
+            "status": "initiated",
+            "to": call_request.to_number
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to initiate outbound call: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/transcript/{call_sid}")
+async def get_call_transcript(call_sid: str):
+    """
+    Get the full transcript for a call.
+    """
+    from app.services.claude import get_claude_service
+    
+    claude = get_claude_service()
+    state = claude.get_conversation(call_sid)
+    
+    if not state:
+        # Check call log
+        for call in call_log:
+            if call.get("call_sid") == call_sid:
+                return {
+                    "call_sid": call_sid,
+                    "transcript": call.get("transcript", []),
+                    "status": call.get("status")
+                }
         raise HTTPException(status_code=404, detail="Call not found")
     
-    with open(path) as f:
-        return json.load(f)
-
-
-@router.get("/active")
-async def get_active_call():
-    """Get currently active call info (for dashboard)."""
-    
-    # TODO: Implement active call tracking
-    # This will be populated when a call is in progress
-    
     return {
-        "active": False,
-        "call_id": None,
-        "caller": None,
-        "started_at": None,
-        "transcript": []
+        "call_sid": call_sid,
+        "transcript": state.history,
+        "turn_count": state.turn_count
     }
 
 
-@router.post("/test")
-async def create_test_call():
-    """Create a test call record for development."""
-    
-    TRANSCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
-    
-    call_id = f"test_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    
-    test_data = {
-        "call_id": call_id,
-        "timestamp": datetime.now().isoformat(),
-        "caller": "+39 333 123 4567",
-        "called": "+39 06 123 4567",
-        "duration": 45,
-        "status": "completed",
-        "summary": "Test call for development",
-        "transcript": [
-            {
-                "speaker": "caller",
-                "text": "Pronto, buongiorno. Sono il corriere.",
-                "timestamp": "00:00:02"
-            },
-            {
-                "speaker": "ai",
-                "text": "Buongiorno. Sì, mi dica.",
-                "timestamp": "00:00:05"
-            },
-            {
-                "speaker": "caller",
-                "text": "Ho un pacco per lei. Dove posso lasciarlo?",
-                "timestamp": "00:00:08"
-            },
-            {
-                "speaker": "ai",
-                "text": "Può lasciare il pacco dal vicino, per favore.",
-                "timestamp": "00:00:12"
-            }
-        ]
-    }
-    
-    with open(TRANSCRIPTS_DIR / f"{call_id}.json", "w") as f:
-        json.dump(test_data, f, indent=2, ensure_ascii=False)
-    
-    return {
-        "status": "created",
-        "call_id": call_id,
-        "message": "Test call record created"
-    }
+@router.delete("/history")
+async def clear_call_history():
+    """Clear the call history (for testing)."""
+    global call_log
+    call_log = []
+    return {"status": "cleared"}

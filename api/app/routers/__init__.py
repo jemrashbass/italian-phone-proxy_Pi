@@ -1,4 +1,4 @@
 """API route handlers."""
-from . import documents, config, twilio, calls, dashboard
+from . import documents, config, twilio, calls, dashboard, analytics
 
-__all__ = ["documents", "config", "twilio", "calls"]
+__all__ = ["documents", "config", "twilio", "calls", "dashboard", "analytics"]

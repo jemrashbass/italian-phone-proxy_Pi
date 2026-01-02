@@ -3,323 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuration - Italian Phone Proxy</title>
+    <title>⚙️ Config - Phone Proxy</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --bg-primary: #0b141a;
+            --bg-secondary: #111b21;
+            --bg-tertiary: #1f2c33;
+            --bg-input: #2a3942;
+            --text-primary: #e9edef;
+            --text-secondary: #8696a0;
+            --accent-green: #00a884;
+            --accent-blue: #53bdeb;
+            --accent-orange: #ff7a00;
+            --accent-red: #ea0038;
+            --border-color: #222d34;
+        }
+        
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5; 
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            min-height: 100vh;
         }
-        h1 { margin-bottom: 20px; color: #333; }
         
+        /* Navigation */
         .nav {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            background: var(--bg-secondary);
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            height: 44px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .nav a {
-            margin-right: 20px;
-            text-decoration: none;
-            color: #007AFF;
-        }
-        .nav a:hover { text-decoration: underline; }
+        .nav-links { display: flex; gap: 16px; align-items: center; }
+        .nav a { text-decoration: none; color: var(--text-secondary); font-size: 13px; }
+        .nav a:hover, .nav a.active { color: var(--text-primary); }
+        .nav-title { font-weight: 600; font-size: 14px; }
         
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        /* Tabs */
         .tabs {
             display: flex;
             gap: 4px;
-            margin-bottom: 20px;
-            background: white;
+            margin-bottom: 16px;
+            background: var(--bg-secondary);
             padding: 4px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
         }
         .tab {
-            padding: 10px 20px;
+            padding: 8px 14px;
             border: none;
             background: transparent;
             cursor: pointer;
             border-radius: 6px;
-            font-size: 0.9em;
+            font-size: 12px;
+            color: var(--text-secondary);
             transition: all 0.2s;
         }
-        .tab:hover { background: #f0f0f0; }
-        .tab.active {
-            background: #007AFF;
-            color: white;
-        }
+        .tab:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .tab.active { background: var(--accent-green); color: white; }
         
         .panel {
-            background: white;
+            background: var(--bg-secondary);
             border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 16px;
             display: none;
         }
         .panel.active { display: block; }
         .panel h2 {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .panel h3 {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin: 20px 0 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
         .form-group label {
             display: block;
+            font-size: 12px;
             font-weight: 500;
-            margin-bottom: 6px;
-            color: #555;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
         }
         .form-group input,
         .form-group textarea {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
-            font-size: 0.95em;
+            font-size: 13px;
+            background: var(--bg-input);
+            color: var(--text-primary);
             transition: border-color 0.2s;
         }
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #007AFF;
+            border-color: var(--accent-green);
         }
         .form-group textarea {
-            min-height: 100px;
+            min-height: 80px;
             resize: vertical;
         }
         .form-group small {
             display: block;
             margin-top: 4px;
-            color: #999;
-            font-size: 0.8em;
+            color: var(--text-secondary);
+            font-size: 11px;
         }
         
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
         }
         
         .btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 12px;
             transition: all 0.2s;
         }
-        .btn-primary { background: #007AFF; color: white; }
-        .btn-primary:hover { background: #0056b3; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-secondary:hover { background: #5a6268; }
+        .btn-primary { background: var(--accent-green); color: white; }
+        .btn-primary:hover { background: #00916e; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-secondary:hover { background: var(--bg-input); }
         
+        /* Save bar */
         .save-bar {
             position: sticky;
-            bottom: 20px;
-            background: white;
-            padding: 16px 24px;
+            bottom: 16px;
+            background: var(--bg-secondary);
+            padding: 12px 16px;
             border-radius: 8px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
+            margin-top: 16px;
+            border: 1px solid var(--border-color);
         }
+        .save-bar span { font-size: 12px; color: var(--text-secondary); }
         
-        .accounts-list {
-            display: grid;
-            gap: 16px;
-        }
+        /* Accounts */
+        .accounts-list { display: grid; gap: 12px; }
         .account-card {
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 16px;
+            padding: 12px;
+            background: var(--bg-tertiary);
         }
         .account-card h4 {
-            font-size: 1em;
-            margin-bottom: 12px;
-            color: #333;
+            font-size: 13px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+        }
+        .account-card h4 span {
+            font-weight: normal;
+            color: var(--text-secondary);
+            font-size: 11px;
         }
         .account-card .detail {
             display: flex;
             justify-content: space-between;
             padding: 4px 0;
-            font-size: 0.9em;
+            font-size: 12px;
         }
-        .account-card .detail .label { color: #666; }
-        .account-card .detail .value { font-family: monospace; }
+        .account-card .detail .label { color: var(--text-secondary); }
+        .account-card .detail .value { font-family: monospace; font-size: 11px; }
         
+        .account-card details {
+            margin-top: 10px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+        .account-card summary {
+            cursor: pointer;
+            color: var(--accent-blue);
+            font-size: 11px;
+        }
+        .account-card table {
+            width: 100%;
+            font-size: 11px;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+        .account-card th {
+            text-align: left;
+            padding: 4px 6px;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .account-card td {
+            padding: 4px 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* JSON view */
         .json-view {
-            background: #f8f9fa;
+            background: var(--bg-tertiary);
             border-radius: 6px;
-            padding: 16px;
+            padding: 12px;
             font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.8em;
+            font-size: 11px;
             white-space: pre-wrap;
-            max-height: 500px;
+            max-height: 400px;
             overflow-y: auto;
+            color: var(--text-primary);
         }
         
+        /* Alert */
         .alert {
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 6px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            font-size: 12px;
         }
-        .alert-success { background: #d4edda; color: #155724; }
-        .alert-error { background: #f8d7da; color: #721c24; }
+        .alert-success { background: rgba(0, 168, 132, 0.2); color: var(--accent-green); }
+        .alert-error { background: rgba(234, 0, 56, 0.2); color: var(--accent-red); }
         
         .empty-state {
             text-align: center;
-            padding: 40px;
-            color: #999;
+            padding: 32px;
+            color: var(--text-secondary);
+            font-size: 12px;
         }
+        .empty-state a { color: var(--accent-blue); }
     </style>
 </head>
 <body>
     <nav class="nav">
-        <a href="/dashboard/">🏠 Dashboard</a>
-        <a href="/documents.html">📄 Documents</a>
-        <a href="/config.html">⚙️ Config</a>
-        <a href="/calls.html">📞 Call History</a>
+        <div class="nav-links">
+            <span class="nav-title">📞 Phone Proxy</span>
+            <a href="index.html">🔴 Live</a>
+            <a href="calls.html">📋 History</a>
+            <a href="documents.html">📄 Docs</a>
+            <a href="config.html">⚙️ Config</a>
+            <a href="analytics.html">📊 Analytics</a>
+        </div>
     </nav>
     
-    <h1>⚙️ Knowledge Base Configuration</h1>
-    
-    <div id="alertContainer"></div>
-    
-    <div class="tabs">
-        <button class="tab active" onclick="showTab('identity')">Identity</button>
-        <button class="tab" onclick="showTab('location')">Location</button>
-        <button class="tab" onclick="showTab('accounts')">Accounts</button>
-        <button class="tab" onclick="showTab('preferences')">Preferences</button>
-        <button class="tab" onclick="showTab('raw')">Raw JSON</button>
-    </div>
-    
-    <div id="identity" class="panel active">
-        <h2>🪪 Identity</h2>
-        <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" id="identity.name" placeholder="As it appears on utility bills">
+    <div class="container">
+        <div id="alertContainer"></div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('identity')">Identity</button>
+            <button class="tab" onclick="showTab('location')">Location</button>
+            <button class="tab" onclick="showTab('accounts')">Accounts</button>
+            <button class="tab" onclick="showTab('preferences')">Preferences</button>
+            <button class="tab" onclick="showTab('raw')">Raw JSON</button>
         </div>
-        <div class="form-group">
-            <label>Codice Fiscale</label>
-            <input type="text" id="identity.codice_fiscale" placeholder="16-character code" maxlength="16" style="text-transform: uppercase;">
-            <small>Italian tax ID - used for identity verification</small>
-        </div>
-        <div class="form-group">
-            <label>Opening Phrase</label>
-            <textarea id="identity.opening_phrase" placeholder="What the AI says at the start of calls"></textarea>
-            <small>Explain you're English and your Italian isn't perfect</small>
-        </div>
-    </div>
-    
-    <div id="location" class="panel">
-        <h2>📍 Location</h2>
-        <div class="form-row">
+        
+        <div id="identity" class="panel active">
+            <h2>🪪 Identity</h2>
             <div class="form-group">
-                <label>Via/Street</label>
-                <input type="text" id="location.address.via" placeholder="Via Roma">
+                <label>Full Name</label>
+                <input type="text" id="identity.name" placeholder="As it appears on utility bills">
             </div>
             <div class="form-group">
-                <label>Number</label>
-                <input type="text" id="location.address.numero" placeholder="42">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>CAP (Postcode)</label>
-                <input type="text" id="location.address.cap" placeholder="00100" maxlength="5">
+                <label>Codice Fiscale</label>
+                <input type="text" id="identity.codice_fiscale" placeholder="16-character code" maxlength="16" style="text-transform: uppercase;">
+                <small>Italian tax ID - used for identity verification</small>
             </div>
             <div class="form-group">
-                <label>Comune (City)</label>
-                <input type="text" id="location.address.comune" placeholder="Roma">
-            </div>
-            <div class="form-group">
-                <label>Provincia</label>
-                <input type="text" id="location.address.provincia" placeholder="RM" maxlength="2" style="text-transform: uppercase;">
+                <label>Opening Phrase</label>
+                <textarea id="identity.opening_phrase" placeholder="What the AI says at the start of calls"></textarea>
+                <small>Explain you're English and your Italian isn't perfect</small>
             </div>
         </div>
         
-        <h3 style="margin: 24px 0 16px;">Directions for Delivery Drivers</h3>
-        <div class="form-group">
-            <label>From Main Road</label>
-            <textarea id="location.directions.from_main_road" placeholder="Coming from the main road, turn left at the pharmacy..."></textarea>
-        </div>
-        <div class="form-group">
-            <label>House Description</label>
-            <input type="text" id="location.directions.house_description" placeholder="Yellow house with green shutters and a red gate">
-        </div>
-        <div class="form-group">
-            <label>Gate Code (if applicable)</label>
-            <input type="text" id="location.gate_code" placeholder="1234#">
-        </div>
-        <div class="form-group">
-            <label>Google Maps URL</label>
-            <input type="url" id="location.google_maps_url" placeholder="https://maps.google.com/...">
-        </div>
-    </div>
-    
-    <div id="accounts" class="panel">
-        <h2>💼 Utility Accounts</h2>
-        <p style="color: #666; margin-bottom: 20px;">
-            Accounts are populated automatically when you approve document extractions.
-            <a href="/documents.html">Upload documents →</a>
-        </p>
-        <div id="accountsList" class="accounts-list">
-            <div class="empty-state">Loading accounts...</div>
-        </div>
-    </div>
-    
-    <div id="preferences" class="panel">
-        <h2>🎯 Preferences</h2>
-        <div class="form-group">
-            <label>Preferred Appointment Time</label>
-            <input type="text" id="preferences.preferred_time" placeholder="la mattina / il pomeriggio">
-        </div>
-        <div class="form-group">
-            <label>Available Days (comma-separated)</label>
-            <input type="text" id="preferences.available_days_text" placeholder="lunedì, martedì, mercoledì">
+        <div id="location" class="panel">
+            <h2>📍 Location</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Via/Street</label>
+                    <input type="text" id="location.address.via" placeholder="Via Roma">
+                </div>
+                <div class="form-group">
+                    <label>Number</label>
+                    <input type="text" id="location.address.numero" placeholder="42">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>CAP</label>
+                    <input type="text" id="location.address.cap" placeholder="00100" maxlength="5">
+                </div>
+                <div class="form-group">
+                    <label>Comune</label>
+                    <input type="text" id="location.address.comune" placeholder="Roma">
+                </div>
+                <div class="form-group">
+                    <label>Provincia</label>
+                    <input type="text" id="location.address.provincia" placeholder="RM" maxlength="2" style="text-transform: uppercase;">
+                </div>
+            </div>
+            
+            <h3>Directions for Delivery Drivers</h3>
+            <div class="form-group">
+                <label>From Main Road</label>
+                <textarea id="location.directions.from_main_road" placeholder="Coming from the main road, turn left at..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>House Description</label>
+                <input type="text" id="location.directions.house_description" placeholder="Yellow house with green shutters">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gate Code</label>
+                    <input type="text" id="location.gate_code" placeholder="1234#">
+                </div>
+                <div class="form-group">
+                    <label>Google Maps URL</label>
+                    <input type="url" id="location.google_maps_url" placeholder="https://maps.google.com/...">
+                </div>
+            </div>
         </div>
         
-        <h3 style="margin: 24px 0 16px;">House Details</h3>
-        <div class="form-row">
+        <div id="accounts" class="panel">
+            <h2>💼 Utility Accounts</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 12px;">
+                Accounts are populated automatically from document extractions.
+                <a href="documents.html" style="color: var(--accent-blue);">Upload documents →</a>
+            </p>
+            <div id="accountsList" class="accounts-list">
+                <div class="empty-state">Loading...</div>
+            </div>
+        </div>
+        
+        <div id="preferences" class="panel">
+            <h2>🎯 Preferences</h2>
             <div class="form-group">
-                <label>Neighbour Name</label>
-                <input type="text" id="house.neighbour_name" placeholder="Signora Rossi">
+                <label>Preferred Appointment Time</label>
+                <input type="text" id="preferences.preferred_time" placeholder="la mattina / il pomeriggio">
             </div>
             <div class="form-group">
-                <label>Neighbour Relation</label>
-                <input type="text" id="house.neighbour_relation" placeholder="la vicina di casa">
+                <label>Available Days (comma-separated)</label>
+                <input type="text" id="preferences.available_days_text" placeholder="lunedì, martedì, mercoledì">
+            </div>
+            
+            <h3>House Details</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Neighbour Name</label>
+                    <input type="text" id="house.neighbour_name" placeholder="Signora Rossi">
+                </div>
+                <div class="form-group">
+                    <label>Neighbour Relation</label>
+                    <input type="text" id="house.neighbour_relation" placeholder="la vicina di casa">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Safe Place for Deliveries</label>
+                <input type="text" id="house.safe_place" placeholder="behind the gate / with the neighbour">
             </div>
         </div>
-        <div class="form-group">
-            <label>Safe Place for Deliveries</label>
-            <input type="text" id="house.safe_place" placeholder="behind the gate / with the neighbour">
+        
+        <div id="raw" class="panel">
+            <h2>📋 Raw Knowledge JSON</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 12px;">
+                Complete knowledge base that powers the phone agent.
+            </p>
+            <div id="rawJson" class="json-view">Loading...</div>
+            <div style="margin-top: 12px; display: flex; gap: 8px;">
+                <button class="btn btn-secondary" onclick="copyJson()">📋 Copy</button>
+                <button class="btn btn-secondary" onclick="loadKnowledge()">🔄 Reload</button>
+            </div>
         </div>
-    </div>
-    
-    <div id="raw" class="panel">
-        <h2>📋 Raw Knowledge JSON</h2>
-        <p style="color: #666; margin-bottom: 16px;">
-            View the complete knowledge base that powers the phone agent.
-        </p>
-        <div id="rawJson" class="json-view">Loading...</div>
-        <div style="margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="copyJson()">📋 Copy JSON</button>
-            <button class="btn btn-secondary" onclick="loadKnowledge()">🔄 Reload</button>
+        
+        <div class="save-bar">
+            <span id="saveStatus">No unsaved changes</span>
+            <button class="btn btn-primary" onclick="saveChanges()">💾 Save Changes</button>
         </div>
-    </div>
-    
-    <div class="save-bar">
-        <span id="saveStatus">No unsaved changes</span>
-        <button class="btn btn-primary" onclick="saveChanges()">💾 Save Changes</button>
     </div>
     
     <script>
@@ -327,11 +408,8 @@
         let hasChanges = false;
         
         function showTab(tabId) {
-            // Update tab buttons
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-            
-            // Update panels
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
         }
@@ -352,17 +430,14 @@
                 renderAccounts();
                 document.getElementById('rawJson').textContent = JSON.stringify(knowledge, null, 2);
             } catch (e) {
-                showAlert('Failed to load knowledge: ' + e.message, 'error');
+                showAlert('Failed to load: ' + e.message, 'error');
             }
         }
         
         function populateForm() {
-            // Identity
             setValue('identity.name', knowledge.identity?.name);
             setValue('identity.codice_fiscale', knowledge.identity?.codice_fiscale);
             setValue('identity.opening_phrase', knowledge.identity?.opening_phrase);
-            
-            // Location
             setValue('location.address.via', knowledge.location?.address?.via);
             setValue('location.address.numero', knowledge.location?.address?.numero);
             setValue('location.address.cap', knowledge.location?.address?.cap);
@@ -372,19 +447,13 @@
             setValue('location.directions.house_description', knowledge.location?.directions?.house_description);
             setValue('location.gate_code', knowledge.location?.gate_code);
             setValue('location.google_maps_url', knowledge.location?.google_maps_url);
-            
-            // Preferences
             setValue('preferences.preferred_time', knowledge.preferences?.preferred_time);
-            const days = knowledge.preferences?.available_days || [];
-            setValue('preferences.available_days_text', days.join(', '));
+            setValue('preferences.available_days_text', (knowledge.preferences?.available_days || []).join(', '));
             setValue('house.neighbour_name', knowledge.house?.neighbour_name);
             setValue('house.neighbour_relation', knowledge.house?.neighbour_relation);
             setValue('house.safe_place', knowledge.house?.safe_place);
             
-            // Add change listeners
-            document.querySelectorAll('input, textarea').forEach(el => {
-                el.addEventListener('input', markChanged);
-            });
+            document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', markChanged));
         }
         
         function setValue(id, value) {
@@ -400,7 +469,7 @@
         function markChanged() {
             hasChanges = true;
             document.getElementById('saveStatus').textContent = '● Unsaved changes';
-            document.getElementById('saveStatus').style.color = '#dc3545';
+            document.getElementById('saveStatus').style.color = 'var(--accent-orange)';
         }
         
         function renderAccounts() {
@@ -408,12 +477,7 @@
             const accounts = knowledge.accounts || {};
             
             if (Object.keys(accounts).length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        No accounts configured yet.<br>
-                        <a href="/documents.html">Upload a utility bill</a> to extract account information.
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state">No accounts yet.<br><a href="documents.html">Upload a utility bill</a></div>';
                 return;
             }
             
@@ -423,73 +487,30 @@
                     <tr>
                         <td>${h.document_date || '-'}</td>
                         <td>${h.period_start || ''} - ${h.period_end || ''}</td>
-                        <td style="text-align: right;">${h.amount ? '€' + h.amount.toFixed(2) : '-'}</td>
-                        <td style="text-align: right;">${h.reading || '-'}</td>
+                        <td style="text-align:right">${h.amount ? '€' + h.amount.toFixed(2) : '-'}</td>
+                        <td style="text-align:right">${h.reading || '-'}</td>
                     </tr>
                 `).join('');
                 
                 return `
                 <div class="account-card">
-                    <h4>
-                        ${acc.provider || key}
-                        <span style="font-weight: normal; color: #999; font-size: 0.85em;">${acc.type || ''}</span>
-                    </h4>
-                    ${acc.identifiers?.codice_cliente ? `
-                        <div class="detail">
-                            <span class="label">Codice Cliente</span>
-                            <span class="value">${acc.identifiers.codice_cliente}</span>
-                        </div>
-                    ` : ''}
-                    ${acc.identifiers?.pod ? `
-                        <div class="detail">
-                            <span class="label">POD</span>
-                            <span class="value">${acc.identifiers.pod}</span>
-                        </div>
-                    ` : ''}
-                    ${acc.identifiers?.pdr ? `
-                        <div class="detail">
-                            <span class="label">PDR</span>
-                            <span class="value">${acc.identifiers.pdr}</span>
-                        </div>
-                    ` : ''}
-                    ${acc.contact?.phone ? `
-                        <div class="detail">
-                            <span class="label">Servizio Clienti</span>
-                            <span class="value">${acc.contact.phone}</span>
-                        </div>
-                    ` : ''}
-                    ${acc.current_bill?.amount ? `
-                        <div class="detail" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-                            <span class="label">Latest Bill</span>
-                            <span class="value" style="font-weight: 600;">€${acc.current_bill.amount}</span>
-                        </div>
-                    ` : ''}
-                    
+                    <h4>${acc.provider || key} <span>${acc.type || ''}</span></h4>
+                    ${acc.identifiers?.codice_cliente ? `<div class="detail"><span class="label">Codice Cliente</span><span class="value">${acc.identifiers.codice_cliente}</span></div>` : ''}
+                    ${acc.identifiers?.pod ? `<div class="detail"><span class="label">POD</span><span class="value">${acc.identifiers.pod}</span></div>` : ''}
+                    ${acc.identifiers?.pdr ? `<div class="detail"><span class="label">PDR</span><span class="value">${acc.identifiers.pdr}</span></div>` : ''}
+                    ${acc.contact?.phone ? `<div class="detail"><span class="label">Servizio Clienti</span><span class="value">${acc.contact.phone}</span></div>` : ''}
+                    ${acc.current_bill?.amount ? `<div class="detail" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color)"><span class="label">Latest Bill</span><span class="value" style="font-weight:600">€${acc.current_bill.amount}</span></div>` : ''}
                     ${history.length > 0 ? `
-                        <details style="margin-top: 12px;">
-                            <summary style="cursor: pointer; color: #007AFF; font-size: 0.9em;">
-                                📊 Billing History (${history.length} records)
-                            </summary>
-                            <div style="margin-top: 10px; overflow-x: auto;">
-                                <table style="width: 100%; font-size: 0.85em; border-collapse: collapse;">
-                                    <thead>
-                                        <tr style="background: #f8f9fa; text-align: left;">
-                                            <th style="padding: 6px;">Date</th>
-                                            <th style="padding: 6px;">Period</th>
-                                            <th style="padding: 6px; text-align: right;">Amount</th>
-                                            <th style="padding: 6px; text-align: right;">Reading</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${historyRows}
-                                    </tbody>
-                                </table>
-                            </div>
+                        <details>
+                            <summary>📊 History (${history.length})</summary>
+                            <table>
+                                <thead><tr><th>Date</th><th>Period</th><th style="text-align:right">Amount</th><th style="text-align:right">Reading</th></tr></thead>
+                                <tbody>${historyRows}</tbody>
+                            </table>
                         </details>
                     ` : ''}
-                    
-                    <div class="detail" style="margin-top: 8px; font-size: 0.8em; color: #999;">
-                        <span>Last updated: ${acc.updated ? new Date(acc.updated).toLocaleDateString() : 'Unknown'}</span>
+                    <div class="detail" style="margin-top:8px;font-size:10px;color:var(--text-secondary)">
+                        Updated: ${acc.updated ? new Date(acc.updated).toLocaleDateString() : 'Unknown'}
                     </div>
                 </div>
             `}).join('');
@@ -524,27 +545,21 @@
                         body: JSON.stringify(update)
                     });
                 }
-                
                 hasChanges = false;
                 document.getElementById('saveStatus').textContent = '✓ Saved';
-                document.getElementById('saveStatus').style.color = '#28a745';
-                showAlert('Configuration saved successfully!');
-                
-                // Reload to get updated data
+                document.getElementById('saveStatus').style.color = 'var(--accent-green)';
+                showAlert('Configuration saved!');
                 await loadKnowledge();
-                
             } catch (e) {
                 showAlert('Failed to save: ' + e.message, 'error');
             }
         }
         
         function copyJson() {
-            const json = document.getElementById('rawJson').textContent;
-            navigator.clipboard.writeText(json);
+            navigator.clipboard.writeText(document.getElementById('rawJson').textContent);
             showAlert('JSON copied to clipboard');
         }
         
-        // Initial load
         loadKnowledge();
     </script>
 </body>

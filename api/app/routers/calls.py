@@ -1,20 +1,25 @@
 """
 Call history and outbound call management.
-"""
-import os
-import logging
-from typing import Optional
-from datetime import datetime
 
-from fastapi import APIRouter, Request, HTTPException
+Provides:
+- /history - List all past calls with transcripts
+- /transcript/{call_sid} - Get full transcript for a call
+- /outbound - Initiate outbound calls
+"""
+import json
+import logging
+import os
+from datetime import datetime
+from pathlib import Path
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from twilio.rest import Client as TwilioClient
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# In-memory call log (future: persist to file/database)
-call_log: list[dict] = []
+TRANSCRIPTS_DIR = Path("/app/data/transcripts")
 
 
 class OutboundCallRequest(BaseModel):
@@ -25,118 +30,208 @@ class OutboundCallRequest(BaseModel):
 
 
 @router.get("/history")
-async def get_call_history(limit: int = 20):
+async def get_call_history(limit: int = 50, offset: int = 0):
     """
-    Get recent call history.
+    Get call history with transcripts.
     
-    Returns list of calls with transcripts and status.
+    Returns list of calls sorted by most recent first.
     """
-    # Import active calls from twilio router
-    from app.routers.twilio import active_calls
+    calls = []
     
-    # Combine with historical log
-    all_calls = list(active_calls.values()) + call_log
-    
-    # Sort by start time, most recent first
-    all_calls.sort(
-        key=lambda x: x.get("started_at", ""),
-        reverse=True
-    )
+    if TRANSCRIPTS_DIR.exists():
+        # Get all transcript files
+        files = sorted(
+            TRANSCRIPTS_DIR.glob("*.json"),
+            key=lambda f: f.stat().st_mtime,
+            reverse=True  # Most recent first
+        )
+        
+        # Apply pagination
+        for filepath in files[offset:offset + limit]:
+            try:
+                with open(filepath) as f:
+                    call_data = json.load(f)
+                    
+                # Add call_sid from filename if not in data
+                if "call_sid" not in call_data:
+                    call_data["call_sid"] = filepath.stem
+                
+                # Calculate summary stats
+                turns = call_data.get("turns", [])
+                caller_turns = [t for t in turns if t.get("speaker") == "caller"]
+                ai_turns = [t for t in turns if t.get("speaker") == "ai"]
+                
+                # Get average latency
+                latencies = [t.get("latency_ms") for t in turns if t.get("latency_ms")]
+                avg_latency = int(sum(latencies) / len(latencies)) if latencies else None
+                
+                calls.append({
+                    "call_sid": call_data.get("call_sid", filepath.stem),
+                    "caller": call_data.get("caller", "Unknown"),
+                    "called": call_data.get("called", "Unknown"),
+                    "started_at": call_data.get("started_at"),
+                    "ended_at": call_data.get("ended_at"),
+                    "duration_seconds": call_data.get("duration_seconds"),
+                    "status": call_data.get("status", "ended"),
+                    "turn_count": len(turns),
+                    "caller_turns": len(caller_turns),
+                    "ai_turns": len(ai_turns),
+                    "avg_latency_ms": avg_latency,
+                    "preview": turns[0].get("text", "")[:100] if turns else None,
+                    "has_transcript": len(turns) > 0
+                })
+                
+            except Exception as e:
+                logger.error(f"Error reading transcript {filepath}: {e}")
+                continue
     
     return {
-        "calls": all_calls[:limit],
-        "total": len(all_calls)
+        "calls": calls,
+        "total": len(list(TRANSCRIPTS_DIR.glob("*.json"))) if TRANSCRIPTS_DIR.exists() else 0,
+        "limit": limit,
+        "offset": offset
+    }
+
+
+@router.get("/transcript/{call_sid}")
+async def get_transcript(call_sid: str):
+    """
+    Get full transcript for a specific call.
+    
+    Returns all conversation turns with timestamps.
+    """
+    filepath = TRANSCRIPTS_DIR / f"{call_sid}.json"
+    
+    if not filepath.exists():
+        raise HTTPException(status_code=404, detail="Transcript not found")
+    
+    try:
+        with open(filepath) as f:
+            call_data = json.load(f)
+        
+        return {
+            "call_sid": call_sid,
+            "caller": call_data.get("caller"),
+            "called": call_data.get("called"),
+            "started_at": call_data.get("started_at"),
+            "ended_at": call_data.get("ended_at"),
+            "duration_seconds": call_data.get("duration_seconds"),
+            "status": call_data.get("status"),
+            "turns": call_data.get("turns", [])
+        }
+        
+    except Exception as e:
+        logger.error(f"Error reading transcript {call_sid}: {e}")
+        raise HTTPException(status_code=500, detail="Error reading transcript")
+
+
+@router.get("/stats")
+async def get_call_stats():
+    """
+    Get aggregate statistics about calls.
+    """
+    if not TRANSCRIPTS_DIR.exists():
+        return {
+            "total_calls": 0,
+            "total_duration_seconds": 0,
+            "avg_duration_seconds": 0,
+            "avg_turns_per_call": 0,
+            "avg_latency_ms": 0
+        }
+    
+    total_calls = 0
+    total_duration = 0
+    total_turns = 0
+    all_latencies = []
+    calls_today = 0
+    calls_this_week = 0
+    
+    today = datetime.now().date()
+    
+    for filepath in TRANSCRIPTS_DIR.glob("*.json"):
+        try:
+            with open(filepath) as f:
+                call_data = json.load(f)
+            
+            total_calls += 1
+            
+            # Duration
+            duration = call_data.get("duration_seconds", 0)
+            if duration:
+                total_duration += duration
+            
+            # Turns
+            turns = call_data.get("turns", [])
+            total_turns += len(turns)
+            
+            # Latencies
+            for turn in turns:
+                if turn.get("latency_ms"):
+                    all_latencies.append(turn["latency_ms"])
+            
+            # Date stats
+            started = call_data.get("started_at")
+            if started:
+                try:
+                    call_date = datetime.fromisoformat(started).date()
+                    if call_date == today:
+                        calls_today += 1
+                    days_ago = (today - call_date).days
+                    if days_ago < 7:
+                        calls_this_week += 1
+                except:
+                    pass
+                    
+        except Exception as e:
+            logger.error(f"Error reading {filepath} for stats: {e}")
+            continue
+    
+    return {
+        "total_calls": total_calls,
+        "calls_today": calls_today,
+        "calls_this_week": calls_this_week,
+        "total_duration_seconds": total_duration,
+        "avg_duration_seconds": int(total_duration / total_calls) if total_calls else 0,
+        "total_turns": total_turns,
+        "avg_turns_per_call": round(total_turns / total_calls, 1) if total_calls else 0,
+        "avg_latency_ms": int(sum(all_latencies) / len(all_latencies)) if all_latencies else 0
     }
 
 
 @router.post("/outbound")
-async def initiate_outbound_call(call_request: OutboundCallRequest, request: Request):
+async def initiate_outbound_call(request: OutboundCallRequest):
     """
     Initiate an outbound call.
     
-    The AI will handle the call according to the specified scenario.
+    This is a placeholder - full implementation requires
+    Twilio outbound call setup.
     """
-    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
-    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
-    from_number = os.getenv("TWILIO_PHONE_NUMBER")
+    logger.info(f"Outbound call requested to {request.to_number}")
     
-    if not all([account_sid, auth_token, from_number]):
-        raise HTTPException(status_code=500, detail="Twilio not configured")
-    
-    try:
-        client = TwilioClient(account_sid, auth_token)
-        
-        # Build webhook URL for this server
-        host = request.headers.get("host", "phone.rashbass.org")
-        voice_url = f"https://{host}/api/twilio/voice"
-        status_url = f"https://{host}/api/twilio/status"
-        
-        # Initiate the call
-        call = client.calls.create(
-            to=call_request.to_number,
-            from_=from_number,
-            url=voice_url,
-            status_callback=status_url,
-            status_callback_event=["initiated", "ringing", "answered", "completed"]
-        )
-        
-        logger.info(f"📞 Outbound call initiated: {call.sid} to {call_request.to_number}")
-        
-        # Log the call
-        call_log.append({
-            "call_sid": call.sid,
-            "direction": "outbound",
-            "to": call_request.to_number,
-            "from": from_number,
-            "scenario": call_request.scenario,
-            "notes": call_request.notes,
-            "started_at": datetime.now().isoformat(),
-            "status": "initiated"
-        })
-        
-        return {
-            "success": True,
-            "call_sid": call.sid,
-            "status": "initiated",
-            "to": call_request.to_number
-        }
-        
-    except Exception as e:
-        logger.error(f"Failed to initiate outbound call: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/transcript/{call_sid}")
-async def get_call_transcript(call_sid: str):
-    """
-    Get the full transcript for a call.
-    """
-    from app.services.claude import get_claude_service
-    
-    claude = get_claude_service()
-    state = claude.get_conversation(call_sid)
-    
-    if not state:
-        # Check call log
-        for call in call_log:
-            if call.get("call_sid") == call_sid:
-                return {
-                    "call_sid": call_sid,
-                    "transcript": call.get("transcript", []),
-                    "status": call.get("status")
-                }
-        raise HTTPException(status_code=404, detail="Call not found")
+    # TODO: Implement outbound calling
+    # 1. Create TwiML for outbound call
+    # 2. Use Twilio client to initiate call
+    # 3. Connect to same WebSocket handler
     
     return {
-        "call_sid": call_sid,
-        "transcript": state.history,
-        "turn_count": state.turn_count
+        "status": "not_implemented",
+        "message": "Outbound calls coming soon",
+        "requested_number": request.to_number
     }
 
 
-@router.delete("/history")
-async def clear_call_history():
-    """Clear the call history (for testing)."""
-    global call_log
-    call_log = []
-    return {"status": "cleared"}
+@router.delete("/transcript/{call_sid}")
+async def delete_transcript(call_sid: str):
+    """Delete a call transcript."""
+    filepath = TRANSCRIPTS_DIR / f"{call_sid}.json"
+    
+    if not filepath.exists():
+        raise HTTPException(status_code=404, detail="Transcript not found")
+    
+    try:
+        os.remove(filepath)
+        logger.info(f"Deleted transcript {call_sid}")
+        return {"status": "deleted", "call_sid": call_sid}
+    except Exception as e:
+        logger.error(f"Error deleting transcript {call_sid}: {e}")
+        raise HTTPException(status_code=500, detail="Error deleting transcript")

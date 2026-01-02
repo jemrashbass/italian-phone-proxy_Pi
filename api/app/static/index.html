@@ -3,106 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📞 Italian Phone Proxy - Live Dashboard</title>
+    <title>📞 Italian Phone Proxy</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         :root {
-            --bg-primary: #0f1419;
-            --bg-secondary: #1a1f26;
-            --bg-tertiary: #242b33;
-            --text-primary: #e7e9ea;
-            --text-secondary: #8b98a5;
-            --accent-green: #00ba7c;
-            --accent-blue: #1d9bf0;
+            --bg-primary: #0b141a;
+            --bg-secondary: #111b21;
+            --bg-tertiary: #1f2c33;
+            --text-primary: #e9edef;
+            --text-secondary: #8696a0;
+            --accent-green: #00a884;
+            --accent-blue: #53bdeb;
             --accent-orange: #ff7a00;
-            --accent-red: #f4212e;
-            --caller-bg: #1e3a5f;
-            --ai-bg: #1e3d34;
-            --border-color: #2f3942;
+            --accent-red: #ea0038;
+            --caller-bg: #005c4b;
+            --ai-bg: #1f2c33;
+            --border-color: #222d34;
         }
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            min-height: 100vh;
+            font-size: 14px;
+            height: 100vh;
+            overflow: hidden;
         }
         
-        /* Navigation */
+        /* Compact Navigation */
         .nav {
             background: var(--bg-secondary);
-            padding: 12px 20px;
+            padding: 8px 16px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            height: 44px;
         }
         
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
+        .nav-links { display: flex; gap: 16px; align-items: center; }
+        .nav a { text-decoration: none; color: var(--text-secondary); font-size: 13px; }
+        .nav a:hover, .nav a.active { color: var(--text-primary); }
+        .nav-title { font-weight: 600; font-size: 14px; }
         
-        .nav a {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 0.9em;
-            transition: color 0.2s;
-        }
-        
-        .nav a:hover, .nav a.active {
-            color: var(--text-primary);
-        }
-        
-        .nav-title {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        /* Connection status */
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85em;
-        }
-        
+        .connection-status { display: flex; align-items: center; gap: 6px; font-size: 12px; }
         .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+            width: 8px; height: 8px; border-radius: 50%;
             background: var(--accent-red);
-            transition: background 0.3s;
         }
-        
-        .status-dot.connected {
-            background: var(--accent-green);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        .status-dot.connected { background: var(--accent-green); }
         
         /* Main layout */
         .main-container {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            height: calc(100vh - 53px);
+            grid-template-columns: 260px 1fr;
+            height: calc(100vh - 44px);
         }
         
         @media (max-width: 768px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                display: none;
-            }
+            .main-container { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
         }
         
-        /* Sidebar - Active calls list */
+        /* Sidebar */
         .sidebar {
             background: var(--bg-secondary);
             border-right: 1px solid var(--border-color);
@@ -111,222 +75,184 @@
         }
         
         .sidebar-header {
-            padding: 16px;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
         }
         
-        .call-list {
-            flex: 1;
-            overflow-y: auto;
-        }
+        .call-list { flex: 1; overflow-y: auto; }
         
         .call-item {
-            padding: 16px;
+            padding: 10px 16px;
             border-bottom: 1px solid var(--border-color);
             cursor: pointer;
-            transition: background 0.2s;
         }
-        
-        .call-item:hover, .call-item.active {
-            background: var(--bg-tertiary);
-        }
-        
-        .call-item .caller {
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-        
-        .call-item .meta {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .call-item .status {
-            font-size: 0.75em;
-            padding: 2px 8px;
-            border-radius: 10px;
-            background: var(--accent-green);
-            color: white;
-        }
-        
-        .call-item .preview {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            margin-top: 8px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+        .call-item:hover, .call-item.active { background: var(--bg-tertiary); }
+        .call-item .caller { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+        .call-item .meta { font-size: 11px; color: var(--text-secondary); display: flex; justify-content: space-between; }
+        .call-item .status { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: var(--accent-green); color: white; }
+        .call-item .preview { font-size: 12px; color: var(--text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
         /* Main panel */
-        .main-panel {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .main-panel { display: flex; flex-direction: column; height: 100%; position: relative; }
         
         .call-header {
-            padding: 16px 20px;
+            padding: 10px 16px;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+        .call-info h2 { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+        .call-info .details { font-size: 11px; color: var(--text-secondary); }
         
-        .call-info h2 {
-            font-size: 1.1em;
-            margin-bottom: 4px;
-        }
-        
-        .call-info .details {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-        }
-        
-        .call-controls {
-            display: flex;
-            gap: 10px;
-        }
-        
+        .call-controls { display: flex; gap: 8px; }
         .call-controls button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.2s;
+            padding: 5px 12px; border: none; border-radius: 4px;
+            cursor: pointer; font-size: 12px;
         }
-        
-        .btn-danger { background: var(--accent-red); color: white; }
         .btn-primary { background: var(--accent-blue); color: white; }
+        .btn-debug { background: var(--bg-tertiary); color: var(--text-secondary); }
+        .btn-debug.active { background: var(--accent-orange); color: white; }
         
-        /* Transcript area */
+        /* Transcript area - WhatsApp style */
         .transcript-area {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 8px 12px;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='%23061018'/%3E%3C/svg%3E");
         }
         
-        .transcript-turn {
-            margin-bottom: 16px;
-            max-width: 80%;
-            animation: fadeIn 0.3s ease;
-        }
+        .transcript-content { display: flex; flex-direction: column; gap: 2px; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* WhatsApp-style bubbles */
+        .turn { max-width: 75%; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         
-        .transcript-turn.caller {
-            margin-right: auto;
-        }
-        
-        .transcript-turn.ai {
-            margin-left: auto;
-        }
+        .turn.caller { align-self: flex-start; }
+        .turn.ai { align-self: flex-end; }
         
         .turn-bubble {
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 6px 10px 4px;
+            border-radius: 8px;
             position: relative;
+            min-width: 80px;
         }
         
-        .transcript-turn.caller .turn-bubble {
-            background: var(--caller-bg);
-            border-bottom-left-radius: 4px;
-        }
-        
-        .transcript-turn.ai .turn-bubble {
+        /* WhatsApp asymmetric corners */
+        .turn.caller .turn-bubble {
             background: var(--ai-bg);
-            border-bottom-right-radius: 4px;
+            border-top-left-radius: 0;
+        }
+        .turn.ai .turn-bubble {
+            background: var(--caller-bg);
+            border-top-right-radius: 0;
         }
         
-        .turn-label {
-            font-size: 0.75em;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .turn-text {
-            line-height: 1.5;
-        }
-        
+        .turn-text { font-size: 13px; line-height: 1.35; word-wrap: break-word; }
         .turn-meta {
-            font-size: 0.75em;
+            font-size: 10px;
             color: var(--text-secondary);
-            margin-top: 6px;
-            display: flex;
-            gap: 12px;
+            text-align: right;
+            margin-top: 2px;
+            opacity: 0.8;
         }
+        .turn-meta .latency { color: var(--accent-green); margin-left: 6px; }
         
         /* Processing indicator */
         .processing-indicator {
-            padding: 12px 20px;
+            padding: 6px 16px;
             background: var(--bg-secondary);
             border-top: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.9em;
+            font-size: 12px;
             color: var(--text-secondary);
-        }
-        
-        .processing-indicator.hidden {
             display: none;
+            align-items: center;
+            gap: 8px;
         }
-        
+        .processing-indicator.visible { display: flex; }
         .processing-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+            width: 6px; height: 6px; border-radius: 50%;
             background: var(--accent-orange);
             animation: blink 1s infinite;
         }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
         /* Empty state */
         .empty-state {
-            display: flex;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100%; color: var(--text-secondary);
+            text-align: center; padding: 40px;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .empty-state h3 { font-size: 16px; margin-bottom: 4px; color: var(--text-primary); }
+        .empty-state p { font-size: 13px; }
+        
+        #callView { display: none; flex-direction: column; height: 100%; }
+        #callView.active { display: flex; }
+        
+        /* Debug Panel */
+        .debug-panel {
+            position: absolute;
+            bottom: 40px;
+            right: 16px;
+            width: 350px;
+            max-height: 300px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: none;
             flex-direction: column;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 11px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .debug-panel.visible { display: flex; }
+        .debug-header {
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--text-secondary);
-            text-align: center;
-            padding: 40px;
+            font-weight: 500;
         }
-        
-        .empty-state .icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            opacity: 0.5;
+        .debug-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            max-height: 250px;
         }
-        
-        .empty-state h3 {
-            margin-bottom: 8px;
-            color: var(--text-primary);
+        .debug-line {
+            padding: 2px 0;
+            border-bottom: 1px solid var(--border-color);
+            word-break: break-all;
         }
+        .debug-line.sent { color: var(--accent-blue); }
+        .debug-line.received { color: var(--accent-green); }
+        .debug-line.error { color: var(--accent-red); }
+        .debug-time { color: var(--text-secondary); margin-right: 8px; }
+        .debug-clear {
+            background: none; border: none; color: var(--text-secondary);
+            cursor: pointer; font-size: 11px;
+        }
+        .debug-clear:hover { color: var(--text-primary); }
     </style>
 </head>
 <body>
     <nav class="nav">
         <div class="nav-links">
-            <span class="nav-title">📞 Italian Phone Proxy</span>
-            <a href="index.html" class="active">Live</a>
-            <a href="calls.html">History</a>
-            <a href="documents.html">Documents</a>
-            <a href="config.html">Config</a>
+            <span class="nav-title">📞 Phone Proxy</span>
+            <a href="index.html">🔴 Live</a>
+            <a href="calls.html">📋 History</a>
+            <a href="documents.html">📄 Docs</a>
+            <a href="config.html">⚙️ Config</a>
+            <a href="analytics.html">📊 Analytics</a>
         </div>
         <div class="connection-status">
             <span class="status-dot" id="statusDot"></span>
@@ -336,108 +262,133 @@
     
     <div class="main-container">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                Active Calls <span id="callCount">(0)</span>
-            </div>
-            <div class="call-list" id="callList">
-                <!-- Populated by JavaScript -->
-            </div>
+            <div class="sidebar-header">Active Calls <span id="callCount">(0)</span></div>
+            <div class="call-list" id="callList"></div>
         </aside>
         
         <main class="main-panel" id="mainPanel">
             <div class="empty-state" id="emptyState">
                 <div class="icon">📞</div>
                 <h3>No Active Calls</h3>
-                <p>Waiting for incoming calls...<br>
-                <small>Call +44 2070 460437 to test</small></p>
+                <p>Waiting for incoming calls...<br><small>+44 2070 460437</small></p>
             </div>
             
-            <div id="callView" style="display: none; flex: 1; display: flex; flex-direction: column;">
+            <div id="callView">
                 <div class="call-header">
                     <div class="call-info">
-                        <h2 id="currentCaller">Unknown Caller</h2>
-                        <div class="details">
-                            <span id="callDuration">0:00</span> • 
-                            <span id="turnCount">0 turns</span>
-                        </div>
+                        <h2 id="currentCaller">Unknown</h2>
+                        <div class="details"><span id="callDuration">0:00</span> • <span id="turnCount">0</span> turns</div>
                     </div>
                     <div class="call-controls">
-                        <button class="btn-primary" onclick="copyTranscript()">📋 Copy</button>
+                        <button class="btn-primary" onclick="copyTranscript()">📋</button>
+                        <button class="btn-debug" id="debugBtn" onclick="toggleDebug()">🛠</button>
                     </div>
                 </div>
                 
                 <div class="transcript-area" id="transcriptArea">
-                    <!-- Populated by JavaScript -->
+                    <div class="transcript-content" id="transcriptContent"></div>
                 </div>
                 
-                <div class="processing-indicator hidden" id="processingIndicator">
+                <div class="processing-indicator" id="processingIndicator">
                     <div class="processing-dot"></div>
                     <span id="processingText">Listening...</span>
+                </div>
+                
+                <div class="debug-panel" id="debugPanel">
+                    <div class="debug-header">
+                        <span>🛠 WebSocket Debug</span>
+                        <button class="debug-clear" onclick="clearDebug()">Clear</button>
+                    </div>
+                    <div class="debug-content" id="debugContent"></div>
                 </div>
             </div>
         </main>
     </div>
     
     <script>
-        // State
         let ws = null;
         let activeCalls = {};
         let currentCallSid = null;
         let callTimers = {};
         let reconnectAttempts = 0;
+        let userScrolled = false;
+        let debugVisible = false;
         
-        // WebSocket connection
+        // Debug logging
+        function debugLog(type, msg) {
+            const content = document.getElementById('debugContent');
+            const time = new Date().toLocaleTimeString('en-GB', {hour12: false});
+            const line = document.createElement('div');
+            line.className = `debug-line ${type}`;
+            
+            let text = typeof msg === 'object' ? JSON.stringify(msg) : msg;
+            if (text.length > 200) text = text.substring(0, 200) + '...';
+            
+            line.innerHTML = `<span class="debug-time">${time}</span>${type === 'sent' ? '→' : '←'} ${text}`;
+            content.appendChild(line);
+            content.scrollTop = content.scrollHeight;
+            
+            // Keep max 100 lines
+            while (content.children.length > 100) content.removeChild(content.firstChild);
+        }
+        
+        function toggleDebug() {
+            debugVisible = !debugVisible;
+            document.getElementById('debugPanel').classList.toggle('visible', debugVisible);
+            document.getElementById('debugBtn').classList.toggle('active', debugVisible);
+        }
+        
+        function clearDebug() {
+            document.getElementById('debugContent').innerHTML = '';
+        }
+        
         function connect() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}/api/dashboard/ws`;
             
-            console.log('Connecting to:', wsUrl);
+            debugLog('sent', `Connecting to ${wsUrl}`);
             ws = new WebSocket(wsUrl);
             
             ws.onopen = () => {
-                console.log('WebSocket connected');
                 reconnectAttempts = 0;
                 updateConnectionStatus(true);
+                debugLog('received', 'Connected!');
             };
             
-            ws.onclose = () => {
-                console.log('WebSocket disconnected');
+            ws.onclose = (e) => {
                 updateConnectionStatus(false);
-                
-                // Reconnect with exponential backoff
+                debugLog('error', `Closed: ${e.code} ${e.reason || ''}`);
                 const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
                 reconnectAttempts++;
-                console.log(`Reconnecting in ${delay}ms...`);
                 setTimeout(connect, delay);
             };
             
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
+            ws.onerror = (e) => {
+                debugLog('error', 'WebSocket error');
             };
             
             ws.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
+                    debugLog('received', data);
                     handleMessage(data);
                 } catch (e) {
-                    console.error('Failed to parse message:', e);
+                    debugLog('error', `Parse error: ${e.message}`);
                 }
             };
         }
         
         function handleMessage(data) {
-            console.log('Received:', data.type, data);
-            
             switch (data.type) {
                 case 'init':
-                    // Initialize with current state
-                    data.active_calls.forEach(call => {
+                    (data.active_calls || []).forEach(call => {
                         activeCalls[call.call_sid] = call;
+                        if (!call.turns) call.turns = [];
                         startCallTimer(call.call_sid, call.started_at);
                     });
                     updateCallList();
-                    if (data.active_calls.length > 0 && !currentCallSid) {
-                        selectCall(data.active_calls[0].call_sid);
+                    if (Object.keys(activeCalls).length > 0 && !currentCallSid) {
+                        selectCall(Object.keys(activeCalls)[0]);
                     }
                     break;
                     
@@ -451,11 +402,7 @@
                     };
                     startCallTimer(data.call_sid, data.timestamp);
                     updateCallList();
-                    
-                    // Auto-select new call
-                    if (!currentCallSid) {
-                        selectCall(data.call_sid);
-                    }
+                    if (!currentCallSid) selectCall(data.call_sid);
                     break;
                     
                 case 'transcript':
@@ -466,7 +413,6 @@
                             timestamp: data.timestamp,
                             latency_ms: data.latency_ms
                         });
-                        
                         if (currentCallSid === data.call_sid) {
                             addTranscriptTurn(data);
                         }
@@ -476,7 +422,7 @@
                     
                 case 'processing':
                     if (currentCallSid === data.call_sid) {
-                        updateProcessingStatus(data.status, data.details);
+                        updateProcessingStatus(data.status);
                     }
                     break;
                     
@@ -484,7 +430,6 @@
                     stopCallTimer(data.call_sid);
                     delete activeCalls[data.call_sid];
                     updateCallList();
-                    
                     if (currentCallSid === data.call_sid) {
                         currentCallSid = null;
                         showEmptyState();
@@ -492,40 +437,29 @@
                     break;
                     
                 case 'heartbeat':
-                    // Just a keepalive
                     break;
             }
         }
         
         function updateConnectionStatus(connected) {
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('statusText');
-            
-            if (connected) {
-                dot.classList.add('connected');
-                text.textContent = 'Connected';
-            } else {
-                dot.classList.remove('connected');
-                text.textContent = 'Disconnected';
-            }
+            document.getElementById('statusDot').classList.toggle('connected', connected);
+            document.getElementById('statusText').textContent = connected ? 'Connected' : 'Disconnected';
         }
         
         function updateCallList() {
             const list = document.getElementById('callList');
             const count = document.getElementById('callCount');
-            
             const calls = Object.values(activeCalls);
             count.textContent = `(${calls.length})`;
             
             if (calls.length === 0) {
-                list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">No active calls</div>';
+                list.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-secondary);font-size:12px;">No active calls</div>';
                 return;
             }
             
             list.innerHTML = calls.map(call => {
-                const lastTurn = call.turns[call.turns.length - 1];
-                const preview = lastTurn ? lastTurn.text.substring(0, 50) + '...' : 'Call starting...';
-                
+                const lastTurn = call.turns?.[call.turns.length - 1];
+                const preview = lastTurn ? lastTurn.text.substring(0, 40) + '...' : 'Starting...';
                 return `
                     <div class="call-item ${call.call_sid === currentCallSid ? 'active' : ''}" 
                          onclick="selectCall('${call.call_sid}')">
@@ -534,7 +468,7 @@
                             <span id="timer-${call.call_sid}">0:00</span>
                             <span class="status">Live</span>
                         </div>
-                        <div class="preview">${preview}</div>
+                        <div class="preview">${escapeHtml(preview)}</div>
                     </div>
                 `;
             }).join('');
@@ -543,106 +477,98 @@
         function selectCall(callSid) {
             currentCallSid = callSid;
             const call = activeCalls[callSid];
-            
             if (!call) return;
             
-            // Update UI
+            userScrolled = false;
             document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('callView').style.display = 'flex';
-            
+            document.getElementById('callView').classList.add('active');
             document.getElementById('currentCaller').textContent = formatCaller(call.caller);
-            document.getElementById('turnCount').textContent = `${call.turns.length} turns`;
+            document.getElementById('turnCount').textContent = (call.turns?.length || 0);
             
-            // Render existing transcript
-            const area = document.getElementById('transcriptArea');
-            area.innerHTML = '';
-            call.turns.forEach(turn => addTranscriptTurn(turn));
-            
-            // Update call list selection
+            const content = document.getElementById('transcriptContent');
+            content.innerHTML = '';
+            (call.turns || []).forEach(turn => addTranscriptTurn(turn, false));
+            scrollToBottom(true);
             updateCallList();
         }
         
         function showEmptyState() {
             document.getElementById('emptyState').style.display = 'flex';
-            document.getElementById('callView').style.display = 'none';
+            document.getElementById('callView').classList.remove('active');
         }
         
-        function addTranscriptTurn(turn) {
-            const area = document.getElementById('transcriptArea');
-            const turnEl = document.createElement('div');
-            turnEl.className = `transcript-turn ${turn.speaker}`;
+        function addTranscriptTurn(turn, animate = true) {
+            const content = document.getElementById('transcriptContent');
+            const el = document.createElement('div');
+            el.className = `turn ${turn.speaker}`;
+            if (!animate) el.style.animation = 'none';
             
-            const label = turn.speaker === 'caller' ? '📞 Caller' : '🤖 AI';
-            const latency = turn.latency_ms ? `${turn.latency_ms}ms` : '';
-            const time = new Date(turn.timestamp).toLocaleTimeString();
+            const time = new Date(turn.timestamp).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+            const latency = turn.latency_ms ? `<span class="latency">⚡${turn.latency_ms}ms</span>` : '';
             
-            turnEl.innerHTML = `
+            el.innerHTML = `
                 <div class="turn-bubble">
-                    <div class="turn-label">${label}</div>
-                    <div class="turn-text">${turn.text}</div>
-                    <div class="turn-meta">
-                        <span>${time}</span>
-                        ${latency ? `<span>⚡ ${latency}</span>` : ''}
-                    </div>
+                    <div class="turn-text">${escapeHtml(turn.text)}</div>
+                    <div class="turn-meta">${time}${latency}</div>
                 </div>
             `;
             
-            area.appendChild(turnEl);
-            area.scrollTop = area.scrollHeight;
+            content.appendChild(el);
+            if (!userScrolled) scrollToBottom();
             
-            // Update turn count
             const call = activeCalls[currentCallSid];
-            if (call) {
-                document.getElementById('turnCount').textContent = `${call.turns.length} turns`;
-            }
+            if (call) document.getElementById('turnCount').textContent = call.turns?.length || 0;
         }
         
-        function updateProcessingStatus(status, details) {
+        function scrollToBottom(instant = false) {
+            const area = document.getElementById('transcriptArea');
+            if (instant) area.scrollTop = area.scrollHeight;
+            else area.scrollTo({ top: area.scrollHeight, behavior: 'smooth' });
+        }
+        
+        document.getElementById('transcriptArea')?.addEventListener('scroll', function() {
+            userScrolled = (this.scrollHeight - this.scrollTop - this.clientHeight) > 50;
+        });
+        
+        function updateProcessingStatus(status) {
             const indicator = document.getElementById('processingIndicator');
             const text = document.getElementById('processingText');
-            
-            const statusMap = {
+            const map = {
                 'listening': '👂 Listening...',
                 'transcribing': '✍️ Transcribing...',
                 'thinking': '🤔 Thinking...',
                 'speaking': '🗣️ Speaking...'
             };
-            
-            text.textContent = statusMap[status] || status;
-            indicator.classList.remove('hidden');
-            
+            text.textContent = map[status] || status;
+            indicator.classList.add('visible');
             if (status === 'listening') {
-                // Hide after a moment
-                setTimeout(() => {
-                    if (text.textContent === statusMap['listening']) {
-                        indicator.classList.add('hidden');
-                    }
-                }, 2000);
+                setTimeout(() => indicator.classList.remove('visible'), 2000);
             }
         }
         
         function formatCaller(phone) {
             if (!phone) return 'Unknown';
-            // Format Italian/UK numbers nicely
             return phone.replace(/^\+/, '').replace(/(\d{2})(\d{3})(\d{3})(\d+)/, '+$1 $2 $3 $4');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
         function startCallTimer(callSid, startTime) {
             const start = new Date(startTime);
-            
             callTimers[callSid] = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - start) / 1000);
                 const mins = Math.floor(elapsed / 60);
                 const secs = elapsed % 60;
-                
+                const str = `${mins}:${secs.toString().padStart(2, '0')}`;
                 const timerEl = document.getElementById(`timer-${callSid}`);
-                if (timerEl) {
-                    timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-                }
-                
+                if (timerEl) timerEl.textContent = str;
                 if (callSid === currentCallSid) {
-                    document.getElementById('callDuration').textContent = 
-                        `${mins}:${secs.toString().padStart(2, '0')}`;
+                    document.getElementById('callDuration').textContent = str;
                 }
             }, 1000);
         }
@@ -657,22 +583,15 @@
         function copyTranscript() {
             const call = activeCalls[currentCallSid];
             if (!call) return;
-            
-            const text = call.turns.map(t => 
+            const text = (call.turns || []).map(t => 
                 `${t.speaker === 'caller' ? 'Caller' : 'AI'}: ${t.text}`
             ).join('\n\n');
-            
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Transcript copied!');
-            });
+            navigator.clipboard.writeText(text).then(() => alert('Copied!'));
         }
         
-        // Start connection
         connect();
-        
-        // Send ping every 25 seconds to keep connection alive
         setInterval(() => {
-            if (ws && ws.readyState === WebSocket.OPEN) {
+            if (ws?.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify({ type: 'ping' }));
             }
         }, 25000);

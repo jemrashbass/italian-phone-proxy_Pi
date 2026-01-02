@@ -260,7 +260,7 @@
   "house": {
     "neighbour_name": "",
     "neighbour_relation": "",
-    "safe_place": "",
+    "safe_place": "please leave parcels either in front of the door or to the left of the house by the pizza oven",
     "meter_locations": {
       "water": {
         "matricola": "903642",
@@ -366,7 +366,7 @@
     }
   },
   "metadata": {
-    "last_updated": "2026-01-01T16:26:58.738282",
+    "last_updated": "2026-01-02T09:53:00.294550",
     "extraction_history": [
       {
         "date": "2026-01-01T10:16:30",

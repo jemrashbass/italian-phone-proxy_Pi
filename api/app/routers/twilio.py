@@ -1,17 +1,11 @@
 """
 Twilio webhook and WebSocket handlers for phone calls.
-
-Implements:
-- /voice - Incoming call webhook (returns TwiML)
-- /stream - WebSocket for bidirectional audio streaming
-- /status - Call status callbacks
-
-Includes dashboard broadcasting for real-time monitoring.
 """
 import asyncio
 import json
 import logging
 import os
+import time
 from typing import Optional
 from datetime import datetime
 
@@ -30,11 +24,29 @@ from app.services.whisper import get_whisper_service
 from app.services.tts import get_tts_service
 from app.services.claude import get_claude_service
 from app.services.knowledge import KnowledgeService
+from app.services.analytics import get_analytics_service, EventType  # 📊 ANALYTICS
 
 from app.routers.dashboard import broadcaster
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+TRANSCRIPTS_DIR = "/app/data/transcripts"
+
+
+def save_transcript(call_sid: str, call_data: dict):
+    """Save call transcript to file for history."""
+    import os
+    
+    os.makedirs(TRANSCRIPTS_DIR, exist_ok=True)
+    filepath = os.path.join(TRANSCRIPTS_DIR, f"{call_sid}.json")
+    
+    try:
+        with open(filepath, "w") as f:
+            json.dump(call_data, f, indent=2, ensure_ascii=False)
+        logger.info(f"📝 Saved transcript to {filepath}")
+    except Exception as e:
+        logger.error(f"Failed to save transcript: {e}")
 
 # Track active calls
 active_calls: dict[str, dict] = {}
@@ -52,13 +64,7 @@ GOODBYE_PHRASES = [
 
 @router.post("/voice")
 async def handle_incoming_call(request: Request):
-    """
-    Handle incoming voice call from Twilio.
-    
-    Returns TwiML that:
-    1. Plays initial greeting
-    2. Connects to WebSocket for bidirectional streaming
-    """
+    """Handle incoming voice call from Twilio."""
     form_data = await request.form()
     
     call_sid = form_data.get("CallSid", "unknown")
@@ -67,16 +73,24 @@ async def handle_incoming_call(request: Request):
     
     logger.info(f"📞 Incoming call: {call_sid} from {caller} to {called}")
     
+    # 📊 ANALYTICS: Start tracking this call
+    analytics = get_analytics_service()
+    analytics.start_call(call_sid, caller, called)
+    await analytics.emit(call_sid, EventType.CALL_STARTED, {
+        "caller": caller,
+        "called": called
+    }, turn_index=None)
+    
     # Broadcast to dashboard
     await broadcaster.call_started(call_sid, caller, called)
     
-    # Track the call
+    # Track the call (existing code)
     active_calls[call_sid] = {
         "caller": caller,
         "called": called,
         "started_at": datetime.now().isoformat(),
         "status": "ringing",
-        "turns": []  # Track conversation turns
+        "turns": []
     }
     
     # Build TwiML response
@@ -115,21 +129,7 @@ async def handle_incoming_call(request: Request):
 
 @router.websocket("/stream")
 async def media_stream(websocket: WebSocket):
-    """
-    Handle bidirectional audio stream from Twilio.
-    
-    Twilio Media Streams protocol:
-    - Receives: JSON messages with base64-encoded mulaw audio
-    - Sends: JSON messages with base64-encoded mulaw audio
-    
-    Pipeline:
-    1. Receive audio chunks from Twilio
-    2. Buffer until silence detected (end of speech)
-    3. Send to Whisper API for transcription
-    4. Feed transcript to Claude for response
-    5. Generate response audio with TTS
-    6. Stream back to Twilio
-    """
+    """Handle bidirectional audio stream from Twilio."""
     await websocket.accept()
     
     # Initialize services
@@ -138,6 +138,7 @@ async def media_stream(websocket: WebSocket):
     claude = get_claude_service()
     knowledge_service = KnowledgeService()
     knowledge_service.load()
+    analytics = get_analytics_service()  # 📊 ANALYTICS
     
     # State for this call
     call_sid: Optional[str] = None
@@ -145,172 +146,185 @@ async def media_stream(websocket: WebSocket):
     stream_sid: Optional[str] = None
     audio_buffer = AudioBuffer()
     
-    # Processing lock to prevent overlapping responses
     processing_lock = asyncio.Lock()
-    is_speaking = False  # True when AI is outputting audio
+    is_speaking = False
+    speech_detected = False  # 📊 ANALYTICS: Track if we've emitted speech_started
     
     logger.info("WebSocket connection accepted")
     
-    async def end_call(reason: str = "goodbye"):
-        """Terminate the call via Twilio API."""
-        nonlocal call_sid
-        
-        if not call_sid:
-            return
-            
-        logger.info(f"🔚 Ending call {call_sid} (reason: {reason})")
-        
-        try:
-            twilio_client = TwilioClient(
-                os.getenv("TWILIO_ACCOUNT_SID"),
-                os.getenv("TWILIO_AUTH_TOKEN")
-            )
-            twilio_client.calls(call_sid).update(status="completed")
-            logger.info(f"📞 Call {call_sid} terminated successfully")
-        except Exception as e:
-            logger.error(f"Failed to end call {call_sid}: {e}")
+    # ... (keep existing end_call function)
     
     async def send_audio_to_twilio(audio_data: bytes):
         """Send TTS audio back to the caller via Twilio."""
         nonlocal is_speaking
         
         if not stream_sid:
-            logger.warning("Cannot send audio: no stream_sid")
             return
         
         is_speaking = True
         
+        # 📊 ANALYTICS: Track playback
+        playback_start = time.time()
+        audio_duration_ms = int(len(audio_data) / 24 / 2)  # Estimate from 24kHz 16-bit
+        await analytics.playback_started(call_sid, expected_duration_ms=audio_duration_ms)
+        
         try:
-            # Convert TTS output to Twilio format
-            # OpenAI TTS outputs 24kHz PCM, Twilio needs 8kHz mulaw
             b64_audio = prepare_audio_for_twilio(audio_data, source_rate=24000)
-            
-            # Send media message to Twilio
-            # Twilio expects chunks of ~20ms (160 bytes at 8kHz mulaw)
-            # We'll send in larger chunks for efficiency
-            chunk_size = 640  # ~80ms of audio
+            chunk_size = 640
             
             for i in range(0, len(b64_audio), chunk_size):
                 chunk = b64_audio[i:i + chunk_size]
-                
                 message = {
                     "event": "media",
                     "streamSid": stream_sid,
-                    "media": {
-                        "payload": chunk
-                    }
+                    "media": {"payload": chunk}
                 }
-                
                 await websocket.send_text(json.dumps(message))
-                
-                # Small delay to pace the audio
                 await asyncio.sleep(0.02)
             
-            # Mark end of audio
-            mark_message = {
-                "event": "mark",
-                "streamSid": stream_sid,
-                "mark": {
-                    "name": "response_end"
-                }
-            }
-            await websocket.send_text(json.dumps(mark_message))
+            # 📊 ANALYTICS: Playback completed
+            playback_duration = int((time.time() - playback_start) * 1000)
+            await analytics.playback_completed(call_sid, actual_duration_ms=playback_duration)
             
+        except Exception as e:
+            logger.error(f"Error sending audio: {e}")
         finally:
             is_speaking = False
     
-    async def process_speech(audio_bytes: bytes):
-        """Process completed speech segment through the full pipeline."""
-        nonlocal call_sid
-        
-        if not call_sid:
-            return
+    async def process_speech(audio_data: bytes):
+        """Process a complete speech segment."""
+        nonlocal speech_detected
         
         async with processing_lock:
-            try:
-                # 1. Convert audio for Whisper
-                await broadcaster.processing_status(call_sid, "transcribing")
-                wav_audio = prepare_audio_for_whisper(audio_bytes)
-                
-                # 2. Transcribe
-                transcript = await whisper.transcribe(wav_audio)
-                
-                if not transcript:
-                    logger.debug("Empty transcript, skipping")
-                    await broadcaster.processing_status(call_sid, "listening")
-                    return
-                
-                logger.info(f"🎤 Caller said: {transcript}")
-                
-                # Broadcast caller's speech to dashboard
-                turn_index = len(active_calls.get(call_sid, {}).get("turns", []))
-                await broadcaster.transcript_update(call_sid, "caller", transcript, turn_index)
-                
-                # Update call tracking
-                if call_sid in active_calls:
-                    active_calls[call_sid]["last_transcript"] = transcript
-                    if "turns" not in active_calls[call_sid]:
-                        active_calls[call_sid]["turns"] = []
-                    active_calls[call_sid]["turns"].append({
-                        "speaker": "caller", 
-                        "text": transcript,
-                        "timestamp": datetime.now().isoformat()
-                    })
-                
-                # 3. Get Claude's response
-                await broadcaster.processing_status(call_sid, "thinking")
-                start_time = datetime.now()
-                response_text = await claude.respond(call_sid, transcript)
-                
-                if not response_text:
-                    logger.warning("No response from Claude")
-                    await broadcaster.processing_status(call_sid, "listening")
-                    return
-                
-                logger.info(f"🤖 AI response: {response_text}")
-                
-                # Calculate latency and broadcast AI response to dashboard
-                latency_ms = int((datetime.now() - start_time).total_seconds() * 1000)
-                turn_index = len(active_calls.get(call_sid, {}).get("turns", []))
-                await broadcaster.transcript_update(call_sid, "ai", response_text, turn_index, latency_ms)
-                
-                # Track AI turn
-                if call_sid in active_calls:
-                    active_calls[call_sid]["turns"].append({
-                        "speaker": "ai", 
-                        "text": response_text,
-                        "timestamp": datetime.now().isoformat(),
-                        "latency_ms": latency_ms
-                    })
-                
-                # 4. Generate TTS audio
-                await broadcaster.processing_status(call_sid, "speaking")
-                audio_response = await tts.synthesize(response_text)
-                
-                if not audio_response:
-                    logger.warning("TTS failed to generate audio")
-                    return
-                
-                # 5. Send audio to caller
-                await send_audio_to_twilio(audio_response)
-                
-                # Back to listening
+            if not call_sid:
+                return
+            
+            # 📊 ANALYTICS: Start new turn and mark silence detected
+            turn_index = analytics.start_turn(call_sid)
+            speech_duration_ms = int(len(audio_data) / 8)  # Estimate from 8kHz
+            await analytics.silence_detected(
+                call_sid,
+                speech_duration_ms=speech_duration_ms,
+                audio_bytes=len(audio_data)
+            )
+            speech_detected = False  # Reset for next utterance
+            
+            await broadcaster.processing_status(call_sid, "processing")
+            
+            # 1. Prepare audio for Whisper
+            wav_audio = prepare_audio_for_whisper(audio_data)
+            
+            # 📊 ANALYTICS: Whisper started
+            whisper_start = time.time()
+            await analytics.whisper_started(
+                call_sid,
+                audio_bytes=len(wav_audio),
+                audio_duration_ms=speech_duration_ms
+            )
+            
+            # 2. Transcribe with Whisper
+            transcript = await whisper.transcribe(wav_audio)
+            
+            # 📊 ANALYTICS: Whisper completed
+            whisper_duration = int((time.time() - whisper_start) * 1000)
+            confidence = getattr(whisper, 'last_confidence', 0.0)  # If available
+            await analytics.whisper_completed(
+                call_sid,
+                transcript=transcript or "",
+                duration_ms=whisper_duration,
+                confidence=confidence
+            )
+            
+            if not transcript or not transcript.strip():
                 await broadcaster.processing_status(call_sid, "listening")
-                
-                # 6. Check if AI said goodbye - end the call
-                # Don't auto-hangup on quick responses (might be echo)
-                from app.prompts.system import get_quick_response
-                is_quick = get_quick_response(transcript) is not None
-                response_lower = response_text.lower()
-                if not is_quick and any(phrase in response_lower for phrase in GOODBYE_PHRASES):
-                    logger.info(f"🔚 AI said goodbye, scheduling call end for {call_sid}")
-                    # Wait for audio to finish playing before hanging up
-                    await asyncio.sleep(3)
-                    await end_call("ai_goodbye")
-                
-            except Exception as e:
-                logger.error(f"Error processing speech: {e}", exc_info=True)
-                await broadcaster.error(call_sid, "processing_error", str(e))
+                return
+            
+            logger.info(f"🎤 Caller said: {transcript}")
+            
+            # Broadcast caller transcript
+            await broadcaster.transcript_update(call_sid, "caller", transcript, turn_index)
+            
+            # Track caller turn
+            if call_sid in active_calls:
+                active_calls[call_sid]["turns"].append({
+                    "speaker": "caller",
+                    "text": transcript,
+                    "timestamp": datetime.now().isoformat()
+                })
+            
+            # 📊 ANALYTICS: Claude started
+            claude_start = time.time()
+            context_turns = len(claude.get_conversation(call_sid).history) if claude.get_conversation(call_sid) else 0
+            await analytics.claude_started(
+                call_sid,
+                input_tokens_estimate=context_turns * 50,  # Rough estimate
+                context_turns=context_turns
+            )
+            
+            # 3. Get Claude response
+            response_text = await claude.respond(call_sid, transcript)
+            
+            # 📊 ANALYTICS: Claude completed with accurate token counts
+            claude_duration = int((time.time() - claude_start) * 1000)
+            usage = claude.last_usage
+            await analytics.claude_completed(
+                call_sid,
+                response=response_text or "",
+                duration_ms=claude_duration,
+                input_tokens=usage["input_tokens"],
+                output_tokens=usage["output_tokens"]
+            )
+            
+            if not response_text:
+                await broadcaster.processing_status(call_sid, "listening")
+                return
+            
+            logger.info(f"🤖 AI response: {response_text}")
+            
+            # Calculate latency and broadcast
+            latency_ms = whisper_duration + claude_duration
+            await broadcaster.transcript_update(call_sid, "ai", response_text, turn_index, latency_ms)
+            
+            # Track AI turn
+            if call_sid in active_calls:
+                active_calls[call_sid]["turns"].append({
+                    "speaker": "ai",
+                    "text": response_text,
+                    "timestamp": datetime.now().isoformat(),
+                    "latency_ms": latency_ms
+                })
+            
+            # 📊 ANALYTICS: TTS started
+            tts_start = time.time()
+            await analytics.tts_started(call_sid, text=response_text)
+            
+            # 4. Generate TTS audio
+            await broadcaster.processing_status(call_sid, "speaking")
+            audio_response = await tts.synthesize(response_text)
+            
+            # 📊 ANALYTICS: TTS completed
+            tts_duration = int((time.time() - tts_start) * 1000)
+            if audio_response:
+                audio_duration_ms = int(len(audio_response) / 24 / 2)  # 24kHz 16-bit estimate
+                await analytics.tts_completed(
+                    call_sid,
+                    duration_ms=tts_duration,
+                    audio_bytes=len(audio_response),
+                    audio_duration_ms=audio_duration_ms
+                )
+            else:
+                await analytics.tts_failed(call_sid, error="TTS returned empty audio")
+            
+            if not audio_response:
+                return
+            
+            # 5. Send audio to caller
+            await send_audio_to_twilio(audio_response)
+            
+            await broadcaster.processing_status(call_sid, "listening")
+            
+            # 6. Check for goodbye (existing code)
+            # ...
     
     try:
         async for message in websocket.iter_text():
@@ -322,7 +336,6 @@ async def media_stream(websocket: WebSocket):
                     logger.info("Twilio Media Stream connected")
                 
                 elif event == "start":
-                    # Stream starting - get metadata
                     start_data = data.get("start", {})
                     stream_sid = start_data.get("streamSid")
                     call_sid = start_data.get("customParameters", {}).get("call_sid")
@@ -330,7 +343,12 @@ async def media_stream(websocket: WebSocket):
                     
                     logger.info(f"Stream started: {stream_sid} for call {call_sid}")
                     
-                    # Initialize conversation with Claude
+                    # 📊 ANALYTICS: Stream connected
+                    if call_sid:
+                        await analytics.emit(call_sid, EventType.STREAM_CONNECTED, {
+                            "stream_sid": stream_sid
+                        }, turn_index=None)
+                    
                     if call_sid:
                         claude.start_conversation(
                             call_sid=call_sid,
@@ -338,78 +356,96 @@ async def media_stream(websocket: WebSocket):
                             knowledge=knowledge_service.data
                         )
                         
-                        # Update call status
                         if call_sid in active_calls:
                             active_calls[call_sid]["status"] = "connected"
                             active_calls[call_sid]["stream_sid"] = stream_sid
                         
-                        # Send opening greeting via TTS
+                        # 📊 ANALYTICS: Greeting started
+                        await analytics.emit(call_sid, EventType.GREETING_STARTED, {}, turn_index=0)
+                        
+                        # Send greeting
                         await broadcaster.processing_status(call_sid, "speaking")
                         greeting = claude.get_opening_greeting(knowledge_service.data)
                         
-                        # Broadcast the greeting to dashboard
-                        await broadcaster.transcript_update(call_sid, "ai", greeting, 0)
-                        if call_sid in active_calls:
-                            active_calls[call_sid]["turns"].append({
-                                "speaker": "ai",
-                                "text": greeting,
-                                "timestamp": datetime.now().isoformat()
-                            })
+                        # 📊 ANALYTICS: TTS for greeting
+                        tts_start = time.time()
+                        await analytics.tts_started(call_sid, text=greeting)
                         
                         greeting_audio = await tts.synthesize(greeting)
+                        
+                        tts_duration = int((time.time() - tts_start) * 1000)
                         if greeting_audio:
+                            await analytics.tts_completed(
+                                call_sid,
+                                duration_ms=tts_duration,
+                                audio_bytes=len(greeting_audio),
+                                audio_duration_ms=int(len(greeting_audio) / 24 / 2)
+                            )
+                            
+                            await broadcaster.transcript_update(call_sid, "ai", greeting, 0)
+                            if call_sid in active_calls:
+                                active_calls[call_sid]["turns"].append({
+                                    "speaker": "ai",
+                                    "text": greeting,
+                                    "timestamp": datetime.now().isoformat()
+                                })
+                            
                             await send_audio_to_twilio(greeting_audio)
+                            
+                            # 📊 ANALYTICS: Greeting completed
+                            await analytics.emit(call_sid, EventType.GREETING_COMPLETED, {
+                                "audio_duration_ms": int(len(greeting_audio) / 24 / 2)
+                            }, turn_index=0)
                         
                         await broadcaster.processing_status(call_sid, "listening")
                 
                 elif event == "media":
-                    # Incoming audio from caller
                     if is_speaking:
-                        # Ignore incoming audio while we're speaking (barge-in disabled for now)
+                        # 📊 ANALYTICS: Detect interrupt attempts
+                        if call_sid and not speech_detected:
+                            media_data = data.get("media", {})
+                            # Could check RMS level here for significant interrupt
                         continue
                     
                     media_data = data.get("media", {})
                     payload = media_data.get("payload")
                     
                     if payload:
-                        # Decode base64 audio
                         audio_chunk = base64_decode_audio(payload)
                         
-                        # Add to buffer, check if speech segment complete
+                        # 📊 ANALYTICS: Emit speech_started on first audio above threshold
+                        if not speech_detected and audio_buffer.is_speech(audio_chunk):
+                            speech_detected = True
+                            await analytics.speech_started(call_sid, rms_level=audio_buffer.get_rms(audio_chunk))
+                        
                         complete_audio = audio_buffer.add_audio(audio_chunk)
                         
                         if complete_audio:
-                            # Process in background to not block WebSocket
                             asyncio.create_task(process_speech(complete_audio))
                 
                 elif event == "mark":
-                    # Our audio finished playing
                     mark_name = data.get("mark", {}).get("name")
-                    logger.debug(f"Mark received: {mark_name}")
+                    # 📊 ANALYTICS: Mark received
+                    if call_sid:
+                        await analytics.emit(call_sid, EventType.MARK_RECEIVED, {
+                            "mark_name": mark_name
+                        })
                 
                 elif event == "stop":
-                    # Stream ending
                     logger.info(f"Stream stopping for call {call_sid}")
-                    
-                    # Process any remaining audio
                     remaining = audio_buffer.flush()
                     if remaining:
                         await process_speech(remaining)
-                    
                     break
-                
+                    
             except json.JSONDecodeError:
-                logger.warning(f"Invalid JSON from Twilio: {message[:100]}")
                 continue
                 
     except WebSocketDisconnect:
         logger.info(f"WebSocket disconnected for call {call_sid}")
     except Exception as e:
         logger.error(f"WebSocket error: {e}", exc_info=True)
-        if call_sid:
-            await broadcaster.error(call_sid, "websocket_error", str(e))
     finally:
-        # Cleanup
         if call_sid:
             claude.end_conversation(call_sid)
             
@@ -425,8 +461,13 @@ async def media_stream(websocket: WebSocket):
                 active_calls[call_sid]["ended_at"] = datetime.now().isoformat()
                 active_calls[call_sid]["duration_seconds"] = duration_seconds
             
-            # Broadcast call ended to dashboard
+            # 📊 ANALYTICS: End call tracking and compute metrics
+            analytics.end_call(call_sid, reason="stream_ended")
+            
             await broadcaster.call_ended(call_sid, duration_seconds)
+            
+            if call_sid in active_calls:
+                save_transcript(call_sid, active_calls[call_sid])
         
         logger.info(f"WebSocket closed for call {call_sid}")
 

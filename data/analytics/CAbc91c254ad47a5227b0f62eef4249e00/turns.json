@@ -1,0 +1,143 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-02T16:05:57.485988",
+    "ended_at": "2026-01-02T16:06:14.808976",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8157,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 2622,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 2622,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-02T16:06:25.109147",
+    "ended_at": "2026-01-02T16:06:56.429833",
+    "transcript": "Buongiorno, sono il colliere di Amazon, ho un pacco per l'aspas, ma non trovo Via Barachini 86.",
+    "anchor_words": [
+      "Buongiorno",
+      "colliere",
+      "Amazon",
+      "pacco",
+      "laspas"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 10320,
+    "confidence": 0.0,
+    "response": "Ah sì, capisco. Allora, deve seguire via Paolo Barachini dal centro di Asciano - vede la macelleria sulla sinistra? Continui dritto e poi giri a sinistra su per la collina. Vedrà il rubinetto dell'acquedotto all'angolo - continui sempre dritto. Il numero 86 è la casa rosa sulla destra in cima alla collina.",
+    "response_anchor_words": [
+      "Ah",
+      "capisco",
+      "Allora",
+      "deve",
+      "seguire"
+    ],
+    "response_audio_duration_ms": 20631,
+    "tokens_in": 1699,
+    "tokens_out": 104,
+    "latency": {
+      "total_ms": 9165,
+      "silence_detection_ms": 4,
+      "whisper_ms": 1992,
+      "claude_ms": 4338,
+      "tts_ms": 2835,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-02T16:07:03.340207",
+    "ended_at": "2026-01-02T16:07:35.208105",
+    "transcript": "Ah, perfetto. Ok, sono sulla colina, vedo una casa gialla, è quella?",
+    "anchor_words": [
+      "Ah",
+      "perfetto",
+      "Ok",
+      "sulla",
+      "colina"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6920,
+    "confidence": 0.0,
+    "response": "No no, non quella gialla. La mia è la casa rosa - deve essere più avanti sulla destra. I numeri delle case sono un po' confusi lì... se vede il numero 82 su una strada laterale a destra e il 101 sulla sinistra, continui ancora un po'. La casa 86 è rosa, sulla destra, in cima alla collina.",
+    "response_anchor_words": [
+      "quella",
+      "gialla",
+      "mia",
+      "casa",
+      "rosa"
+    ],
+    "response_audio_duration_ms": 20197,
+    "tokens_in": 1829,
+    "tokens_out": 93,
+    "latency": {
+      "total_ms": 10413,
+      "silence_detection_ms": 2,
+      "whisper_ms": 2109,
+      "claude_ms": 5081,
+      "tts_ms": 3223,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-02T16:07:41.827252",
+    "ended_at": "2026-01-02T16:08:01.206528",
+    "transcript": "Ah, perfetto, sono arrivato. Arrivederci.",
+    "anchor_words": [
+      "Ah",
+      "perfetto",
+      "arrivato",
+      "Arrivederci"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6640,
+    "confidence": 0.0,
+    "response": "Perfetto! Se non ci sono io, può lasciare il pacco davanti alla porta o a sinistra della casa vicino al forno per la pizza. Grazie e arrivederci!",
+    "response_anchor_words": [
+      "Perfetto",
+      "io",
+      "può",
+      "lasciare",
+      "pacco"
+    ],
+    "response_audio_duration_ms": 9460,
+    "tokens_in": 1942,
+    "tokens_out": 49,
+    "latency": {
+      "total_ms": 6513,
+      "silence_detection_ms": 2,
+      "whisper_ms": 1648,
+      "claude_ms": 3494,
+      "tts_ms": 1371,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  }
+]

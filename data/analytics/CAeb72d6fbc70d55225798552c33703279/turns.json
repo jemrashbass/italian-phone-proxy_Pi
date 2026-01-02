@@ -1,0 +1,285 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-02T14:54:21.549417",
+    "ended_at": "2026-01-02T14:54:38.966810",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8236,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 2380,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 2380,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-02T14:54:45.948659",
+    "ended_at": "2026-01-02T14:54:55.190421",
+    "transcript": "Buongiorno, chiama di enni plenitude, parlo con il signor Aspas.",
+    "anchor_words": [
+      "Buongiorno",
+      "chiama",
+      "enni",
+      "plenitude",
+      "parlo"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6980,
+    "confidence": 0.0,
+    "response": "Sì, sono Jeremy Rashbass. Prego, mi dica.",
+    "response_anchor_words": [
+      "Jeremy",
+      "Rashbass",
+      "Prego",
+      "dica"
+    ],
+    "response_audio_duration_ms": 2473,
+    "tokens_in": 1689,
+    "tokens_out": 22,
+    "latency": {
+      "total_ms": 5778,
+      "silence_detection_ms": 2,
+      "whisper_ms": 2494,
+      "claude_ms": 2378,
+      "tts_ms": 906,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-02T14:55:07.548676",
+    "ended_at": "2026-01-02T14:55:21.686672",
+    "transcript": "Ah, perfetto. Abbiamo un appuntamento per il controllo del contatore. Gas. Giovedì alle 11. Conferma?",
+    "anchor_words": [
+      "Ah",
+      "perfetto",
+      "Abbiamo",
+      "appuntamento",
+      "controllo"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 12380,
+    "confidence": 0.0,
+    "response": "Un momento che verifico... Sì, giovedì alle 11 va bene per il controllo del contatore del gas. Confermo l'appuntamento.",
+    "response_anchor_words": [
+      "momento",
+      "verifico",
+      "giovedì",
+      "11",
+      "va"
+    ],
+    "response_audio_duration_ms": 7921,
+    "tokens_in": 1750,
+    "tokens_out": 42,
+    "latency": {
+      "total_ms": 5397,
+      "silence_detection_ms": 4,
+      "whisper_ms": 1360,
+      "claude_ms": 2357,
+      "tts_ms": 1680,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-02T14:55:28.307672",
+    "ended_at": "2026-01-02T14:55:40.686797",
+    "transcript": "Mi puoi confermare il PDR della fornitura?",
+    "anchor_words": [
+      "puoi",
+      "confermare",
+      "PDR",
+      "fornitura"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6640,
+    "confidence": 0.0,
+    "response": "Sì, il PDR è 15104203586742. È giusto?",
+    "response_anchor_words": [
+      "PDR",
+      "15104203586742",
+      "giusto"
+    ],
+    "response_audio_duration_ms": 5052,
+    "tokens_in": 1808,
+    "tokens_out": 22,
+    "latency": {
+      "total_ms": 6092,
+      "silence_detection_ms": 3,
+      "whisper_ms": 1589,
+      "claude_ms": 2257,
+      "tts_ms": 2246,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 4,
+    "speaker": "caller",
+    "started_at": "2026-01-02T14:55:47.488795",
+    "ended_at": "2026-01-02T14:55:55.629054",
+    "transcript": "Perfetto, a che ora arriverà il tecnico?",
+    "anchor_words": [
+      "Perfetto",
+      "ora",
+      "arriverà",
+      "tecnico"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6820,
+    "confidence": 0.0,
+    "response": "Mi scusi, può ripetere? Aveva detto giovedì alle 11, giusto? Il tecnico arriva a quell'ora?",
+    "response_anchor_words": [
+      "scusi",
+      "può",
+      "ripetere",
+      "Aveva",
+      "detto"
+    ],
+    "response_audio_duration_ms": 6197,
+    "tokens_in": 1847,
+    "tokens_out": 37,
+    "latency": {
+      "total_ms": 6032,
+      "silence_detection_ms": 2,
+      "whisper_ms": 1281,
+      "claude_ms": 2857,
+      "tts_ms": 1894,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 5,
+    "speaker": "caller",
+    "started_at": "2026-01-02T14:55:55.630331",
+    "ended_at": "2026-01-02T14:56:03.145177",
+    "transcript": "Tentacle.",
+    "anchor_words": [
+      "Tentacle"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 1780,
+    "confidence": 0.0,
+    "response": "Mi scusi, non ho capito. Può ripetere per favore?",
+    "response_anchor_words": [
+      "scusi",
+      "capito",
+      "Può",
+      "ripetere",
+      "favore"
+    ],
+    "response_audio_duration_ms": 3118,
+    "tokens_in": 1891,
+    "tokens_out": 21,
+    "latency": {
+      "total_ms": 6457,
+      "silence_detection_ms": 2,
+      "whisper_ms": 2465,
+      "claude_ms": 2255,
+      "tts_ms": 1737,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 6,
+    "speaker": "caller",
+    "started_at": "2026-01-02T14:56:04.566841",
+    "ended_at": "2026-01-02T14:56:12.651907",
+    "transcript": "Perfetto, grazie.",
+    "anchor_words": [
+      "Perfetto",
+      "grazie"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 3240,
+    "confidence": 0.0,
+    "response": "Prego. Quindi confermo: giovedì alle 11 per il controllo del contatore gas. Arrivederci.",
+    "response_anchor_words": [
+      "Prego",
+      "Quindi",
+      "confermo",
+      "giovedì",
+      "11"
+    ],
+    "response_audio_duration_ms": 6105,
+    "tokens_in": 1922,
+    "tokens_out": 34,
+    "latency": {
+      "total_ms": 6016,
+      "silence_detection_ms": 2,
+      "whisper_ms": 690,
+      "claude_ms": 2659,
+      "tts_ms": 2667,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 7,
+    "speaker": "caller",
+    "started_at": "2026-01-02T14:56:12.668061",
+    "ended_at": "2026-01-02T14:56:29.263734",
+    "transcript": "grazie, a giovedì, arrivederci.",
+    "anchor_words": [
+      "grazie",
+      "giovedì",
+      "arrivederci"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 4920,
+    "confidence": 0.0,
+    "response": "Grazie a lei, a giovedì. Arrivederci.",
+    "response_anchor_words": [
+      "Grazie",
+      "lei",
+      "giovedì",
+      "Arrivederci"
+    ],
+    "response_audio_duration_ms": 2157,
+    "tokens_in": 1972,
+    "tokens_out": 20,
+    "latency": {
+      "total_ms": 5919,
+      "silence_detection_ms": 3,
+      "whisper_ms": 1473,
+      "claude_ms": 2550,
+      "tts_ms": 1896,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  }
+]

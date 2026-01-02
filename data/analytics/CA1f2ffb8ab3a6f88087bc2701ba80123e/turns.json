@@ -1,0 +1,178 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-02T16:14:22.280985",
+    "ended_at": "2026-01-02T16:14:37.793703",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8236,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 1324,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 1324,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-02T16:14:46.155915",
+    "ended_at": "2026-01-02T16:15:12.028259",
+    "transcript": "Buongiorno, sono il Corriere di Amazon, un pacco per l'aspasmo, non trovo Via Barachini 86.",
+    "anchor_words": [
+      "Buongiorno",
+      "Corriere",
+      "Amazon",
+      "pacco",
+      "laspasmo"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 8380,
+    "confidence": 0.0,
+    "response": "Ah sì, capisco. Allora, deve seguire via Paolo Barachini dal centro di Asciano - dove c'è la macelleria sulla sinistra. Continui dritto e poi giri a sinistra su per la collina. Vedrà il rubinetto dell'acquedotto all'angolo - continui",
+    "response_anchor_words": [
+      "Ah",
+      "capisco",
+      "Allora",
+      "deve",
+      "seguire"
+    ],
+    "response_audio_duration_ms": 15342,
+    "tokens_in": 1699,
+    "tokens_out": 80,
+    "latency": {
+      "total_ms": 8555,
+      "silence_detection_ms": 2,
+      "whisper_ms": 2155,
+      "claude_ms": 3155,
+      "tts_ms": 3245,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-02T16:15:18.896558",
+    "ended_at": "2026-01-02T16:15:45.875798",
+    "transcript": "Ah, grazie. Ok, sono sulla collina, vedo una casa gialla, è quella?",
+    "anchor_words": [
+      "Ah",
+      "grazie",
+      "Ok",
+      "sulla",
+      "collina"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6900,
+    "confidence": 0.0,
+    "response": "No, no. Deve continuare ancora. Vedrà che la numerazione è un po' confusa - il numero 82 è su una strada laterale a destra, e il 101 è sulla sinistra. Continui ancora su per la collina. Il numero 86 è la casa rosa sulla destra, in cima alla collina",
+    "response_anchor_words": [
+      "Deve",
+      "continuare",
+      "ancora",
+      "Vedrà",
+      "numerazione"
+    ],
+    "response_audio_duration_ms": 17526,
+    "tokens_in": 1808,
+    "tokens_out": 80,
+    "latency": {
+      "total_ms": 7701,
+      "silence_detection_ms": 2,
+      "whisper_ms": 1647,
+      "claude_ms": 3478,
+      "tts_ms": 2576,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-02T16:15:52.295754",
+    "ended_at": "2026-01-02T16:16:07.035560",
+    "transcript": "Perfetto, posso lasciare il pacco da qualche parte?",
+    "anchor_words": [
+      "Perfetto",
+      "posso",
+      "lasciare",
+      "pacco",
+      "qualche"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6440,
+    "confidence": 0.0,
+    "response": "Sì, può lasciare il pacco davanti alla porta oppure a sinistra della casa, vicino al forno per la pizza. Grazie mille.",
+    "response_anchor_words": [
+      "può",
+      "lasciare",
+      "pacco",
+      "davanti",
+      "porta"
+    ],
+    "response_audio_duration_ms": 7657,
+    "tokens_in": 1911,
+    "tokens_out": 42,
+    "latency": {
+      "total_ms": 5756,
+      "silence_detection_ms": 2,
+      "whisper_ms": 828,
+      "claude_ms": 2624,
+      "tts_ms": 2304,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 4,
+    "speaker": "caller",
+    "started_at": "2026-01-02T16:16:09.595514",
+    "ended_at": "2026-01-02T16:16:16.386184",
+    "transcript": "Grazie mille, arrivederci.",
+    "anchor_words": [
+      "Grazie",
+      "mille",
+      "arrivederci"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2580,
+    "confidence": 0.0,
+    "response": "Prego, arrivederci e grazie a lei!",
+    "response_anchor_words": [
+      "Prego",
+      "arrivederci",
+      "grazie",
+      "lei"
+    ],
+    "response_audio_duration_ms": 2157,
+    "tokens_in": 1967,
+    "tokens_out": 17,
+    "latency": {
+      "total_ms": 3880,
+      "silence_detection_ms": 1,
+      "whisper_ms": 856,
+      "claude_ms": 2063,
+      "tts_ms": 961,
+      "overhead_ms": 0
+    },
+    "flags": []
+  }
+]

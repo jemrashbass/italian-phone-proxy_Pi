@@ -1,0 +1,32 @@
+{
+  "call_sid": "CAbc91c254ad47a5227b0f62eef4249e00",
+  "caller": "+447796315426",
+  "called": "+442070460437",
+  "started_at": "2026-01-02T16:05:57.485744",
+  "ended_at": "2026-01-02T16:08:01.206482",
+  "duration_seconds": 123,
+  "status": "ended",
+  "total_turns": 4,
+  "caller_turns": 3,
+  "ai_turns": 1,
+  "total_talk_time_ms": 0,
+  "total_silence_time_ms": 0,
+  "avg_total_ms": 7178,
+  "avg_whisper_ms": 1916,
+  "avg_claude_ms": 4304,
+  "avg_tts_ms": 2512,
+  "p95_total_ms": 10413,
+  "slowest_turn": 2,
+  "slowest_component": "claude",
+  "avg_whisper_confidence": 0.0,
+  "low_confidence_turns": [],
+  "echo_events": 0,
+  "interruptions": 0,
+  "repeats": 0,
+  "flags_summary": {
+    "SLOW_RESPONSE": 3
+  },
+  "total_input_tokens": 5470,
+  "total_output_tokens": 246,
+  "avg_response_tokens": 82
+}

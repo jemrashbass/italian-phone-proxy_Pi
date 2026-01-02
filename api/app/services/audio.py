@@ -45,6 +45,7 @@ class AudioBuffer:
     _speech_started: bool = False
     _silence_start: Optional[float] = None
     _speech_start: Optional[float] = None
+    _peak_rms: int = 0  # Track peak RMS for analytics
     
     def reset(self):
         """Clear the buffer and reset state."""
@@ -52,6 +53,62 @@ class AudioBuffer:
         self._speech_started = False
         self._silence_start = None
         self._speech_start = None
+        self._peak_rms = 0
+    
+    def get_rms(self, audio_chunk: bytes) -> int:
+        """
+        Calculate RMS level of audio chunk.
+        
+        Used for silence detection and analytics instrumentation.
+        
+        Args:
+            audio_chunk: mulaw audio bytes
+            
+        Returns:
+            RMS level as integer (0 if calculation fails)
+        """
+        if len(audio_chunk) < 2:
+            return 0
+        
+        try:
+            # Convert mulaw to linear PCM for RMS calculation
+            linear = audioop.ulaw2lin(audio_chunk, PCM_SAMPLE_WIDTH)
+            return audioop.rms(linear, PCM_SAMPLE_WIDTH)
+        except audioop.error:
+            return 0
+    
+    def is_speech(self, audio_chunk: bytes) -> bool:
+        """
+        Check if audio chunk contains speech (above silence threshold).
+        
+        Useful for analytics to detect when caller starts speaking.
+        
+        Args:
+            audio_chunk: mulaw audio bytes
+            
+        Returns:
+            True if audio is above silence threshold
+        """
+        rms = self.get_rms(audio_chunk)
+        return rms > self.silence_threshold
+    
+    def get_peak_rms(self) -> int:
+        """
+        Get the peak RMS level recorded during current speech segment.
+        
+        Useful for analytics to understand audio quality.
+        """
+        return self._peak_rms
+    
+    def get_speech_duration_ms(self) -> int:
+        """
+        Get duration of current speech segment in milliseconds.
+        
+        Returns 0 if no speech in progress.
+        """
+        if self._speech_start is None:
+            return 0
+        return int((time.time() - self._speech_start) * 1000)
     
     def add_audio(self, mulaw_audio: bytes) -> Optional[bytes]:
         """
@@ -82,6 +139,10 @@ class AudioBuffer:
         if is_speech:
             # Speech detected
             self._silence_start = None
+            
+            # Track peak RMS for analytics
+            if rms > self._peak_rms:
+                self._peak_rms = rms
             
             if not self._speech_started:
                 self._speech_started = True

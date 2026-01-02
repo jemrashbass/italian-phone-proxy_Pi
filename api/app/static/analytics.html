@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Analytics - Italian Phone Proxy</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e; 
+            color: #eee;
+            min-height: 100vh;
+        }
+        
+        /* Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 900px) {
+            .app-container { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .sidebar.mobile-open { display: block; position: fixed; z-index: 100; width: 100%; }
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: #16213e;
+            border-right: 1px solid #0f3460;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #0f3460;
+            position: sticky;
+            top: 0;
+            background: #16213e;
+            z-index: 10;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.2em;
+            color: #00d9ff;
+            margin-bottom: 4px;
+        }
+        
+        .sidebar-header p {
+            font-size: 0.8em;
+            color: #888;
+        }
+        
+        .call-list {
+            padding: 10px;
+        }
+        
+        .call-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        
+        .call-card:hover {
+            background: #0f3460;
+        }
+        
+        .call-card.selected {
+            border-color: #00d9ff;
+            background: #0f3460;
+        }
+        
+        .call-card .caller {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        
+        .call-card .meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        
+        .call-card .stats {
+            display: flex;
+            gap: 12px;
+            font-size: 0.75em;
+        }
+        
+        .call-card .stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .call-card .stat-value {
+            color: #00d9ff;
+            font-weight: 600;
+        }
+        
+        .call-card .flags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .flag {
+            font-size: 0.65em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .flag.SLOW_RESPONSE { background: #ff6b35; color: #fff; }
+        .flag.LOW_CONFIDENCE { background: #f7b731; color: #333; }
+        .flag.ECHO { background: #eb3b5a; color: #fff; }
+        .flag.REPEAT { background: #8854d0; color: #fff; }
+        .flag.INTERRUPTED { background: #4b7bec; color: #fff; }
+        
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+        
+        .no-selection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        /* Summary Stats Bar */
+        .summary-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .summary-stat {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .summary-stat .value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #00d9ff;
+        }
+        
+        .summary-stat .value.warning { color: #ff6b35; }
+        .summary-stat .value.good { color: #26de81; }
+        
+        .summary-stat .label {
+            font-size: 0.75em;
+            color: #888;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        /* Component Breakdown */
+        .component-breakdown {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .component-breakdown h2 {
+            font-size: 0.9em;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        
+        .breakdown-bars {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .breakdown-item {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .breakdown-item .bar-container {
+            height: 8px;
+            background: #1a1a2e;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        
+        .breakdown-item .bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .breakdown-item .bar.whisper { background: #f7b731; }
+        .breakdown-item .bar.claude { background: #8854d0; }
+        .breakdown-item .bar.tts { background: #00d9ff; }
+        
+        .breakdown-item .bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+        }
+        
+        .breakdown-item .bar-label .name { color: #888; }
+        .breakdown-item .bar-label .value { color: #fff; font-weight: 600; }
+        
+        /* Turns Section */
+        .turns-section h2 {
+            font-size: 0.9em;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        
+        .turn-card {
+            background: #16213e;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        
+        .turn-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .turn-header:hover {
+            background: #1a1a2e;
+        }
+        
+        .turn-header .turn-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .turn-header .turn-number {
+            background: #0f3460;
+            color: #00d9ff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85em;
+        }
+        
+        .turn-header .turn-number.ai {
+            background: #8854d0;
+            color: #fff;
+        }
+        
+        .turn-header .anchor-words {
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        
+        .turn-header .anchor-words span {
+            color: #00d9ff;
+            font-weight: 500;
+        }
+        
+        .turn-header .turn-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .turn-header .latency {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .turn-header .latency strong {
+            color: #ff6b35;
+            font-weight: 600;
+        }
+        
+        .turn-header .latency.good strong {
+            color: #26de81;
+        }
+        
+        .turn-header .expand-icon {
+            color: #666;
+            transition: transform 0.2s;
+        }
+        
+        .turn-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Turn Details */
+        .turn-details {
+            display: none;
+            padding: 0 16px 16px;
+            border-top: 1px solid #0f3460;
+        }
+        
+        .turn-card.expanded .turn-details {
+            display: block;
+        }
+        
+        .turn-transcript {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        
+        @media (max-width: 700px) {
+            .turn-transcript { grid-template-columns: 1fr; }
+        }
+        
+        .transcript-box {
+            background: #1a1a2e;
+            border-radius: 6px;
+            padding: 12px;
+        }
+        
+        .transcript-box .label {
+            font-size: 0.7em;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        
+        .transcript-box.caller .label { color: #4b7bec; }
+        .transcript-box.ai .label { color: #8854d0; }
+        
+        .transcript-box .text {
+            font-size: 0.9em;
+            line-height: 1.5;
+            color: #ddd;
+        }
+        
+        /* Latency Breakdown Bar */
+        .latency-breakdown {
+            margin-top: 16px;
+        }
+        
+        .latency-breakdown .breakdown-label {
+            font-size: 0.7em;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .stacked-bar {
+            display: flex;
+            height: 24px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #1a1a2e;
+        }
+        
+        .stacked-bar .segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: 600;
+            color: #fff;
+            min-width: 40px;
+        }
+        
+        .stacked-bar .segment.whisper { background: #f7b731; color: #333; }
+        .stacked-bar .segment.claude { background: #8854d0; }
+        .stacked-bar .segment.tts { background: #00d9ff; color: #333; }
+        
+        .latency-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 0.75em;
+        }
+        
+        .latency-legend .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .latency-legend .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+        
+        .latency-legend .dot.whisper { background: #f7b731; }
+        .latency-legend .dot.claude { background: #8854d0; }
+        .latency-legend .dot.tts { background: #00d9ff; }
+        
+        /* Token Info */
+        .token-info {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            font-size: 0.8em;
+            color: #888;
+        }
+        
+        .token-info span {
+            color: #00d9ff;
+        }
+        
+        /* Loading & Empty States */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-top-color: #00d9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state .icon {
+            font-size: 3em;
+            margin-bottom: 16px;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: #16213e;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            border-bottom: 1px solid #0f3460;
+        }
+        
+        .nav-title {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.95em;
+        }
+        
+        .nav a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.2s;
+        }
+        
+        .nav a:hover {
+            color: #fff;
+        }
+        
+        .nav a.active {
+            color: #00d9ff;
+        }
+        
+        /* Refresh button */
+        .refresh-btn {
+            background: #0f3460;
+            border: none;
+            color: #00d9ff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s;
+            margin-left: auto;
+        }
+        
+        .refresh-btn:hover {
+            background: #1a3a6e;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <span class="nav-title">📞 Phone Proxy</span>
+        <a href="index.html">🔴 Live</a>
+        <a href="calls.html">📋 History</a>
+        <a href="documents.html">📄 Docs</a>
+        <a href="config.html">⚙️ Config</a>
+        <a href="analytics.html" class="active">📊 Analytics</a>
+        <button class="refresh-btn" onclick="loadCalls()">↻ Refresh</button>
+    </nav>
+    
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>📊 Call Analytics</h1>
+                <p>Performance & quality metrics</p>
+            </div>
+            <div class="call-list" id="callList">
+                <div class="loading">Loading calls</div>
+            </div>
+        </aside>
+        
+        <main class="main-content" id="mainContent">
+            <div class="no-selection">
+                <p>← Select a call to view analytics</p>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let calls = [];
+        let selectedCallSid = null;
+        
+        // Format duration
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Format timestamp
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // Format date
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+        }
+        
+        // Format phone number
+        function formatPhone(phone) {
+            if (!phone) return 'Unknown';
+            // Show last 4 digits
+            return '...' + phone.slice(-4);
+        }
+        
+        // Load calls list
+        async function loadCalls() {
+            const listEl = document.getElementById('callList');
+            listEl.innerHTML = '<div class="loading">Loading calls</div>';
+            
+            try {
+                const response = await fetch('/api/analytics/calls?limit=50');
+                const data = await response.json();
+                calls = data.calls || [];
+                
+                if (calls.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📞</div>
+                            <p>No calls yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                listEl.innerHTML = calls.map(call => `
+                    <div class="call-card ${call.call_sid === selectedCallSid ? 'selected' : ''}" 
+                         onclick="selectCall('${call.call_sid}')">
+                        <div class="caller">${formatPhone(call.caller)}</div>
+                        <div class="meta">
+                            <span>${formatDate(call.started_at)} ${formatTime(call.started_at)}</span>
+                            <span>${formatDuration(call.duration_seconds)}</span>
+                        </div>
+                        <div class="stats">
+                            <div class="stat">
+                                <span>Turns:</span>
+                                <span class="stat-value">${call.turns}</span>
+                            </div>
+                            <div class="stat">
+                                <span>Avg:</span>
+                                <span class="stat-value">${(call.avg_latency_ms / 1000).toFixed(1)}s</span>
+                            </div>
+                        </div>
+                        ${call.quality_flags && call.quality_flags.length > 0 ? `
+                            <div class="flags">
+                                ${call.quality_flags.map(flag => `<span class="flag ${flag}">${flag.replace('_', ' ')}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+                
+                // Auto-select first call if none selected
+                if (!selectedCallSid && calls.length > 0) {
+                    selectCall(calls[0].call_sid);
+                }
+            } catch (error) {
+                console.error('Failed to load calls:', error);
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <p>Failed to load calls</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Select and load call details
+        async function selectCall(callSid) {
+            selectedCallSid = callSid;
+            
+            // Update sidebar selection
+            document.querySelectorAll('.call-card').forEach(card => {
+                card.classList.toggle('selected', card.onclick.toString().includes(callSid));
+            });
+            
+            const mainEl = document.getElementById('mainContent');
+            mainEl.innerHTML = '<div class="loading">Loading analytics</div>';
+            
+            try {
+                const response = await fetch(`/api/analytics/call/${callSid}`);
+                const data = await response.json();
+                
+                renderCallAnalytics(data);
+            } catch (error) {
+                console.error('Failed to load call:', error);
+                mainEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <p>Failed to load call analytics</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Render call analytics
+        function renderCallAnalytics(data) {
+            const mainEl = document.getElementById('mainContent');
+            const analytics = data.analytics || {};
+            const turns = data.turns || [];
+            
+            // Determine if latency is good or warning
+            const avgLatency = analytics.avg_total_ms || 0;
+            const latencyClass = avgLatency > 4000 ? 'warning' : 'good';
+            
+            // Calculate max latency for bar scaling
+            const maxLatency = Math.max(
+                analytics.avg_whisper_ms || 0,
+                analytics.avg_claude_ms || 0,
+                analytics.avg_tts_ms || 0
+            );
+            
+            mainEl.innerHTML = `
+                <!-- Summary Stats -->
+                <div class="summary-bar">
+                    <div class="summary-stat">
+                        <div class="value">${analytics.total_turns || 0}</div>
+                        <div class="label">Turns</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value ${latencyClass}">${(avgLatency / 1000).toFixed(1)}s</div>
+                        <div class="label">Avg Latency</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value">${formatDuration(analytics.duration_seconds || 0)}</div>
+                        <div class="label">Duration</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value">${((analytics.avg_whisper_confidence || 0) * 100).toFixed(0)}%</div>
+                        <div class="label">Confidence</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value">${analytics.total_input_tokens || 0}</div>
+                        <div class="label">Tokens In</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value">${analytics.total_output_tokens || 0}</div>
+                        <div class="label">Tokens Out</div>
+                    </div>
+                </div>
+                
+                <!-- Component Breakdown -->
+                <div class="component-breakdown">
+                    <h2>Average Latency by Component</h2>
+                    <div class="breakdown-bars">
+                        <div class="breakdown-item">
+                            <div class="bar-container">
+                                <div class="bar whisper" style="width: ${(analytics.avg_whisper_ms / maxLatency * 100) || 0}%"></div>
+                            </div>
+                            <div class="bar-label">
+                                <span class="name">Whisper (STT)</span>
+                                <span class="value">${analytics.avg_whisper_ms || 0}ms</span>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="bar-container">
+                                <div class="bar claude" style="width: ${(analytics.avg_claude_ms / maxLatency * 100) || 0}%"></div>
+                            </div>
+                            <div class="bar-label">
+                                <span class="name">Claude (LLM)</span>
+                                <span class="value">${analytics.avg_claude_ms || 0}ms</span>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="bar-container">
+                                <div class="bar tts" style="width: ${(analytics.avg_tts_ms / maxLatency * 100) || 0}%"></div>
+                            </div>
+                            <div class="bar-label">
+                                <span class="name">TTS (Speech)</span>
+                                <span class="value">${analytics.avg_tts_ms || 0}ms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Turns -->
+                <div class="turns-section">
+                    <h2>Conversation Turns</h2>
+                    ${turns.map((turn, i) => renderTurnCard(turn, i)).join('')}
+                </div>
+            `;
+            
+            // Add click handlers for expandable turns
+            document.querySelectorAll('.turn-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    header.parentElement.classList.toggle('expanded');
+                });
+            });
+        }
+        
+        // Render a single turn card
+        function renderTurnCard(turn, index) {
+            const totalLatency = turn.latency?.total_ms || 0;
+            const whisperMs = turn.latency?.whisper_ms || 0;
+            const claudeMs = turn.latency?.claude_ms || 0;
+            const ttsMs = turn.latency?.tts_ms || 0;
+            
+            // Calculate percentages for stacked bar
+            const whisperPct = totalLatency > 0 ? (whisperMs / totalLatency * 100) : 0;
+            const claudePct = totalLatency > 0 ? (claudeMs / totalLatency * 100) : 0;
+            const ttsPct = totalLatency > 0 ? (ttsMs / totalLatency * 100) : 0;
+            
+            const isAi = turn.speaker === 'ai';
+            const latencyClass = totalLatency > 4000 ? '' : 'good';
+            
+            // Get anchor words for display
+            const anchorWords = turn.anchor_words || [];
+            const anchorDisplay = anchorWords.length > 0 
+                ? anchorWords.slice(0, 3).map(w => `<span>${w}</span>`).join(' ')
+                : (turn.transcript ? turn.transcript.slice(0, 40) + '...' : 'Greeting');
+            
+            return `
+                <div class="turn-card">
+                    <div class="turn-header">
+                        <div class="turn-info">
+                            <div class="turn-number ${isAi ? 'ai' : ''}">${turn.turn_index}</div>
+                            <div class="anchor-words">${anchorDisplay}</div>
+                            ${turn.flags && turn.flags.length > 0 ? `
+                                <div class="flags">
+                                    ${turn.flags.map(flag => `<span class="flag ${flag}">${flag.replace('_', ' ')}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="turn-meta">
+                            <div class="latency ${latencyClass}">
+                                <strong>${(totalLatency / 1000).toFixed(2)}s</strong>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                    </div>
+                    <div class="turn-details">
+                        <div class="turn-transcript">
+                            <div class="transcript-box caller">
+                                <div class="label">📞 Caller</div>
+                                <div class="text">${turn.transcript || '(greeting turn)'}</div>
+                            </div>
+                            <div class="transcript-box ai">
+                                <div class="label">🤖 AI Response</div>
+                                <div class="text">${turn.response || '(no response)'}</div>
+                            </div>
+                        </div>
+                        
+                        ${totalLatency > 0 ? `
+                            <div class="latency-breakdown">
+                                <div class="breakdown-label">Latency Breakdown (${totalLatency}ms total)</div>
+                                <div class="stacked-bar">
+                                    ${whisperMs > 0 ? `<div class="segment whisper" style="width: ${whisperPct}%">${whisperMs}ms</div>` : ''}
+                                    ${claudeMs > 0 ? `<div class="segment claude" style="width: ${claudePct}%">${claudeMs}ms</div>` : ''}
+                                    ${ttsMs > 0 ? `<div class="segment tts" style="width: ${ttsPct}%">${ttsMs}ms</div>` : ''}
+                                </div>
+                                <div class="latency-legend">
+                                    <div class="legend-item"><div class="dot whisper"></div> Whisper</div>
+                                    <div class="legend-item"><div class="dot claude"></div> Claude</div>
+                                    <div class="legend-item"><div class="dot tts"></div> TTS</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="token-info">
+                            <div>Tokens in: <span>${turn.tokens_in || 0}</span></div>
+                            <div>Tokens out: <span>${turn.tokens_out || 0}</span></div>
+                            <div>Speech: <span>${turn.speech_duration_ms || 0}ms</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Initialize
+        loadCalls();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadCalls, 30000);
+    </script>
+</body>
+</html>

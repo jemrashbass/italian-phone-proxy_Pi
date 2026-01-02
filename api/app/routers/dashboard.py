@@ -1,8 +1,6 @@
 """
 Dashboard WebSocket router for real-time call monitoring.
 
-NEW FILE - Add this to api/app/routers/
-
 Broadcasts call events to connected dashboard clients.
 """
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -28,7 +26,11 @@ class DashboardBroadcaster:
     @staticmethod
     async def broadcast(event: Dict[str, Any]):
         """Broadcast event to all connected dashboard clients."""
+        client_count = len(dashboard_clients)
+        logger.info(f"📡 Broadcasting {event.get('type')} to {client_count} clients")
+        
         if not dashboard_clients:
+            logger.warning("📡 No dashboard clients connected - broadcast skipped")
             return
             
         message = json.dumps(event, default=str)
@@ -37,17 +39,22 @@ class DashboardBroadcaster:
         for client in dashboard_clients:
             try:
                 await client.send_text(message)
+                logger.debug(f"📡 Sent to client successfully")
             except Exception as e:
-                logger.warning(f"Failed to send to dashboard client: {e}")
+                logger.warning(f"📡 Failed to send to dashboard client: {e}")
                 disconnected.add(client)
         
         # Clean up disconnected clients
         for client in disconnected:
             dashboard_clients.discard(client)
+        
+        logger.info(f"📡 Broadcast complete: {event.get('type')}")
     
     @staticmethod
     async def call_started(call_sid: str, caller: str, called: str):
         """Notify dashboard that a call has started."""
+        logger.info(f"📡 call_started: {call_sid} from {caller}")
+        
         active_calls[call_sid] = {
             "call_sid": call_sid,
             "caller": caller,
@@ -69,6 +76,8 @@ class DashboardBroadcaster:
     async def transcript_update(call_sid: str, speaker: str, text: str, 
                                  turn_index: int, latency_ms: int = None):
         """Notify dashboard of new transcript."""
+        logger.info(f"📡 transcript_update: {speaker} said '{text[:50]}...' (turn {turn_index})")
+        
         turn = {
             "index": turn_index,
             "speaker": speaker,
@@ -93,6 +102,8 @@ class DashboardBroadcaster:
     @staticmethod
     async def processing_status(call_sid: str, status: str, details: str = None):
         """Notify dashboard of processing status (transcribing, thinking, speaking)."""
+        logger.info(f"📡 processing_status: {call_sid} -> {status}")
+        
         await DashboardBroadcaster.broadcast({
             "type": "processing",
             "call_sid": call_sid,
@@ -105,6 +116,8 @@ class DashboardBroadcaster:
     async def call_ended(call_sid: str, duration_seconds: int = None, 
                          summary: str = None):
         """Notify dashboard that a call has ended."""
+        logger.info(f"📡 call_ended: {call_sid} (duration: {duration_seconds}s)")
+        
         if call_sid in active_calls:
             del active_calls[call_sid]
         
@@ -119,11 +132,23 @@ class DashboardBroadcaster:
     @staticmethod
     async def error(call_sid: str, error_type: str, message: str):
         """Notify dashboard of an error."""
+        logger.error(f"📡 error: {call_sid} - {error_type}: {message}")
+        
         await DashboardBroadcaster.broadcast({
             "type": "error",
             "call_sid": call_sid,
             "error_type": error_type,
             "message": message,
+            "timestamp": datetime.now().isoformat()
+        })
+
+    @staticmethod
+    async def analytics_event(call_sid: str, event: dict):
+        """Broadcast analytics event for real-time dashboard updates."""
+        await DashboardBroadcaster.broadcast({
+            "type": "analytics_event",
+            "call_sid": call_sid,
+            "event": event,
             "timestamp": datetime.now().isoformat()
         })
 
@@ -138,7 +163,7 @@ async def dashboard_websocket(websocket: WebSocket):
     await websocket.accept()
     dashboard_clients.add(websocket)
     
-    logger.info(f"Dashboard client connected. Total clients: {len(dashboard_clients)}")
+    logger.info(f"📡 Dashboard client connected. Total clients: {len(dashboard_clients)}")
     
     try:
         # Send current state on connect
@@ -180,12 +205,12 @@ async def dashboard_websocket(websocket: WebSocket):
                     break
                     
     except WebSocketDisconnect:
-        logger.info("Dashboard client disconnected")
+        logger.info("📡 Dashboard client disconnected")
     except Exception as e:
-        logger.error(f"Dashboard WebSocket error: {e}")
+        logger.error(f"📡 Dashboard WebSocket error: {e}")
     finally:
         dashboard_clients.discard(websocket)
-        logger.info(f"Dashboard client removed. Total clients: {len(dashboard_clients)}")
+        logger.info(f"📡 Dashboard client removed. Total clients: {len(dashboard_clients)}")
 
 
 @router.get("/status")
@@ -195,4 +220,72 @@ async def dashboard_status():
         "connected_clients": len(dashboard_clients),
         "active_calls": len(active_calls),
         "calls": list(active_calls.values())
+    }
+
+
+@router.post("/test")
+async def test_broadcast():
+    """
+    TEST ENDPOINT: Trigger a fake call to verify WebSocket broadcast works.
+    
+    Usage: curl -X POST https://phone.rashbass.org/api/dashboard/test
+    
+    This simulates a complete call flow to verify the dashboard receives messages.
+    """
+    import uuid
+    
+    test_call_sid = f"TEST-{uuid.uuid4().hex[:8]}"
+    test_caller = "+39 328 TEST"
+    
+    logger.info(f"🧪 TEST: Starting fake call {test_call_sid}")
+    
+    # Simulate call flow
+    await broadcaster.call_started(test_call_sid, test_caller, "+44 2070 460437")
+    await asyncio.sleep(0.5)
+    
+    await broadcaster.processing_status(test_call_sid, "speaking")
+    await asyncio.sleep(0.3)
+    
+    await broadcaster.transcript_update(
+        test_call_sid, 
+        "ai", 
+        "Pronto. Mi scusi, sono inglese e il mio italiano non è perfetto.", 
+        0
+    )
+    await asyncio.sleep(0.5)
+    
+    await broadcaster.processing_status(test_call_sid, "listening")
+    await asyncio.sleep(1.0)
+    
+    await broadcaster.processing_status(test_call_sid, "transcribing")
+    await asyncio.sleep(0.3)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "caller",
+        "Buongiorno, sono il corriere. Ho un pacco per Via Barachini.",
+        1
+    )
+    await asyncio.sleep(0.5)
+    
+    await broadcaster.processing_status(test_call_sid, "thinking")
+    await asyncio.sleep(0.3)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "ai",
+        "Sì, è l'indirizzo giusto. Via Paolo Barachini 86, San Giuliano Terme.",
+        2,
+        latency_ms=850
+    )
+    await asyncio.sleep(0.5)
+    
+    await broadcaster.call_ended(test_call_sid, duration_seconds=15)
+    
+    logger.info(f"🧪 TEST: Completed fake call {test_call_sid}")
+    
+    return {
+        "status": "test_complete",
+        "call_sid": test_call_sid,
+        "message": "Check the dashboard - you should have seen a fake call appear and complete"
     }

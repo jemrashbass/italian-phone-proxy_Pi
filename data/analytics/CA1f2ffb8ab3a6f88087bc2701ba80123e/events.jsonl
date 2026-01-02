@@ -1,0 +1,49 @@
+{"id": "evt_0000", "type": "call_started", "timestamp": "2026-01-02T16:14:22.280985", "turn_index": 0, "data": {"caller": "+447796315426", "called": "+442070460437"}}
+{"id": "evt_0001", "type": "stream_connected", "timestamp": "2026-01-02T16:14:27.614092", "turn_index": 0, "data": {"stream_sid": "MZ108f752e1a8c678c36337fa92646426b"}}
+{"id": "evt_0002", "type": "greeting_started", "timestamp": "2026-01-02T16:14:27.614753", "turn_index": 0, "data": {}}
+{"id": "evt_0003", "type": "tts_started", "timestamp": "2026-01-02T16:14:27.615073", "turn_index": 0, "data": {"text": "Pronto. Sì, sono JEREMY. Mi scusi, sono inglese e il mio italiano non è perfetto — parlo lentamente ", "text_length": 130, "voice": "onyx"}}
+{"id": "evt_0004", "type": "tts_completed", "timestamp": "2026-01-02T16:14:28.939136", "turn_index": 0, "data": {"duration_ms": 1324, "audio_bytes": 395368, "audio_duration_ms": 8236}}
+{"id": "evt_0005", "type": "playback_started", "timestamp": "2026-01-02T16:14:28.939796", "turn_index": 0, "data": {"expected_duration_ms": 8236}}
+{"id": "evt_0006", "type": "playback_completed", "timestamp": "2026-01-02T16:14:31.718880", "turn_index": 0, "data": {"actual_duration_ms": 2779}}
+{"id": "evt_0007", "type": "greeting_completed", "timestamp": "2026-01-02T16:14:31.719399", "turn_index": 0, "data": {"audio_duration_ms": 8236}}
+{"id": "evt_0008", "type": "speech_started", "timestamp": "2026-01-02T16:14:37.793703", "turn_index": 0, "data": {"rms_level": 539}}
+{"id": "evt_0009", "type": "silence_detected", "timestamp": "2026-01-02T16:14:46.155915", "turn_index": 1, "data": {"speech_duration_ms": 8380, "audio_bytes": 67040, "peak_rms": 0}}
+{"id": "evt_0010", "type": "whisper_started", "timestamp": "2026-01-02T16:14:46.158032", "turn_index": 1, "data": {"audio_bytes": 268202, "audio_duration_ms": 8380}}
+{"id": "evt_0011", "type": "whisper_completed", "timestamp": "2026-01-02T16:14:48.313528", "turn_index": 1, "data": {"transcript": "Buongiorno, sono il Corriere di Amazon, un pacco per l'aspasmo, non trovo Via Barachini 86.", "duration_ms": 2155, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0012", "type": "claude_started", "timestamp": "2026-01-02T16:14:48.314138", "turn_index": 1, "data": {"input_tokens_estimate": 50, "context_turns": 1}}
+{"id": "evt_0013", "type": "claude_completed", "timestamp": "2026-01-02T16:14:51.469392", "turn_index": 1, "data": {"response": "Ah sì, capisco. Allora, deve seguire via Paolo Barachini dal centro di Asciano - dove c'è la macelleria sulla sinistra. Continui dritto e poi giri a sinistra su per la collina. Vedrà il rubinetto dell'acquedotto all'angolo - continui", "duration_ms": 3155, "input_tokens": 1699, "output_tokens": 80}}
+{"id": "evt_0014", "type": "tts_started", "timestamp": "2026-01-02T16:14:51.470250", "turn_index": 1, "data": {"text": "Ah sì, capisco. Allora, deve seguire via Paolo Barachini dal centro di Asciano - dove c'è la macelle", "text_length": 233, "voice": "onyx"}}
+{"id": "evt_0015", "type": "tts_completed", "timestamp": "2026-01-02T16:14:54.715930", "turn_index": 1, "data": {"duration_ms": 3245, "audio_bytes": 736422, "audio_duration_ms": 15342}}
+{"id": "evt_0016", "type": "playback_started", "timestamp": "2026-01-02T16:14:54.716484", "turn_index": 1, "data": {"expected_duration_ms": 15342}}
+{"id": "evt_0017", "type": "playback_completed", "timestamp": "2026-01-02T16:14:59.889148", "turn_index": 1, "data": {"actual_duration_ms": 5172}}
+{"id": "evt_0018", "type": "speech_started", "timestamp": "2026-01-02T16:15:12.028259", "turn_index": 1, "data": {"rms_level": 2327}}
+{"id": "evt_0019", "type": "silence_detected", "timestamp": "2026-01-02T16:15:18.896558", "turn_index": 2, "data": {"speech_duration_ms": 6900, "audio_bytes": 55200, "peak_rms": 0}}
+{"id": "evt_0020", "type": "whisper_started", "timestamp": "2026-01-02T16:15:18.898670", "turn_index": 2, "data": {"audio_bytes": 220842, "audio_duration_ms": 6900}}
+{"id": "evt_0021", "type": "whisper_completed", "timestamp": "2026-01-02T16:15:20.545787", "turn_index": 2, "data": {"transcript": "Ah, grazie. Ok, sono sulla collina, vedo una casa gialla, è quella?", "duration_ms": 1647, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0022", "type": "claude_started", "timestamp": "2026-01-02T16:15:20.548041", "turn_index": 2, "data": {"input_tokens_estimate": 150, "context_turns": 3}}
+{"id": "evt_0023", "type": "claude_completed", "timestamp": "2026-01-02T16:15:24.026984", "turn_index": 2, "data": {"response": "No, no. Deve continuare ancora. Vedrà che la numerazione è un po' confusa - il numero 82 è su una strada laterale a destra, e il 101 è sulla sinistra. Continui ancora su per la collina. Il numero 86 è la casa rosa sulla destra, in cima alla collina", "duration_ms": 3478, "input_tokens": 1808, "output_tokens": 80}}
+{"id": "evt_0024", "type": "tts_started", "timestamp": "2026-01-02T16:15:24.028078", "turn_index": 2, "data": {"text": "No, no. Deve continuare ancora. Vedrà che la numerazione è un po' confusa - il numero 82 è su una st", "text_length": 248, "voice": "onyx"}}
+{"id": "evt_0025", "type": "tts_completed", "timestamp": "2026-01-02T16:15:26.604978", "turn_index": 2, "data": {"duration_ms": 2576, "audio_bytes": 841264, "audio_duration_ms": 17526}}
+{"id": "evt_0026", "type": "playback_started", "timestamp": "2026-01-02T16:15:26.605755", "turn_index": 2, "data": {"expected_duration_ms": 17526}}
+{"id": "evt_0027", "type": "playback_completed", "timestamp": "2026-01-02T16:15:32.525197", "turn_index": 2, "data": {"actual_duration_ms": 5919}}
+{"id": "evt_0028", "type": "speech_started", "timestamp": "2026-01-02T16:15:45.875798", "turn_index": 2, "data": {"rms_level": 530}}
+{"id": "evt_0029", "type": "silence_detected", "timestamp": "2026-01-02T16:15:52.295754", "turn_index": 3, "data": {"speech_duration_ms": 6440, "audio_bytes": 51520, "peak_rms": 0}}
+{"id": "evt_0030", "type": "whisper_started", "timestamp": "2026-01-02T16:15:52.298711", "turn_index": 3, "data": {"audio_bytes": 206122, "audio_duration_ms": 6440}}
+{"id": "evt_0031", "type": "whisper_completed", "timestamp": "2026-01-02T16:15:53.126901", "turn_index": 3, "data": {"transcript": "Perfetto, posso lasciare il pacco da qualche parte?", "duration_ms": 828, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0032", "type": "claude_started", "timestamp": "2026-01-02T16:15:53.129492", "turn_index": 3, "data": {"input_tokens_estimate": 250, "context_turns": 5}}
+{"id": "evt_0033", "type": "claude_completed", "timestamp": "2026-01-02T16:15:55.754425", "turn_index": 3, "data": {"response": "Sì, può lasciare il pacco davanti alla porta oppure a sinistra della casa, vicino al forno per la pizza. Grazie mille.", "duration_ms": 2624, "input_tokens": 1911, "output_tokens": 42}}
+{"id": "evt_0034", "type": "tts_started", "timestamp": "2026-01-02T16:15:55.757162", "turn_index": 3, "data": {"text": "Sì, può lasciare il pacco davanti alla porta oppure a sinistra della casa, vicino al forno per la pi", "text_length": 118, "voice": "onyx"}}
+{"id": "evt_0035", "type": "tts_completed", "timestamp": "2026-01-02T16:15:58.061468", "turn_index": 3, "data": {"duration_ms": 2304, "audio_bytes": 367578, "audio_duration_ms": 7657}}
+{"id": "evt_0036", "type": "playback_started", "timestamp": "2026-01-02T16:15:58.062284", "turn_index": 3, "data": {"expected_duration_ms": 7657}}
+{"id": "evt_0037", "type": "playback_completed", "timestamp": "2026-01-02T16:16:00.647094", "turn_index": 3, "data": {"actual_duration_ms": 2584}}
+{"id": "evt_0038", "type": "speech_started", "timestamp": "2026-01-02T16:16:07.035560", "turn_index": 3, "data": {"rms_level": 767}}
+{"id": "evt_0039", "type": "silence_detected", "timestamp": "2026-01-02T16:16:09.595514", "turn_index": 4, "data": {"speech_duration_ms": 2580, "audio_bytes": 20640, "peak_rms": 0}}
+{"id": "evt_0040", "type": "whisper_started", "timestamp": "2026-01-02T16:16:09.597167", "turn_index": 4, "data": {"audio_bytes": 82602, "audio_duration_ms": 2580}}
+{"id": "evt_0041", "type": "whisper_completed", "timestamp": "2026-01-02T16:16:10.453292", "turn_index": 4, "data": {"transcript": "Grazie mille, arrivederci.", "duration_ms": 856, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0042", "type": "claude_started", "timestamp": "2026-01-02T16:16:10.455363", "turn_index": 4, "data": {"input_tokens_estimate": 350, "context_turns": 7}}
+{"id": "evt_0043", "type": "claude_completed", "timestamp": "2026-01-02T16:16:12.519355", "turn_index": 4, "data": {"response": "Prego, arrivederci e grazie a lei!", "duration_ms": 2063, "input_tokens": 1967, "output_tokens": 17}}
+{"id": "evt_0044", "type": "tts_started", "timestamp": "2026-01-02T16:16:12.520831", "turn_index": 4, "data": {"text": "Prego, arrivederci e grazie a lei!", "text_length": 34, "voice": "onyx"}}
+{"id": "evt_0045", "type": "tts_completed", "timestamp": "2026-01-02T16:16:13.482492", "turn_index": 4, "data": {"duration_ms": 961, "audio_bytes": 103578, "audio_duration_ms": 2157}}
+{"id": "evt_0046", "type": "playback_started", "timestamp": "2026-01-02T16:16:13.483206", "turn_index": 4, "data": {"expected_duration_ms": 2157}}
+{"id": "evt_0047", "type": "playback_completed", "timestamp": "2026-01-02T16:16:14.211917", "turn_index": 4, "data": {"actual_duration_ms": 728}}
+{"id": "evt_0048", "type": "call_ended", "timestamp": "2026-01-02T16:16:16.386184", "turn_index": 4, "data": {"reason": "stream_ended", "total_turns": 4}}

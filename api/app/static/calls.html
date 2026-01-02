@@ -3,332 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Call History - Italian Phone Proxy</title>
+    <title>📞 Call History - Phone Proxy</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --bg-primary: #0b141a;
+            --bg-secondary: #111b21;
+            --bg-tertiary: #1f2c33;
+            --text-primary: #e9edef;
+            --text-secondary: #8696a0;
+            --accent-green: #00a884;
+            --accent-blue: #53bdeb;
+            --accent-orange: #ff7a00;
+            --accent-red: #ea0038;
+            --caller-bg: #1f2c33;
+            --ai-bg: #005c4b;
+            --border-color: #222d34;
+        }
+        
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5; 
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            min-height: 100vh;
         }
-        h1 { margin-bottom: 20px; color: #333; }
         
+        /* Navigation */
         .nav {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            background: var(--bg-secondary);
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            height: 44px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .nav a {
-            margin-right: 20px;
-            text-decoration: none;
-            color: #007AFF;
-        }
-        .nav a:hover { text-decoration: underline; }
+        .nav-links { display: flex; gap: 16px; align-items: center; }
+        .nav a { text-decoration: none; color: var(--text-secondary); font-size: 13px; }
+        .nav a:hover, .nav a.active { color: var(--text-primary); }
+        .nav-title { font-weight: 600; font-size: 14px; }
         
-        .container {
+        .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+        
+        /* Stats bar */
+        .stats-bar {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 20px;
-        }
-        
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; }
-        }
-        
-        .panel {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .panel h2 {
-            font-size: 1.1em;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
             margin-bottom: 16px;
         }
         
-        .call-list {
-            list-style: none;
+        @media (max-width: 600px) {
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
         }
-        .call-item {
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
             padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        .stat-value { font-size: 20px; font-weight: 600; color: var(--accent-blue); }
+        .stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+        
+        /* Call list */
+        .call-list { display: flex; flex-direction: column; gap: 8px; }
+        
+        .call-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .call-header {
+            padding: 12px 16px;
             cursor: pointer;
-            transition: background 0.2s;
-            border-radius: 6px;
-        }
-        .call-item:hover {
-            background: #f8f9fa;
-        }
-        .call-item.selected {
-            background: #e3f2fd;
-            border-color: #90caf9;
-        }
-        .call-item .caller {
-            font-weight: 500;
-            color: #333;
-            margin-bottom: 4px;
-        }
-        .call-item .meta {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85em;
-            color: #999;
+            align-items: center;
         }
-        .call-item .summary {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .call-header:hover { background: var(--bg-tertiary); }
         
-        .call-detail {
-            position: sticky;
-            top: 20px;
-        }
-        .call-header {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 16px;
-            margin-bottom: 16px;
-        }
-        .call-header h3 {
-            font-size: 1.2em;
-            margin-bottom: 8px;
-        }
-        .call-header .info {
+        .call-caller { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+        .call-meta {
+            font-size: 11px;
+            color: var(--text-secondary);
             display: flex;
-            gap: 20px;
-            font-size: 0.9em;
-            color: #666;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-        
-        .transcript {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        .message {
-            padding: 12px 16px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            max-width: 85%;
-        }
-        .message.caller {
-            background: #e3f2fd;
-            margin-right: auto;
-        }
-        .message.ai {
-            background: #f5f5f5;
-            margin-left: auto;
-        }
-        .message .speaker {
-            font-size: 0.75em;
-            color: #666;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-        .message .text {
-            line-height: 1.5;
-        }
-        .message .timestamp {
-            font-size: 0.75em;
-            color: #999;
+        .call-preview {
+            font-size: 12px;
+            color: var(--text-secondary);
             margin-top: 4px;
+            font-style: italic;
         }
         
+        .expand-btn {
+            background: none; border: none;
+            color: var(--text-secondary);
+            font-size: 14px; cursor: pointer;
+            padding: 4px 8px;
+            transition: transform 0.2s;
+        }
+        .expand-btn.expanded { transform: rotate(180deg); }
+        
+        /* Transcript */
+        .call-transcript {
+            display: none;
+            padding: 0 12px 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        .call-transcript.expanded { display: block; }
+        
+        .transcript-turns {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 12px;
+        }
+        
+        .turn { max-width: 80%; }
+        .turn.caller { align-self: flex-start; }
+        .turn.ai { align-self: flex-end; }
+        
+        .turn-bubble {
+            padding: 6px 10px 4px;
+            border-radius: 8px;
+            min-width: 60px;
+        }
+        .turn.caller .turn-bubble {
+            background: var(--caller-bg);
+            border-top-left-radius: 0;
+        }
+        .turn.ai .turn-bubble {
+            background: var(--ai-bg);
+            border-top-right-radius: 0;
+        }
+        
+        .turn-text { font-size: 13px; line-height: 1.35; }
+        .turn-meta {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-align: right;
+            margin-top: 2px;
+            opacity: 0.8;
+        }
+        .turn-meta .latency { color: var(--accent-green); margin-left: 6px; }
+        
+        /* Empty state */
         .empty-state {
             text-align: center;
-            padding: 40px;
-            color: #999;
+            padding: 48px 20px;
+            color: var(--text-secondary);
         }
+        .empty-state .icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+        .empty-state h3 { font-size: 16px; margin-bottom: 4px; color: var(--text-primary); }
         
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.2s;
-        }
-        .btn-primary { background: #007AFF; color: white; }
-        .btn-primary:hover { background: #0056b3; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-secondary:hover { background: #5a6268; }
-        
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
+        .loading {
+            text-align: center;
+            padding: 32px;
+            color: var(--text-secondary);
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
     <nav class="nav">
-        <a href="/dashboard/">🏠 Dashboard</a>
-        <a href="/documents.html">📄 Documents</a>
-        <a href="/config.html">⚙️ Config</a>
-        <a href="/calls.html">📞 Call History</a>
+        <div class="nav-links">
+            <span class="nav-title">📞 Phone Proxy</span>
+            <a href="index.html">🔴 Live</a>
+            <a href="calls.html">📋 History</a>
+            <a href="documents.html">📄 Docs</a>
+            <a href="config.html">⚙️ Config</a>
+            <a href="analytics.html">📊 Analytics</a>
+        </div>
     </nav>
     
-    <h1>📞 Call History</h1>
-    
-    <div class="toolbar">
-        <button class="btn btn-secondary" onclick="loadCalls()">🔄 Refresh</button>
-        <button class="btn btn-primary" onclick="createTestCall()">🧪 Create Test Call</button>
-    </div>
-    
     <div class="container">
-        <div class="panel">
-            <h2>Recent Calls</h2>
-            <ul class="call-list" id="callList">
-                <li class="empty-state">Loading calls...</li>
-            </ul>
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCalls">-</div>
+                <div class="stat-label">Total Calls</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="callsToday">-</div>
+                <div class="stat-label">Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgDuration">-</div>
+                <div class="stat-label">Avg Duration</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgLatency">-</div>
+                <div class="stat-label">Avg Latency</div>
+            </div>
         </div>
         
-        <div class="panel call-detail">
-            <div id="callDetail">
-                <div class="empty-state">
-                    Select a call to view transcript
-                </div>
-            </div>
+        <div class="call-list" id="callList">
+            <div class="loading">Loading call history...</div>
         </div>
     </div>
     
     <script>
-        let selectedCallId = null;
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/calls/stats');
+                const stats = await res.json();
+                document.getElementById('totalCalls').textContent = stats.total_calls || 0;
+                document.getElementById('callsToday').textContent = stats.calls_today || 0;
+                document.getElementById('avgDuration').textContent = formatDuration(stats.avg_duration_seconds);
+                document.getElementById('avgLatency').textContent = stats.avg_latency_ms ? `${stats.avg_latency_ms}ms` : '-';
+            } catch (e) {
+                console.error('Failed to load stats:', e);
+            }
+        }
         
         async function loadCalls() {
+            const list = document.getElementById('callList');
+            
             try {
                 const res = await fetch('/api/calls/history?limit=50');
                 const data = await res.json();
                 
-                const list = document.getElementById('callList');
-                
                 if (!data.calls || data.calls.length === 0) {
                     list.innerHTML = `
-                        <li class="empty-state">
-                            No calls yet.<br>
-                            Calls will appear here once the phone system is active.
-                        </li>
+                        <div class="empty-state">
+                            <div class="icon">📞</div>
+                            <h3>No calls yet</h3>
+                            <p>Call history will appear here.</p>
+                        </div>
                     `;
                     return;
                 }
                 
                 list.innerHTML = data.calls.map(call => `
-                    <li class="call-item ${call.call_id === selectedCallId ? 'selected' : ''}" 
-                        onclick="viewCall('${call.call_id}')">
-                        <div class="caller">📞 ${call.caller || 'Unknown'}</div>
-                        <div class="meta">
-                            <span>${formatTime(call.timestamp)}</span>
-                            <span>${call.duration || 0}s</span>
+                    <div class="call-card" data-call-sid="${call.call_sid}">
+                        <div class="call-header" onclick="toggleTranscript('${call.call_sid}')">
+                            <div class="call-info">
+                                <div class="call-caller">${formatCaller(call.caller)}</div>
+                                <div class="call-meta">
+                                    <span>📅 ${formatDate(call.started_at)}</span>
+                                    <span>⏱️ ${formatDuration(call.duration_seconds)}</span>
+                                    <span>💬 ${call.turn_count || 0}</span>
+                                    ${call.avg_latency_ms ? `<span>⚡ ${call.avg_latency_ms}ms</span>` : ''}
+                                </div>
+                                ${call.preview ? `<div class="call-preview">"${escapeHtml(call.preview)}..."</div>` : ''}
+                            </div>
+                            <button class="expand-btn" id="btn-${call.call_sid}">▼</button>
                         </div>
-                        ${call.summary ? `<div class="summary">${call.summary}</div>` : ''}
-                    </li>
+                        <div class="call-transcript" id="transcript-${call.call_sid}">
+                            <div class="loading">Loading transcript...</div>
+                        </div>
+                    </div>
                 `).join('');
                 
             } catch (e) {
-                document.getElementById('callList').innerHTML = `
-                    <li class="empty-state" style="color: #dc3545;">
-                        Failed to load calls
-                    </li>
-                `;
-            }
-        }
-        
-        async function viewCall(callId) {
-            selectedCallId = callId;
-            
-            // Update selected state in list
-            document.querySelectorAll('.call-item').forEach(item => {
-                item.classList.toggle('selected', item.onclick.toString().includes(callId));
-            });
-            
-            try {
-                const res = await fetch(`/api/calls/history/${callId}`);
-                const call = await res.json();
-                
-                const detail = document.getElementById('callDetail');
-                
-                detail.innerHTML = `
-                    <div class="call-header">
-                        <h3>📞 ${call.caller || 'Unknown Caller'}</h3>
-                        <div class="info">
-                            <span>🕐 ${formatTime(call.timestamp)}</span>
-                            <span>⏱ ${call.duration || 0} seconds</span>
-                            <span>📍 ${call.status || 'completed'}</span>
-                        </div>
-                    </div>
-                    
-                    <h4 style="margin-bottom: 12px; color: #666;">Transcript</h4>
-                    <div class="transcript">
-                        ${(call.transcript || []).map(msg => `
-                            <div class="message ${msg.speaker}">
-                                <div class="speaker">${msg.speaker === 'ai' ? '🤖 AI' : '👤 Caller'}</div>
-                                <div class="text">${msg.text}</div>
-                                <div class="timestamp">${msg.timestamp || ''}</div>
-                            </div>
-                        `).join('')}
-                        ${!call.transcript || call.transcript.length === 0 ? 
-                            '<div class="empty-state">No transcript available</div>' : ''}
-                    </div>
-                `;
-                
-            } catch (e) {
-                document.getElementById('callDetail').innerHTML = `
-                    <div class="empty-state" style="color: #dc3545;">
-                        Failed to load call details
+                console.error('Failed to load calls:', e);
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Error loading calls</h3>
+                        <p>${e.message}</p>
                     </div>
                 `;
             }
         }
         
-        async function createTestCall() {
+        async function toggleTranscript(callSid) {
+            const el = document.getElementById(`transcript-${callSid}`);
+            const btn = document.getElementById(`btn-${callSid}`);
+            const isExpanded = el.classList.contains('expanded');
+            
+            if (isExpanded) {
+                el.classList.remove('expanded');
+                btn.classList.remove('expanded');
+            } else {
+                el.classList.add('expanded');
+                btn.classList.add('expanded');
+                if (el.querySelector('.loading')) {
+                    await loadTranscript(callSid);
+                }
+            }
+        }
+        
+        async function loadTranscript(callSid) {
+            const el = document.getElementById(`transcript-${callSid}`);
+            
             try {
-                const res = await fetch('/api/calls/test', { method: 'POST' });
+                const res = await fetch(`/api/calls/transcript/${callSid}`);
                 const data = await res.json();
                 
-                alert('Test call created: ' + data.call_id);
-                loadCalls();
+                if (!data.turns || data.turns.length === 0) {
+                    el.innerHTML = '<p style="color:var(--text-secondary);padding:12px 0;font-size:12px;">No transcript available</p>';
+                    return;
+                }
                 
+                el.innerHTML = `
+                    <div class="transcript-turns">
+                        ${data.turns.map(turn => `
+                            <div class="turn ${turn.speaker}">
+                                <div class="turn-bubble">
+                                    <div class="turn-text">${escapeHtml(turn.text)}</div>
+                                    <div class="turn-meta">
+                                        ${formatTime(turn.timestamp)}
+                                        ${turn.latency_ms ? `<span class="latency">⚡${turn.latency_ms}ms</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
             } catch (e) {
-                alert('Failed to create test call: ' + e.message);
+                el.innerHTML = `<p style="color:var(--accent-red);font-size:12px;">Error loading transcript</p>`;
             }
         }
         
-        function formatTime(isoString) {
-            if (!isoString) return 'Unknown';
-            const date = new Date(isoString);
+        function formatCaller(phone) {
+            if (!phone) return 'Unknown';
+            return phone.replace(/^\+/, '').replace(/(\d{2})(\d{3})(\d{3})(\d+)/, '+$1 $2 $3 $4');
+        }
+        
+        function formatDate(iso) {
+            if (!iso) return '-';
+            const d = new Date(iso);
             const now = new Date();
-            const diff = now - date;
-            
-            // Today
-            if (diff < 86400000 && date.getDate() === now.getDate()) {
-                return 'Today ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const isToday = d.toDateString() === now.toDateString();
+            if (isToday) {
+                return `Today ${d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'})}`;
             }
-            
-            // Yesterday
-            const yesterday = new Date(now);
-            yesterday.setDate(yesterday.getDate() - 1);
-            if (date.getDate() === yesterday.getDate()) {
-                return 'Yesterday ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }
-            
-            // This week
-            if (diff < 604800000) {
-                return date.toLocaleDateString([], { weekday: 'short' }) + ' ' + 
-                       date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }
-            
-            // Older
-            return date.toLocaleDateString();
+            return d.toLocaleDateString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
         }
         
-        // Initial load
+        function formatTime(iso) {
+            if (!iso) return '';
+            return new Date(iso).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+        }
+        
+        function formatDuration(secs) {
+            if (!secs) return '-';
+            const m = Math.floor(secs / 60);
+            const s = Math.round(secs % 60);
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        loadStats();
         loadCalls();
     </script>
 </body>

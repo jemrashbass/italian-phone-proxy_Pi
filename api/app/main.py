@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 import logging
 import os
 
-from app.routers import documents, config, twilio, calls, dashboard
+from app.routers import documents, config, twilio, calls, dashboard, analytics
 from app.services.knowledge import KnowledgeService
 
 # Configure logging
@@ -30,6 +30,13 @@ async def lifespan(app: FastAPI):
     app.state.knowledge = KnowledgeService()
     app.state.knowledge.load()
     logger.info(f"📚 Knowledge loaded: {app.state.knowledge.data.get('identity', {}).get('name', 'Unknown')}")
+    
+    # Connect analytics service to dashboard broadcaster
+    from app.services.analytics import get_analytics_service
+    from app.routers.dashboard import broadcaster
+    analytics_service = get_analytics_service()
+    analytics_service.set_broadcaster(broadcaster)
+    logger.info("📊 Analytics service connected to broadcaster")
     
     # Log configuration
     logger.info(f"🔑 Anthropic API: {'configured' if os.getenv('ANTHROPIC_API_KEY') else 'MISSING'}")
@@ -63,6 +70,7 @@ app.include_router(config.router, prefix="/api/config", tags=["Configuration"])
 app.include_router(twilio.router, prefix="/api/twilio", tags=["Twilio"])
 app.include_router(calls.router, prefix="/api/calls", tags=["Calls"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
+app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
 
 # Static files (dashboard) - must be last
 # Check if static directory exists before mounting

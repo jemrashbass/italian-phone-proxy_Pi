@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 import logging
 import os
 
-from app.routers import documents, config, twilio, calls, dashboard, analytics, system_config, messaging
+from app.routers import documents, config, twilio, calls, dashboard, analytics, system_config, messaging, sms
 from app.services.knowledge import KnowledgeService
 
 # Configure logging
@@ -86,6 +86,7 @@ app.include_router(calls.router, prefix="/api/calls", tags=["Calls"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
 app.include_router(messaging.router, prefix="/api/messaging", tags=["Messaging"])  # 📍 NEW
+app.include_router(sms.router, prefix="/api/twilio", tags=["SMS"])  # 📨 SMS forwarding
 
 # Static files (dashboard) - must be last
 # Check if static directory exists before mounting
@@ -112,7 +113,8 @@ async def health_check():
             "twilio": bool(os.getenv("TWILIO_ACCOUNT_SID")),
             "analytics": True,
             "system_config": True,
-            "messaging": True  # 📍 NEW
+            "messaging": True,  # 📍 Location SMS
+            "sms_forwarding": bool(os.getenv("OWNER_MOBILE_NUMBER"))  # 📨 Reply forwarding
         }
     }
 

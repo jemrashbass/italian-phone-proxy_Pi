@@ -12,6 +12,7 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
       - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY:-}
+      - OWNER_MOBILE_NUMBER=${OWNER_MOBILE_NUMBER}
     volumes:
       - ./data/config:/app/data/config
       - ./data/documents:/app/data/documents

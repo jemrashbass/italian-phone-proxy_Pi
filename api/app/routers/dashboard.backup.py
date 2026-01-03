@@ -2,10 +2,9 @@
 Dashboard WebSocket router for real-time call monitoring.
 
 Broadcasts call events to connected dashboard clients.
-Includes location send notifications for delivery drivers.
 """
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from typing import Set, Dict, Any, Optional
+from typing import Set, Dict, Any
 import asyncio
 import json
 import logging
@@ -19,9 +18,6 @@ dashboard_clients: Set[WebSocket] = set()
 
 # Current call state for new connections
 active_calls: Dict[str, Dict[str, Any]] = {}
-
-# Pending location sends (call_sid -> task)
-pending_location_sends: Dict[str, asyncio.Task] = {}
 
 
 class DashboardBroadcaster:
@@ -65,8 +61,7 @@ class DashboardBroadcaster:
             "called": called,
             "started_at": datetime.now().isoformat(),
             "status": "connected",
-            "turns": [],
-            "location_send_pending": False
+            "turns": []
         }
         
         await DashboardBroadcaster.broadcast({
@@ -123,11 +118,6 @@ class DashboardBroadcaster:
         """Notify dashboard that a call has ended."""
         logger.info(f"📡 call_ended: {call_sid} (duration: {duration_seconds}s)")
         
-        # Cancel any pending location send
-        if call_sid in pending_location_sends:
-            pending_location_sends[call_sid].cancel()
-            del pending_location_sends[call_sid]
-        
         if call_sid in active_calls:
             del active_calls[call_sid]
         
@@ -162,125 +152,9 @@ class DashboardBroadcaster:
             "timestamp": datetime.now().isoformat()
         })
 
-    @staticmethod
-    async def location_send_pending(
-        call_sid: str, 
-        caller: str,
-        confidence: float,
-        reason: str,
-        timeout_seconds: int = 30
-    ):
-        """
-        Notify dashboard that location SMS should be sent.
-        
-        Shows notification with countdown - auto-sends after timeout unless cancelled.
-        """
-        logger.info(f"📍 Location send pending for {call_sid} (confidence: {confidence:.0%})")
-        
-        if call_sid in active_calls:
-            active_calls[call_sid]["location_send_pending"] = True
-        
-        await DashboardBroadcaster.broadcast({
-            "type": "location_send_pending",
-            "call_sid": call_sid,
-            "caller": caller,
-            "confidence": confidence,
-            "reason": reason,
-            "timeout_seconds": timeout_seconds,
-            "timestamp": datetime.now().isoformat()
-        })
-    
-    @staticmethod
-    async def location_sent(call_sid: str, caller: str, trigger: str, success: bool):
-        """Notify dashboard that location SMS was sent (or failed)."""
-        logger.info(f"📍 Location {'sent' if success else 'failed'} for {call_sid} (trigger: {trigger})")
-        
-        if call_sid in active_calls:
-            active_calls[call_sid]["location_send_pending"] = False
-            active_calls[call_sid]["location_sent"] = success
-        
-        await DashboardBroadcaster.broadcast({
-            "type": "location_sent",
-            "call_sid": call_sid,
-            "caller": caller,
-            "trigger": trigger,
-            "success": success,
-            "timestamp": datetime.now().isoformat()
-        })
-    
-    @staticmethod
-    async def location_cancelled(call_sid: str):
-        """Notify dashboard that location send was cancelled."""
-        logger.info(f"📍 Location send cancelled for {call_sid}")
-        
-        if call_sid in active_calls:
-            active_calls[call_sid]["location_send_pending"] = False
-        
-        await DashboardBroadcaster.broadcast({
-            "type": "location_cancelled",
-            "call_sid": call_sid,
-            "timestamp": datetime.now().isoformat()
-        })
-
 
 # Global broadcaster instance
 broadcaster = DashboardBroadcaster()
-
-
-async def schedule_location_send(
-    call_sid: str,
-    caller: str,
-    timeout_seconds: int = 30
-):
-    """
-    Schedule automatic location send after timeout.
-    
-    Can be cancelled by calling cancel_location_send().
-    """
-    from app.services.messaging import get_messaging_service
-    
-    async def send_after_timeout():
-        try:
-            await asyncio.sleep(timeout_seconds)
-            
-            # Check if still pending (not cancelled)
-            if call_sid in active_calls and active_calls[call_sid].get("location_send_pending"):
-                logger.info(f"📍 Auto-sending location to {caller} (timeout)")
-                
-                messaging = get_messaging_service()
-                result = messaging.send_location_sms(
-                    to_number=caller,
-                    call_sid=call_sid,
-                    trigger="timeout"
-                )
-                
-                await broadcaster.location_sent(
-                    call_sid, 
-                    caller, 
-                    "timeout", 
-                    result.get("success", False)
-                )
-        except asyncio.CancelledError:
-            logger.info(f"📍 Location send cancelled for {call_sid}")
-        except Exception as e:
-            logger.error(f"📍 Location send error: {e}")
-    
-    # Cancel any existing task for this call
-    if call_sid in pending_location_sends:
-        pending_location_sends[call_sid].cancel()
-    
-    # Schedule new task
-    task = asyncio.create_task(send_after_timeout())
-    pending_location_sends[call_sid] = task
-
-
-def cancel_location_send(call_sid: str) -> bool:
-    """Cancel pending location send for a call."""
-    if call_sid in pending_location_sends:
-        pending_location_sends[call_sid].cancel()
-        del pending_location_sends[call_sid]
-        return True
-    return False
 
 
 @router.websocket("/ws")
@@ -311,47 +185,11 @@ async def dashboard_websocket(websocket: WebSocket):
                 # Handle client commands
                 try:
                     data = json.loads(message)
-                    msg_type = data.get("type")
-                    
-                    if msg_type == "ping":
+                    if data.get("type") == "ping":
                         await websocket.send_text(json.dumps({
                             "type": "pong",
                             "timestamp": datetime.now().isoformat()
                         }))
-                    
-                    elif msg_type == "send_location":
-                        # Manual send from dashboard
-                        call_sid = data.get("call_sid")
-                        caller = data.get("caller")
-                        
-                        if call_sid and caller:
-                            from app.services.messaging import get_messaging_service
-                            
-                            # Cancel timeout task
-                            cancel_location_send(call_sid)
-                            
-                            # Send immediately
-                            messaging = get_messaging_service()
-                            result = messaging.send_location_sms(
-                                to_number=caller,
-                                call_sid=call_sid,
-                                trigger="manual"
-                            )
-                            
-                            await broadcaster.location_sent(
-                                call_sid,
-                                caller,
-                                "manual",
-                                result.get("success", False)
-                            )
-                    
-                    elif msg_type == "cancel_location":
-                        # Cancel location send
-                        call_sid = data.get("call_sid")
-                        if call_sid:
-                            cancel_location_send(call_sid)
-                            await broadcaster.location_cancelled(call_sid)
-                            
                 except json.JSONDecodeError:
                     pass
                     
@@ -381,8 +219,7 @@ async def dashboard_status():
     return {
         "connected_clients": len(dashboard_clients),
         "active_calls": len(active_calls),
-        "calls": list(active_calls.values()),
-        "pending_location_sends": list(pending_location_sends.keys())
+        "calls": list(active_calls.values())
     }
 
 
@@ -431,24 +268,13 @@ async def test_broadcast():
     )
     await asyncio.sleep(0.5)
     
-    # Simulate delivery detection
-    await broadcaster.location_send_pending(
-        test_call_sid,
-        test_caller,
-        confidence=0.85,
-        reason="Delivery detected (corriere, pacco, Via)",
-        timeout_seconds=15  # Shorter for test
-    )
-    
-    await asyncio.sleep(0.5)
-    
     await broadcaster.processing_status(test_call_sid, "thinking")
     await asyncio.sleep(0.3)
     
     await broadcaster.transcript_update(
         test_call_sid,
         "ai",
-        "Sì, è l'indirizzo giusto. Via Paolo Barachini 7, San Giuliano Terme. Cancello verde.",
+        "Sì, è l'indirizzo giusto. Via Paolo Barachini 86, San Giuliano Terme.",
         2,
         latency_ms=850
     )
@@ -461,30 +287,5 @@ async def test_broadcast():
     return {
         "status": "test_complete",
         "call_sid": test_call_sid,
-        "message": "Check the dashboard - you should have seen a fake call with location send notification"
-    }
-
-
-@router.post("/test-location")
-async def test_location_send():
-    """
-    TEST ENDPOINT: Test location SMS sending.
-    
-    Usage: curl -X POST https://phone.rashbass.org/api/dashboard/test-location
-    
-    Tests the messaging service preview (doesn't actually send).
-    """
-    from app.services.messaging import get_messaging_service
-    
-    messaging = get_messaging_service()
-    
-    return {
-        "service_enabled": messaging.client is not None,
-        "from_number": messaging.from_number,
-        "preview": messaging.format_location_message(),
-        "location": {
-            "address": messaging.location.address,
-            "landmark": messaging.location.landmark,
-            "maps_url": messaging.location.get_maps_url()
-        }
+        "message": "Check the dashboard - you should have seen a fake call appear and complete"
     }

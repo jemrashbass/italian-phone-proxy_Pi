@@ -1,0 +1,171 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-03T13:19:50.731968",
+    "ended_at": "2026-01-03T13:20:06.538428",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8289,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 1881,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 1881,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-03T13:20:14.384160",
+    "ended_at": "2026-01-03T13:20:25.305509",
+    "transcript": "Buongiorno, sono il Corriere, sto cercando Via Paolo Barachini 86.",
+    "anchor_words": [
+      "Buongiorno",
+      "Corriere",
+      "sto",
+      "cercando",
+      "Via"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 7860,
+    "confidence": 0.0,
+    "response": "Sì, è qui. Da dove arriva? Dal centro di Asciano?",
+    "response_anchor_words": [
+      "qui",
+      "dove",
+      "arriva",
+      "Dal",
+      "centro"
+    ],
+    "response_audio_duration_ms": 3013,
+    "tokens_in": 1907,
+    "tokens_out": 22,
+    "latency": {
+      "total_ms": 6498,
+      "silence_detection_ms": 2,
+      "whisper_ms": 1653,
+      "claude_ms": 2562,
+      "tts_ms": 2283,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-03T13:20:28.878098",
+    "ended_at": "2026-01-03T13:20:44.057735",
+    "transcript": "al centro di Asciano.",
+    "anchor_words": [
+      "centro",
+      "Asciano"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 3740,
+    "confidence": 0.0,
+    "response": "Perfetto. Segua via Paolo Barachini dritto - vedrà la macelleria sulla sinistra. Continui dritto e giri a sinistra in salita.",
+    "response_anchor_words": [
+      "Perfetto",
+      "Segua",
+      "via",
+      "Paolo",
+      "Barachini"
+    ],
+    "response_audio_duration_ms": 7855,
+    "tokens_in": 1939,
+    "tokens_out": 47,
+    "latency": {
+      "total_ms": 5024,
+      "silence_detection_ms": 2,
+      "whisper_ms": 1072,
+      "claude_ms": 2563,
+      "tts_ms": 1389,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "ECHO",
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-03T13:20:50.981544",
+    "ended_at": "2026-01-03T13:21:00.679412",
+    "transcript": "Un'altra domanda, grazie, un'altra domanda, un'altra domanda, grazie, un'altra domanda,",
+    "anchor_words": [
+      "Unaltra",
+      "domanda",
+      "grazie",
+      "unaltra",
+      "domanda"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6940,
+    "confidence": 0.0,
+    "response": "Prego, mi dica.",
+    "response_anchor_words": [
+      "Prego",
+      "dica"
+    ],
+    "response_audio_duration_ms": 802,
+    "tokens_in": 2019,
+    "tokens_out": 11,
+    "latency": {
+      "total_ms": 4616,
+      "silence_detection_ms": 2,
+      "whisper_ms": 975,
+      "claude_ms": 2139,
+      "tts_ms": 1502,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 4,
+    "speaker": "caller",
+    "started_at": "2026-01-03T13:21:03.020234",
+    "ended_at": "2026-01-03T13:21:09.543397",
+    "transcript": "grazie, arrivederci.",
+    "anchor_words": [
+      "grazie",
+      "arrivederci"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2360,
+    "confidence": 0.0,
+    "response": "Arrivederci, buona giornata.",
+    "response_anchor_words": [
+      "Arrivederci",
+      "buona",
+      "giornata"
+    ],
+    "response_audio_duration_ms": 1526,
+    "tokens_in": 2041,
+    "tokens_out": 15,
+    "latency": {
+      "total_ms": 3646,
+      "silence_detection_ms": 2,
+      "whisper_ms": 899,
+      "claude_ms": 1956,
+      "tts_ms": 791,
+      "overhead_ms": 0
+    },
+    "flags": []
+  }
+]

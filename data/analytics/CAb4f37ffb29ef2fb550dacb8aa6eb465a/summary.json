@@ -1,0 +1,32 @@
+{
+  "call_sid": "CAb4f37ffb29ef2fb550dacb8aa6eb465a",
+  "caller": "+447796315426",
+  "called": "+447886078862",
+  "started_at": "2026-01-03T14:12:48.165519",
+  "ended_at": "2026-01-03T14:14:22.779731",
+  "duration_seconds": 94,
+  "status": "ended",
+  "total_turns": 6,
+  "caller_turns": 5,
+  "ai_turns": 1,
+  "total_talk_time_ms": 0,
+  "total_silence_time_ms": 0,
+  "avg_total_ms": 4500,
+  "avg_whisper_ms": 1609,
+  "avg_claude_ms": 2530,
+  "avg_tts_ms": 1471,
+  "p95_total_ms": 6497,
+  "slowest_turn": 3,
+  "slowest_component": "claude",
+  "avg_whisper_confidence": 0.0,
+  "low_confidence_turns": [],
+  "echo_events": 0,
+  "interruptions": 0,
+  "repeats": 0,
+  "flags_summary": {
+    "SLOW_RESPONSE": 4
+  },
+  "total_input_tokens": 7972,
+  "total_output_tokens": 131,
+  "avg_response_tokens": 32
+}

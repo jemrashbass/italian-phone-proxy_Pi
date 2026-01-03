@@ -1,0 +1,135 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-03T12:17:08.548259",
+    "ended_at": "2026-01-03T12:17:18.123649",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 7460,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 2223,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 2223,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-03T12:17:19.340705",
+    "ended_at": "2026-01-03T12:17:24.465999",
+    "transcript": "Grazie a tutti",
+    "anchor_words": [
+      "Grazie",
+      "tutti"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 4480,
+    "confidence": 0.0,
+    "response": "Prego. C'è qualcosa di cui ha bisogno?",
+    "response_anchor_words": [
+      "Prego",
+      "Cè",
+      "qualcosa",
+      "cui",
+      "bisogno"
+    ],
+    "response_audio_duration_ms": 0,
+    "tokens_in": 1879,
+    "tokens_out": 20,
+    "latency": {
+      "total_ms": 3866,
+      "silence_detection_ms": 2,
+      "whisper_ms": 1536,
+      "claude_ms": 2330,
+      "tts_ms": 0,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-03T12:17:36.737927",
+    "ended_at": "2026-01-03T12:17:54.078172",
+    "transcript": "Buongiorno, sono il Corriere, sto cercando Via Barachini 86, ma il navigatore mi manda una strada sbagliata.",
+    "anchor_words": [
+      "Buongiorno",
+      "Corriere",
+      "sto",
+      "cercando",
+      "Via"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 12300,
+    "confidence": 0.0,
+    "response": "Ah sì, capita spesso. Deve seguire via Paolo Barachini dal centro di Asciano - c'è la macelleria sulla sinistra. Continui dritto, poi giri a sinistra su per la collina.",
+    "response_anchor_words": [
+      "Ah",
+      "capita",
+      "spesso",
+      "Deve",
+      "seguire"
+    ],
+    "response_audio_duration_ms": 0,
+    "tokens_in": 1940,
+    "tokens_out": 60,
+    "latency": {
+      "total_ms": 4424,
+      "silence_detection_ms": 4,
+      "whisper_ms": 1400,
+      "claude_ms": 3024,
+      "tts_ms": 0,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-03T12:17:55.824861",
+    "ended_at": "2026-01-03T12:18:03.215177",
+    "transcript": "caro",
+    "anchor_words": [
+      "caro"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 1760,
+    "confidence": 0.0,
+    "response": "Vedrà il rubinetto dell'acquedotto sull'angolo. La casa 86 è quella rosa sulla destra, in cima alla collina. I numeri delle case sono confusi - continui fino in cima.",
+    "response_anchor_words": [
+      "Vedrà",
+      "rubinetto",
+      "dellacquedotto",
+      "sullangolo",
+      "casa"
+    ],
+    "response_audio_duration_ms": 0,
+    "tokens_in": 2005,
+    "tokens_out": 57,
+    "latency": {
+      "total_ms": 4787,
+      "silence_detection_ms": 1,
+      "whisper_ms": 1580,
+      "claude_ms": 3207,
+      "tts_ms": 0,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  }
+]

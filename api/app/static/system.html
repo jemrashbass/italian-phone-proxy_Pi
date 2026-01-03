@@ -304,7 +304,7 @@
             position: relative;
         }
         .list-section li::before {
-            content: "•";
+            content: "â€¢";
             position: absolute;
             left: 0;
             color: #00d9ff;
@@ -393,17 +393,18 @@
 </head>
 <body>
     <nav class="nav">
-        <a href="/dashboard/">🔴 Live</a>
-        <a href="/dashboard/calls.html">📞 History</a>
-        <a href="/dashboard/documents.html">📄 Docs</a>
-        <a href="/dashboard/config.html">⚙️ Knowledge</a>
-        <a href="/dashboard/analytics.html">📊 Analytics</a>
-        <a href="/dashboard/system.html" class="active">🔧 System</a>
+        <span class="nav-title">📞 Phone Proxy</span>
+        <a href="index.html">🔴 Live</a>
+        <a href="calls.html">📋 History</a>
+        <a href="documents.html">📄 Docs</a>
+        <a href="config.html" class="active">⚙️ Config</a>
+        <a href="analytics.html">📊 Analytics</a>
+        <a href="system.html">🔧 System</a>
     </nav>
     
     <div class="container">
         <div class="page-header">
-            <h1>🔧 System Configuration</h1>
+            <h1>ðŸ”§ System Configuration</h1>
             <p>Adjust system parameters and view AI-powered optimization recommendations</p>
         </div>
         
@@ -416,7 +417,7 @@
                     <option value="">Select a call to analyze...</option>
                 </select>
                 <button class="btn btn-primary" onclick="analyzeCall()" id="analyzeBtn">
-                    🔍 Analyze Call
+                    ðŸ” Analyze Call
                 </button>
             </div>
         </div>
@@ -429,7 +430,7 @@
                         <h2>Current Settings</h2>
                         <div>
                             <span id="unsavedIndicator" class="unsaved-indicator" style="display: none;">
-                                ● Unsaved changes
+                                â— Unsaved changes
                             </span>
                             <button class="btn btn-success btn-sm" onclick="saveChanges()" id="saveBtn" disabled>
                                 Save Changes
@@ -460,7 +461,7 @@
                     </div>
                     <div class="card-body" id="recommendationsContainer">
                         <div class="empty-state">
-                            <div class="icon">🔍</div>
+                            <div class="icon">ðŸ”</div>
                             <p>Select a call and click "Analyze" to get AI-powered recommendations</p>
                         </div>
                     </div>
@@ -575,6 +576,32 @@
                         `).join('')}
                     </select>
                 `;
+            } else if (meta.type === 'bool') {
+                inputHtml = `
+                    <label style="cursor: pointer;">
+                        <input type="checkbox" 
+                               id="${inputId}"
+                               ${value ? 'checked' : ''}
+                               onchange="handleChange('${key}', this.checked)"
+                               style="width: auto; margin-right: 8px;">
+                        ${value ? 'Enabled' : 'Disabled'}
+                    </label>
+                `;
+            } else if (meta.type === 'textarea') {
+                inputHtml = `
+                    <textarea id="${inputId}"
+                              rows="4"
+                              style="width: 100%; min-width: 300px; background: #1a1a2e; border: 1px solid #0f3460; border-radius: 6px; padding: 8px; color: #fff; font-size: 0.85em; resize: vertical;"
+                              onchange="handleChange('${key}', this.value)">${escapeHtml(value)}</textarea>
+                `;
+            } else if (meta.type === 'text') {
+                inputHtml = `
+                    <input type="text" 
+                           id="${inputId}"
+                           value="${escapeHtml(value)}"
+                           style="width: 280px; text-align: left;"
+                           onchange="handleChange('${key}', this.value)">
+                `;
             } else if (meta.type === 'float') {
                 inputHtml = `
                     <div class="input-group">
@@ -603,7 +630,7 @@
             }
             
             return `
-                <div class="config-item">
+                <div class="config-item" style="${meta.type === 'textarea' ? 'grid-template-columns: 1fr; gap: 8px;' : ''}">
                     <div>
                         <div class="label">${meta.label || key}</div>
                         <div class="description">${meta.description || ''}</div>
@@ -611,6 +638,14 @@
                     ${inputHtml}
                 </div>
             `;
+        }
+        
+        // Helper to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
         // Handle config value change
@@ -676,7 +711,7 @@
             
             const btn = document.getElementById('analyzeBtn');
             btn.disabled = true;
-            btn.textContent = '⏳ Analyzing...';
+            btn.textContent = 'â³ Analyzing...';
             
             const container = document.getElementById('recommendationsContainer');
             container.innerHTML = '<div class="loading">Analyzing call with AI...</div>';
@@ -693,13 +728,13 @@
             } catch (error) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="icon">⚠️</div>
+                        <div class="icon">âš ï¸</div>
                         <p>Failed to analyze call: ${error.message}</p>
                     </div>
                 `;
             } finally {
                 btn.disabled = false;
-                btn.textContent = '🔍 Analyze Call';
+                btn.textContent = 'ðŸ” Analyze Call';
             }
         }
         
@@ -721,7 +756,7 @@
             if (insights.issues && insights.issues.length > 0) {
                 html += `
                     <div class="list-section issues">
-                        <h4>⚠️ Issues Identified</h4>
+                        <h4>âš ï¸ Issues Identified</h4>
                         <ul>
                             ${insights.issues.map(issue => `<li>${issue}</li>`).join('')}
                         </ul>
@@ -742,7 +777,7 @@
             if (insights.quick_wins && insights.quick_wins.length > 0) {
                 html += `
                     <div class="list-section quick-wins">
-                        <h4>⚡ Quick Wins</h4>
+                        <h4>âš¡ Quick Wins</h4>
                         <ul>
                             ${insights.quick_wins.map(win => `<li>${win}</li>`).join('')}
                         </ul>
@@ -754,7 +789,7 @@
             if (insights.requires_investigation && insights.requires_investigation.length > 0) {
                 html += `
                     <div class="list-section">
-                        <h4>🔬 Requires Investigation</h4>
+                        <h4>ðŸ”¬ Requires Investigation</h4>
                         <ul>
                             ${insights.requires_investigation.map(item => `<li>${item}</li>`).join('')}
                         </ul>
@@ -775,19 +810,19 @@
                     <div class="recommendation-header">
                         <span class="recommendation-param">${rec.parameter}</span>
                         <span class="recommendation-priority ${priorityClass}">
-                            Priority ${rec.priority} · ${rec.confidence}
+                            Priority ${rec.priority} Â· ${rec.confidence}
                         </span>
                     </div>
                     <div class="recommendation-values">
                         <span class="current">${rec.current_value}</span>
-                        <span class="arrow">→</span>
+                        <span class="arrow">â†’</span>
                         <span class="recommended">${rec.recommended_value}</span>
                     </div>
                     <div class="recommendation-reasoning">${rec.reasoning}</div>
                     <div class="recommendation-impact">Expected: ${rec.expected_impact}</div>
                     <div class="recommendation-actions">
                         <button class="btn btn-success btn-sm" onclick="applyRecommendation('${rec.id}', '${rec.parameter}', ${JSON.stringify(rec.recommended_value).replace(/"/g, '&quot;')})">
-                            ✓ Apply
+                            âœ“ Apply
                         </button>
                         <button class="btn btn-secondary btn-sm" onclick="dismissRecommendation('${rec.id}')">
                             Dismiss
@@ -857,14 +892,14 @@
             container.innerHTML = history.map(change => {
                 const date = new Date(change.timestamp);
                 const timeStr = date.toLocaleString();
-                const sourceIcon = change.source === 'recommendation' ? '🤖' : 
-                                   change.source === 'manual' ? '👤' : '⚙️';
+                const sourceIcon = change.source === 'recommendation' ? 'ðŸ¤–' : 
+                                   change.source === 'manual' ? 'ðŸ‘¤' : 'âš™ï¸';
                 
                 return `
                     <div class="history-item">
                         <div class="time">${sourceIcon} ${timeStr}</div>
                         <div class="change">${change.parameter}</div>
-                        <div class="values">${change.old_value} → ${change.new_value}</div>
+                        <div class="values">${change.old_value} â†’ ${change.new_value}</div>
                     </div>
                 `;
             }).join('');

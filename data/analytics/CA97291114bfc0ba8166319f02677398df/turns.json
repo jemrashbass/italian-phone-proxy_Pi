@@ -1,0 +1,193 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-03T14:14:49.977805",
+    "ended_at": "2026-01-03T14:14:59.907870",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8263,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 2391,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 2391,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:15:01.125930",
+    "ended_at": "2026-01-03T14:15:22.149703",
+    "transcript": "Grazie mille! Ciao!",
+    "anchor_words": [
+      "Grazie",
+      "mille",
+      "Ciao"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 3320,
+    "confidence": 0.0,
+    "response": "Prego! Arrivederci e buona giornata!",
+    "response_anchor_words": [
+      "Prego",
+      "Arrivederci",
+      "buona",
+      "giornata"
+    ],
+    "response_audio_duration_ms": 2302,
+    "tokens_in": 1892,
+    "tokens_out": 19,
+    "latency": {
+      "total_ms": 20228,
+      "silence_detection_ms": 2,
+      "whisper_ms": 800,
+      "claude_ms": 2514,
+      "tts_ms": 16914,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:15:28.572973",
+    "ended_at": "2026-01-03T14:15:30.567327",
+    "transcript": "Ciao",
+    "anchor_words": [
+      "Ciao"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 1900,
+    "confidence": 0.0,
+    "response": "Arrivederci.",
+    "response_anchor_words": [
+      "Arrivederci"
+    ],
+    "response_audio_duration_ms": 750,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 1987,
+      "silence_detection_ms": 1,
+      "whisper_ms": 671,
+      "claude_ms": 0,
+      "tts_ms": 1316,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:15:35.662612",
+    "ended_at": "2026-01-03T14:15:40.071177",
+    "transcript": "ciao a tutti.",
+    "anchor_words": [
+      "ciao",
+      "tutti"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 1920,
+    "confidence": 0.0,
+    "response": "Arrivederci a lei.",
+    "response_anchor_words": [
+      "Arrivederci",
+      "lei"
+    ],
+    "response_audio_duration_ms": 1092,
+    "tokens_in": 1934,
+    "tokens_out": 11,
+    "latency": {
+      "total_ms": 4402,
+      "silence_detection_ms": 1,
+      "whisper_ms": 1274,
+      "claude_ms": 2081,
+      "tts_ms": 1047,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 4,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:15:44.955036",
+    "ended_at": "2026-01-03T14:15:48.863144",
+    "transcript": "Grazie a tutti",
+    "anchor_words": [
+      "Grazie",
+      "tutti"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 1260,
+    "confidence": 0.0,
+    "response": "Prego, arrivederci.",
+    "response_anchor_words": [
+      "Prego",
+      "arrivederci"
+    ],
+    "response_audio_duration_ms": 1184,
+    "tokens_in": 1953,
+    "tokens_out": 12,
+    "latency": {
+      "total_ms": 3902,
+      "silence_detection_ms": 1,
+      "whisper_ms": 635,
+      "claude_ms": 1924,
+      "tts_ms": 1343,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 5,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:15:53.562814",
+    "ended_at": "2026-01-03T14:16:02.228863",
+    "transcript": "Termi, dove è la cassa?",
+    "anchor_words": [
+      "Termi",
+      "dove",
+      "cassa"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 8880,
+    "confidence": 0.0,
+    "response": "Pronto. Sì, sono JEREMY. Mi scusi, sono inglese e il mio italiano non è perfetto — parlo lentamente ma capisco bene. Mi dica pure.",
+    "response_anchor_words": [
+      "Pronto",
+      "JEREMY",
+      "scusi",
+      "inglese",
+      "mio"
+    ],
+    "response_audio_duration_ms": 8315,
+    "tokens_in": 1917,
+    "tokens_out": 48,
+    "latency": {
+      "total_ms": 5281,
+      "silence_detection_ms": 3,
+      "whisper_ms": 1014,
+      "claude_ms": 2239,
+      "tts_ms": 2028,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  }
+]

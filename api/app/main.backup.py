@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 import logging
 import os
 
-from app.routers import documents, config, twilio, calls, dashboard, analytics, system_config, messaging
+from app.routers import documents, config, twilio, calls, dashboard, analytics, system_config
 from app.services.knowledge import KnowledgeService
 
 # Configure logging
@@ -38,13 +38,6 @@ async def lifespan(app: FastAPI):
     analytics_service.set_broadcaster(broadcaster)
     logger.info("📊 Analytics service connected to broadcaster")
     
-    # Connect messaging service to dashboard broadcaster AND knowledge service
-    from app.services.messaging import get_messaging_service
-    messaging_service = get_messaging_service()
-    messaging_service.set_broadcaster(broadcaster.broadcast)
-    messaging_service.set_knowledge_service(app.state.knowledge)  # 📍 Connect to knowledge
-    logger.info("📍 Messaging service connected to broadcaster and knowledge")
-    
     # Initialize system config service
     from app.services.system_config import get_system_config_service
     config_service = get_system_config_service()
@@ -64,7 +57,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Italian Phone Proxy",
     description="AI Voice Agent for Managing Italian Phone Calls",
-    version="0.4.0",  # Version bump for messaging feature
+    version="0.3.0",
     lifespan=lifespan
 )
 
@@ -85,7 +78,6 @@ app.include_router(twilio.router, prefix="/api/twilio", tags=["Twilio"])
 app.include_router(calls.router, prefix="/api/calls", tags=["Calls"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
-app.include_router(messaging.router, prefix="/api/messaging", tags=["Messaging"])  # 📍 NEW
 
 # Static files (dashboard) - must be last
 # Check if static directory exists before mounting
@@ -103,7 +95,7 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "italian-phone-proxy",
-        "version": "0.4.0",
+        "version": "0.3.0",
         "features": {
             "documents": True,
             "telephony": True,
@@ -111,8 +103,7 @@ async def health_check():
             "claude": bool(os.getenv("ANTHROPIC_API_KEY")),
             "twilio": bool(os.getenv("TWILIO_ACCOUNT_SID")),
             "analytics": True,
-            "system_config": True,
-            "messaging": True  # 📍 NEW
+            "system_config": True
         }
     }
 
@@ -123,11 +114,8 @@ async def api_status():
     from app.routers.twilio import active_calls as twilio_calls
     from app.routers.dashboard import active_calls as dashboard_calls, dashboard_clients
     from app.services.system_config import get_system_config_service
-    from app.services.messaging import get_messaging_service
     
     config_service = get_system_config_service()
-    messaging_service = get_messaging_service()
-    messaging_config = messaging_service.get_config()
     
     return {
         "service": "italian-phone-proxy",
@@ -137,9 +125,5 @@ async def api_status():
         "active_calls": len(dashboard_calls),
         "dashboard_clients": len(dashboard_clients),
         "calls": list(dashboard_calls.values()),
-        "config_version": config_service.config.version,
-        "messaging": {
-            "queued_messages": len(messaging_service.get_queue_status()),
-            "auto_send_enabled": messaging_config.get("auto_send_enabled", True)
-        }
+        "config_version": config_service.config.version
     }

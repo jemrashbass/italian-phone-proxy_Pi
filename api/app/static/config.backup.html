@@ -108,8 +108,7 @@
             color: var(--text-secondary);
         }
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 10px 12px;
             border: 1px solid var(--border-color);
@@ -120,15 +119,13 @@
             transition: border-color 0.2s;
         }
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             outline: none;
             border-color: var(--accent-green);
         }
         .form-group textarea {
             min-height: 80px;
             resize: vertical;
-            font-family: inherit;
         }
         .form-group small {
             display: block;
@@ -143,60 +140,6 @@
             gap: 12px;
         }
         
-        /* Toggle switch */
-        .toggle-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-        .toggle-group label {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        .toggle {
-            position: relative;
-            width: 44px;
-            height: 24px;
-        }
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg-tertiary);
-            border-radius: 24px;
-            transition: 0.3s;
-        }
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            border-radius: 50%;
-            transition: 0.3s;
-        }
-        .toggle input:checked + .toggle-slider {
-            background: var(--accent-green);
-        }
-        .toggle input:checked + .toggle-slider:before {
-            transform: translateX(20px);
-        }
-        .toggle-status {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        
         .btn {
             padding: 8px 16px;
             border: none;
@@ -209,8 +152,6 @@
         .btn-primary:hover { background: #00916e; }
         .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
         .btn-secondary:hover { background: var(--bg-input); }
-        .btn-test { background: var(--accent-blue); color: white; }
-        .btn-test:hover { background: #3aa8d8; }
         
         /* Save bar */
         .save-bar {
@@ -314,25 +255,6 @@
             font-size: 12px;
         }
         .empty-state a { color: var(--accent-blue); }
-        
-        /* Test result box */
-        .test-result {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 6px;
-            background: var(--bg-tertiary);
-            font-size: 12px;
-            display: none;
-        }
-        .test-result.visible { display: block; }
-        .test-result.success { border-left: 3px solid var(--accent-green); }
-        .test-result.error { border-left: 3px solid var(--accent-red); }
-        .test-result pre {
-            margin-top: 8px;
-            font-size: 11px;
-            color: var(--text-secondary);
-            white-space: pre-wrap;
-        }
     </style>
 </head>
 <body>
@@ -342,7 +264,7 @@
             <a href="index.html">🔴 Live</a>
             <a href="calls.html">📋 History</a>
             <a href="documents.html">📄 Docs</a>
-            <a href="config.html" class="active">⚙️ Config</a>
+            <a href="config.html">⚙️ Config</a>
             <a href="analytics.html">📊 Analytics</a>
             <a href="system.html">🔧 System</a>
         </div>
@@ -354,7 +276,6 @@
         <div class="tabs">
             <button class="tab active" onclick="showTab('identity')">Identity</button>
             <button class="tab" onclick="showTab('location')">Location</button>
-            <button class="tab" onclick="showTab('sms')">📍 SMS</button>
             <button class="tab" onclick="showTab('accounts')">Accounts</button>
             <button class="tab" onclick="showTab('preferences')">Preferences</button>
             <button class="tab" onclick="showTab('raw')">Raw JSON</button>
@@ -424,82 +345,6 @@
                     <input type="url" id="location.google_maps_url" placeholder="https://maps.google.com/...">
                 </div>
             </div>
-        </div>
-        
-        <!-- 📍 NEW: Location SMS Panel -->
-        <div id="sms" class="panel">
-            <h2>📍 Location SMS for Delivery Drivers</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 12px;">
-                When the AI detects a delivery driver asking for directions, it can suggest sending them an SMS with your exact location and a tappable map link.
-            </p>
-            
-            <h3>GPS Coordinates</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Latitude</label>
-                    <input type="text" id="location_sharing.coordinates.lat" placeholder="43.7489171">
-                </div>
-                <div class="form-group">
-                    <label>Longitude</label>
-                    <input type="text" id="location_sharing.coordinates.lng" placeholder="10.4747839">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Google Maps Short Link</label>
-                <input type="url" id="location_sharing.google_maps_url" placeholder="https://maps.app.goo.gl/...">
-                <small>Get this from Google Maps → Share → Copy link</small>
-            </div>
-            
-            <h3>SMS Message Template</h3>
-            <div class="form-group">
-                <label>Message Text</label>
-                <textarea id="location_sharing.sms_template" rows="6" placeholder="📍 Ecco la posizione esatta:
-Via Paolo Barachini 7, San Giuliano Terme
-
-Cancello verde, citofono RASHBASS
-
-🗺 {location_url}"></textarea>
-                <small>Use <code>{location_url}</code> for the map link</small>
-            </div>
-            
-            <h3>Auto-Send Behavior</h3>
-            <div class="toggle-group">
-                <label class="toggle">
-                    <input type="checkbox" id="location_sharing.auto_send_enabled" onchange="updateToggleStatus(this)">
-                    <span class="toggle-slider"></span>
-                </label>
-                <label>Auto-send location after countdown</label>
-                <span class="toggle-status" id="autoSendStatus">Disabled</span>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Countdown Delay (seconds)</label>
-                    <input type="number" id="location_sharing.auto_send_delay_seconds" min="5" max="120" value="30">
-                    <small>Time before auto-sending (can cancel in dashboard)</small>
-                </div>
-            </div>
-            
-            <h3>Detection Keywords</h3>
-            <div class="form-group">
-                <label>Delivery Keywords (comma-separated)</label>
-                <input type="text" id="location_sharing.delivery_keywords" placeholder="consegna,corriere,pacco,delivery">
-                <small>Words that indicate a delivery context</small>
-            </div>
-            <div class="form-group">
-                <label>Address/Directions Keywords (comma-separated)</label>
-                <input type="text" id="location_sharing.address_keywords" placeholder="indirizzo,dove,posizione,strada">
-                <small>Words that indicate they're asking for directions</small>
-            </div>
-            
-            <h3>Test Detection</h3>
-            <div class="form-group">
-                <label>Test Phrase</label>
-                <input type="text" id="testPhrase" placeholder="Sono il corriere, dove devo portare il pacco?">
-            </div>
-            <button class="btn btn-test" onclick="testDetection()">🧪 Test Detection</button>
-            <button class="btn btn-secondary" onclick="previewMessage()" style="margin-left: 8px;">👁 Preview SMS</button>
-            
-            <div class="test-result" id="testResult"></div>
         </div>
         
         <div id="accounts" class="panel">
@@ -591,12 +436,9 @@ Cancello verde, citofono RASHBASS
         }
         
         function populateForm() {
-            // Identity
             setValue('identity.name', knowledge.identity?.name);
             setValue('identity.codice_fiscale', knowledge.identity?.codice_fiscale);
             setValue('identity.opening_phrase', knowledge.identity?.opening_phrase);
-            
-            // Location
             setValue('location.address.via', knowledge.location?.address?.via);
             setValue('location.address.numero', knowledge.location?.address?.numero);
             setValue('location.address.cap', knowledge.location?.address?.cap);
@@ -606,22 +448,6 @@ Cancello verde, citofono RASHBASS
             setValue('location.directions.house_description', knowledge.location?.directions?.house_description);
             setValue('location.gate_code', knowledge.location?.gate_code);
             setValue('location.google_maps_url', knowledge.location?.google_maps_url);
-            
-            // Location Sharing (SMS)
-            const ls = knowledge.location_sharing || {};
-            setValue('location_sharing.coordinates.lat', ls.coordinates?.lat || '');
-            setValue('location_sharing.coordinates.lng', ls.coordinates?.lng || '');
-            setValue('location_sharing.google_maps_url', ls.google_maps_url || '');
-            setValue('location_sharing.sms_template', ls.sms_template || '📍 Ecco la posizione esatta:\n{address}\n\n🗺 {location_url}');
-            setChecked('location_sharing.auto_send_enabled', ls.auto_send_enabled !== false);
-            setValue('location_sharing.auto_send_delay_seconds', ls.auto_send_delay_seconds || 30);
-            setValue('location_sharing.delivery_keywords', (ls.delivery_keywords || ['consegna','corriere','pacco','delivery','spedizione']).join(','));
-            setValue('location_sharing.address_keywords', (ls.address_keywords || ['indirizzo','dove','posizione','strada','via']).join(','));
-            
-            // Update toggle status
-            updateToggleStatus(document.getElementById('location_sharing.auto_send_enabled'));
-            
-            // Preferences
             setValue('preferences.preferred_time', knowledge.preferences?.preferred_time);
             setValue('preferences.available_days_text', (knowledge.preferences?.available_days || []).join(', '));
             setValue('house.neighbour_name', knowledge.house?.neighbour_name);
@@ -629,7 +455,6 @@ Cancello verde, citofono RASHBASS
             setValue('house.safe_place', knowledge.house?.safe_place);
             
             document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', markChanged));
-            document.querySelectorAll('input[type="checkbox"]').forEach(el => el.addEventListener('change', markChanged));
         }
         
         function setValue(id, value) {
@@ -637,27 +462,9 @@ Cancello verde, citofono RASHBASS
             if (el) el.value = value || '';
         }
         
-        function setChecked(id, checked) {
-            const el = document.getElementById(id);
-            if (el) el.checked = checked;
-        }
-        
         function getValue(id) {
             const el = document.getElementById(id);
             return el ? el.value : '';
-        }
-        
-        function getChecked(id) {
-            const el = document.getElementById(id);
-            return el ? el.checked : false;
-        }
-        
-        function updateToggleStatus(checkbox) {
-            const status = document.getElementById('autoSendStatus');
-            if (status) {
-                status.textContent = checkbox.checked ? 'Enabled' : 'Disabled';
-                status.style.color = checkbox.checked ? 'var(--accent-green)' : 'var(--text-secondary)';
-            }
         }
         
         function markChanged() {
@@ -712,11 +519,9 @@ Cancello verde, citofono RASHBASS
         
         async function saveChanges() {
             const updates = [
-                // Identity
                 { path: 'identity.name', value: getValue('identity.name') },
                 { path: 'identity.codice_fiscale', value: getValue('identity.codice_fiscale').toUpperCase() },
                 { path: 'identity.opening_phrase', value: getValue('identity.opening_phrase') },
-                // Location
                 { path: 'location.address.via', value: getValue('location.address.via') },
                 { path: 'location.address.numero', value: getValue('location.address.numero') },
                 { path: 'location.address.cap', value: getValue('location.address.cap') },
@@ -726,16 +531,6 @@ Cancello verde, citofono RASHBASS
                 { path: 'location.directions.house_description', value: getValue('location.directions.house_description') },
                 { path: 'location.gate_code', value: getValue('location.gate_code') },
                 { path: 'location.google_maps_url', value: getValue('location.google_maps_url') },
-                // Location Sharing (SMS)
-                { path: 'location_sharing.coordinates.lat', value: parseFloat(getValue('location_sharing.coordinates.lat')) || null },
-                { path: 'location_sharing.coordinates.lng', value: parseFloat(getValue('location_sharing.coordinates.lng')) || null },
-                { path: 'location_sharing.google_maps_url', value: getValue('location_sharing.google_maps_url') },
-                { path: 'location_sharing.sms_template', value: getValue('location_sharing.sms_template') },
-                { path: 'location_sharing.auto_send_enabled', value: getChecked('location_sharing.auto_send_enabled') },
-                { path: 'location_sharing.auto_send_delay_seconds', value: parseInt(getValue('location_sharing.auto_send_delay_seconds')) || 30 },
-                { path: 'location_sharing.delivery_keywords', value: getValue('location_sharing.delivery_keywords').split(',').map(s => s.trim()).filter(Boolean) },
-                { path: 'location_sharing.address_keywords', value: getValue('location_sharing.address_keywords').split(',').map(s => s.trim()).filter(Boolean) },
-                // Preferences
                 { path: 'preferences.preferred_time', value: getValue('preferences.preferred_time') },
                 { path: 'preferences.available_days', value: getValue('preferences.available_days_text').split(',').map(s => s.trim()).filter(Boolean) },
                 { path: 'house.neighbour_name', value: getValue('house.neighbour_name') },
@@ -758,61 +553,6 @@ Cancello verde, citofono RASHBASS
                 await loadKnowledge();
             } catch (e) {
                 showAlert('Failed to save: ' + e.message, 'error');
-            }
-        }
-        
-        async function testDetection() {
-            const phrase = getValue('testPhrase');
-            if (!phrase) {
-                showAlert('Enter a test phrase', 'error');
-                return;
-            }
-            
-            const resultBox = document.getElementById('testResult');
-            resultBox.classList.remove('visible', 'success', 'error');
-            resultBox.innerHTML = '<em>Asking Claude...</em>';
-            resultBox.classList.add('visible');
-            
-            try {
-                // Use Claude-based detection (smarter!)
-                const response = await fetch('/api/messaging/detect-claude', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: phrase })
-                });
-                
-                const result = await response.json();
-                
-                resultBox.classList.add(result.should_suggest ? 'success' : 'error');
-                resultBox.innerHTML = `
-                    <strong>${result.should_suggest ? '✓ Would suggest sending location' : '✗ Would NOT suggest sending'}</strong>
-                    <br>Confidence: ${(result.confidence * 100).toFixed(0)}%
-                    <br>Method: ${result.method || 'claude'}
-                    ${result.caller_type ? `<br>Caller type: ${result.caller_type}` : ''}
-                    ${result.reason ? `<pre style="margin-top: 8px; white-space: pre-wrap;">${result.reason}</pre>` : ''}
-                `;
-            } catch (e) {
-                resultBox.classList.add('error');
-                resultBox.innerHTML = `<strong>Error:</strong> ${e.message}`;
-            }
-        }
-        
-        async function previewMessage() {
-            const resultBox = document.getElementById('testResult');
-            resultBox.classList.remove('visible', 'success', 'error');
-            
-            try {
-                const response = await fetch('/api/messaging/preview');
-                const result = await response.json();
-                
-                resultBox.classList.add('visible', 'success');
-                resultBox.innerHTML = `
-                    <strong>📱 SMS Preview:</strong>
-                    <pre style="white-space: pre-wrap; margin-top: 8px; padding: 10px; background: var(--bg-input); border-radius: 4px;">${result.message}</pre>
-                `;
-            } catch (e) {
-                resultBox.classList.add('visible', 'error');
-                resultBox.innerHTML = `<strong>Error:</strong> ${e.message}`;
             }
         }
         

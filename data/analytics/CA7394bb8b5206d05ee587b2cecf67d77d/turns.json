@@ -1,0 +1,173 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-03T14:02:52.599164",
+    "ended_at": "2026-01-03T14:03:02.211335",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8328,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 1951,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 1951,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:03:03.421330",
+    "ended_at": "2026-01-03T14:03:13.322308",
+    "transcript": "Grazie a tutti",
+    "anchor_words": [
+      "Grazie",
+      "tutti"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6220,
+    "confidence": 0.0,
+    "response": "Prego. In che cosa posso aiutarla?",
+    "response_anchor_words": [
+      "Prego",
+      "posso",
+      "aiutarla"
+    ],
+    "response_audio_duration_ms": 2144,
+    "tokens_in": 1887,
+    "tokens_out": 17,
+    "latency": {
+      "total_ms": 4791,
+      "silence_detection_ms": 2,
+      "whisper_ms": 1488,
+      "claude_ms": 2037,
+      "tts_ms": 1266,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:03:26.721770",
+    "ended_at": "2026-01-03T14:03:51.920608",
+    "transcript": "Buongiorno, sono Yves Corriera, sto cercando Via Paolo Barachini, 86, ma il navigatore mi manda in una strada sbagliata.",
+    "anchor_words": [
+      "Buongiorno",
+      "Yves",
+      "Corriera",
+      "sto",
+      "cercando"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 14540,
+    "confidence": 0.0,
+    "response": "Sì, lo so. Segua via Paolo Barachini dal centro di Asciano - continui dritto e giri a sinistra su per la collina. Vedrà il rubinetto dell'acquedotto all'angolo. La casa 86 è quella rosa sulla destra in cima alla collina.",
+    "response_anchor_words": [
+      "so",
+      "Segua",
+      "via",
+      "Paolo",
+      "Barachini"
+    ],
+    "response_audio_duration_ms": 14565,
+    "tokens_in": 1950,
+    "tokens_out": 79,
+    "latency": {
+      "total_ms": 8307,
+      "silence_detection_ms": 5,
+      "whisper_ms": 2116,
+      "claude_ms": 3621,
+      "tts_ms": 2570,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:03:59.722334",
+    "ended_at": "2026-01-03T14:04:13.520937",
+    "transcript": "Ah, perfetto, ok, sono sulla collina, vedo una casa gialla, è quella?",
+    "anchor_words": [
+      "Ah",
+      "perfetto",
+      "ok",
+      "sulla",
+      "collina"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 7820,
+    "confidence": 0.0,
+    "response": "No, la casa è rosa, non gialla. Continui ancora un po' - è in cima alla collina sulla destra.",
+    "response_anchor_words": [
+      "casa",
+      "rosa",
+      "gialla",
+      "Continui",
+      "ancora"
+    ],
+    "response_audio_duration_ms": 5421,
+    "tokens_in": 2055,
+    "tokens_out": 33,
+    "latency": {
+      "total_ms": 6600,
+      "silence_detection_ms": 4,
+      "whisper_ms": 1577,
+      "claude_ms": 3460,
+      "tts_ms": 1563,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 4,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:04:17.140926",
+    "ended_at": "2026-01-03T14:04:23.926550",
+    "transcript": "Perfetto, grazie, arrivederci.",
+    "anchor_words": [
+      "Perfetto",
+      "grazie",
+      "arrivederci"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 3640,
+    "confidence": 0.0,
+    "response": "Prego, arrivederci.",
+    "response_anchor_words": [
+      "Prego",
+      "arrivederci"
+    ],
+    "response_audio_duration_ms": 1157,
+    "tokens_in": 2103,
+    "tokens_out": 12,
+    "latency": {
+      "total_ms": 4400,
+      "silence_detection_ms": 2,
+      "whisper_ms": 1479,
+      "claude_ms": 1969,
+      "tts_ms": 952,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  }
+]

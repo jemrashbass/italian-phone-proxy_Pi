@@ -99,14 +99,26 @@ class SystemConfig:
         """Create config from dictionary."""
         config = cls()
         
+        # Load each section, using defaults if missing
         if "audio" in data:
             config.audio = AudioConfig(**data["audio"])
+        else:
+            config.audio = AudioConfig()
+            
         if "claude" in data:
             config.claude = ClaudeConfig(**data["claude"])
+        else:
+            config.claude = ClaudeConfig()
+            
         if "tts" in data:
             config.tts = TTSConfig(**data["tts"])
+        else:
+            config.tts = TTSConfig()
+            
         if "analytics" in data:
             config.analytics = AnalyticsConfig(**data["analytics"])
+        else:
+            config.analytics = AnalyticsConfig()
         
         config.version = data.get("version", 1)
         config.updated_at = data.get("updated_at", "")
@@ -231,12 +243,22 @@ class SystemConfigService:
         """
         Set a configuration value by dot-notation path.
         
-        Returns change record.
+        Args:
+            path: Dot-notation path (e.g., "audio.silence_duration_ms")
+            value: New value
+            source: Who made the change (manual, recommendation, api)
+            recommendation_id: Optional ID linking to a recommendation
+            
+        Returns:
+            Change record dict
         """
         # Validate
         self._validate(path, value)
         
-        # Coerce types if needed
+        # Get current value
+        old_value = self.get(path)
+        
+        # Handle type coercion for numeric types
         rules = self.VALIDATION_RULES.get(path, {})
         expected_type = rules.get("type")
         if expected_type == float and isinstance(value, int):
@@ -244,19 +266,16 @@ class SystemConfigService:
         elif expected_type == int and isinstance(value, float) and value == int(value):
             value = int(value)
         
-        # Get old value
-        old_value = self.get(path)
-        
         # Set new value
         parts = path.split(".")
-        if len(parts) == 2:
-            section, param = parts
-            section_obj = getattr(self._config, section)
-            setattr(section_obj, param, value)
-        else:
-            raise ValueError(f"Invalid config path: {path}")
+        obj = self._config
         
-        # Update metadata
+        for part in parts[:-1]:
+            obj = getattr(obj, part)
+        
+        setattr(obj, parts[-1], value)
+        
+        # Increment version
         self._config.version += 1
         self._config.updated_by = source
         
@@ -274,7 +293,7 @@ class SystemConfigService:
         )
         self._record_change(change)
         
-        logger.info(f"Config changed: {path} = {value} (was {old_value})")
+        logger.info(f"Config changed: {path} = {value} (was {old_value}) by {source}")
         
         return change.to_dict()
     
@@ -325,13 +344,15 @@ class SystemConfigService:
                 # Accept both int and float for float parameters
                 if not isinstance(value, (int, float)):
                     raise ValueError(f"{path} must be a number, got {type(value).__name__}")
-                # Convert int to float if needed (handled in set())
             elif expected_type == int:
                 # Accept int, or float if it's a whole number
                 if isinstance(value, float) and value == int(value):
                     pass  # Will be converted in set()
                 elif not isinstance(value, int):
                     raise ValueError(f"{path} must be {expected_type.__name__}, got {type(value).__name__}")
+            elif expected_type == bool:
+                if not isinstance(value, bool):
+                    raise ValueError(f"{path} must be bool, got {type(value).__name__}")
             elif not isinstance(value, expected_type):
                 raise ValueError(f"{path} must be {expected_type.__name__}, got {type(value).__name__}")
         

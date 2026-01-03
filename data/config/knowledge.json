@@ -9,7 +9,7 @@
       "via": "VIA PAOLO BARACHINI",
       "numero": "86",
       "cap": "56017",
-      "comune": "SAN GIULIANO TERME",
+      "comune": "ASCIANO, SAN GIULIANO TERME",
       "provincia": "PI"
     },
     "address_variants": [
@@ -366,7 +366,7 @@
     }
   },
   "metadata": {
-    "last_updated": "2026-01-03T11:06:09.724754",
+    "last_updated": "2026-01-03T13:03:00.472741",
     "extraction_history": [
       {
         "date": "2026-01-01T10:16:30",
@@ -403,6 +403,35 @@
         "document_type": "electricity",
         "provider": "Eni Plenitude SpA"
       }
+    ]
+  },
+  "location_sharing": {
+    "coordinates": {
+      "lat": 43.748971397357224,
+      "lng": 10.474816052097635
+    },
+    "google_maps_url": "https://maps.app.goo.gl/9iQiDfF7Z1V2zMsn8",
+    "sms_template": "📍 Ecco la posizione esatta:\n{address}\n\n🗺 {location_url}",
+    "auto_send_enabled": true,
+    "auto_send_delay_seconds": 30,
+    "delivery_keywords": [
+      "consegna",
+      "corriere",
+      "pacco",
+      "delivery",
+      "spedizione",
+      "Amazon",
+      "DPD",
+      "DHL",
+      "GSL"
+    ],
+    "address_keywords": [
+      "indirizzo",
+      "dove",
+      "posizione",
+      "strada",
+      "via",
+      "Barachini"
     ]
   }
 }

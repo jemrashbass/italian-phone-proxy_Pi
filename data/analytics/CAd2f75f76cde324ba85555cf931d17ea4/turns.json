@@ -1,0 +1,141 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-03T13:03:23.082292",
+    "ended_at": "2026-01-03T13:03:39.020660",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8328,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 2014,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 2014,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-03T13:03:47.850038",
+    "ended_at": "2026-01-03T13:03:56.853684",
+    "transcript": "Grazie, buongiorno, sono il coliere, sto cercando Via Paolo Barachini, 86.",
+    "anchor_words": [
+      "Grazie",
+      "buongiorno",
+      "coliere",
+      "sto",
+      "cercando"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 8840,
+    "confidence": 0.0,
+    "response": "Sì, è qui. Via Paolo Barachini 86, Asciano. Dove si trova adesso?",
+    "response_anchor_words": [
+      "qui",
+      "Via",
+      "Paolo",
+      "Barachini",
+      "86"
+    ],
+    "response_audio_duration_ms": 4276,
+    "tokens_in": 1910,
+    "tokens_out": 30,
+    "latency": {
+      "total_ms": 7530,
+      "silence_detection_ms": 4,
+      "whisper_ms": 1853,
+      "claude_ms": 2718,
+      "tts_ms": 2959,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-03T13:03:56.855303",
+    "ended_at": "2026-01-03T13:04:19.506296",
+    "transcript": "ma il navigatore mi manda in una strada sbagliata.",
+    "anchor_words": [
+      "navigatore",
+      "manda",
+      "strada",
+      "sbagliata"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6100,
+    "confidence": 0.0,
+    "response": "Sì, capita spesso. Dal centro di Asciano, segua via Paolo Barachini dritto - macelleria sulla sinistra. Poi giri a sinistra in salita.",
+    "response_anchor_words": [
+      "capita",
+      "spesso",
+      "Dal",
+      "centro",
+      "Asciano"
+    ],
+    "response_audio_duration_ms": 8697,
+    "tokens_in": 1958,
+    "tokens_out": 49,
+    "latency": {
+      "total_ms": 4640,
+      "silence_detection_ms": 2,
+      "whisper_ms": 753,
+      "claude_ms": 2656,
+      "tts_ms": 1231,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-03T13:04:22.821116",
+    "ended_at": "2026-01-03T13:04:49.400441",
+    "transcript": "Posso mandare una mappa?",
+    "anchor_words": [
+      "Posso",
+      "mandare",
+      "mappa"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 3340,
+    "confidence": 0.0,
+    "response": "Sì, va bene. Il numero è 3482341783. La casa è rosa sulla destra, in cima alla collina.",
+    "response_anchor_words": [
+      "va",
+      "bene",
+      "numero",
+      "3482341783",
+      "casa"
+    ],
+    "response_audio_duration_ms": 7473,
+    "tokens_in": 2019,
+    "tokens_out": 35,
+    "latency": {
+      "total_ms": 5735,
+      "silence_detection_ms": 2,
+      "whisper_ms": 831,
+      "claude_ms": 3485,
+      "tts_ms": 1419,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  }
+]

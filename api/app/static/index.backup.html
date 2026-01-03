@@ -162,60 +162,6 @@
         }
         .turn-meta .latency { color: var(--accent-green); margin-left: 6px; }
         
-        /* 📍 Location Send Banner */
-        .location-banner {
-            display: none;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, #1a3a2f 0%, #0d2818 100%);
-            border-top: 1px solid var(--accent-green);
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            animation: slideUp 0.3s ease;
-        }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .location-banner.visible { display: flex; }
-        
-        .location-banner .icon { font-size: 24px; }
-        
-        .location-banner .content { flex: 1; }
-        .location-banner .title { 
-            font-size: 13px; 
-            font-weight: 600; 
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-        .location-banner .subtitle { 
-            font-size: 11px; 
-            color: var(--text-secondary); 
-        }
-        
-        .location-banner .countdown {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent-green);
-            min-width: 32px;
-            text-align: center;
-        }
-        
-        .location-banner .actions { display: flex; gap: 8px; }
-        .location-banner button {
-            padding: 6px 14px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .btn-send { background: var(--accent-green); color: white; }
-        .btn-send:hover { background: #00c49a; }
-        .btn-cancel { background: var(--bg-tertiary); color: var(--text-secondary); }
-        .btn-cancel:hover { background: var(--border-color); color: var(--text-primary); }
-        
-        .location-banner.sent { background: linear-gradient(135deg, #1a2f3a 0%, #0d1828 100%); border-color: var(--accent-blue); }
-        .location-banner.sent .countdown { color: var(--accent-blue); }
-        
         /* Processing indicator */
         .processing-indicator {
             padding: 6px 16px;
@@ -302,7 +248,7 @@
     <nav class="nav">
         <div class="nav-links">
             <span class="nav-title">📞 Phone Proxy</span>
-            <a href="index.html" class="active">🔴 Live</a>
+            <a href="index.html">🔴 Live</a>
             <a href="calls.html">📋 History</a>
             <a href="documents.html">📄 Docs</a>
             <a href="config.html">⚙️ Config</a>
@@ -344,20 +290,6 @@
                     <div class="transcript-content" id="transcriptContent"></div>
                 </div>
                 
-                <!-- 📍 Location Send Banner -->
-                <div class="location-banner" id="locationBanner">
-                    <span class="icon">📍</span>
-                    <div class="content">
-                        <div class="title" id="locationTitle">Send location to caller?</div>
-                        <div class="subtitle" id="locationSubtitle">Delivery context detected</div>
-                    </div>
-                    <div class="countdown" id="locationCountdown">30</div>
-                    <div class="actions">
-                        <button class="btn-send" onclick="sendLocationNow()">Send Now</button>
-                        <button class="btn-cancel" onclick="cancelLocationSend()">Cancel</button>
-                    </div>
-                </div>
-                
                 <div class="processing-indicator" id="processingIndicator">
                     <div class="processing-dot"></div>
                     <span id="processingText">Listening...</span>
@@ -382,9 +314,6 @@
         let reconnectAttempts = 0;
         let userScrolled = false;
         let debugVisible = false;
-        
-        // 📍 Location send state
-        let locationPendingCallSid = null;
         
         // Debug logging
         function debugLog(type, msg) {
@@ -422,34 +351,54 @@
             ws = new WebSocket(wsUrl);
             
             ws.onopen = () => {
-                debugLog('received', 'Connected');
-                updateConnectionStatus(true);
                 reconnectAttempts = 0;
+                updateConnectionStatus(true);
+                debugLog('received', 'Connected!');
             };
             
-            ws.onclose = () => {
-                debugLog('error', 'Disconnected');
+            ws.onclose = (e) => {
                 updateConnectionStatus(false);
-                setTimeout(() => {
-                    reconnectAttempts++;
-                    connect();
-                }, Math.min(1000 * reconnectAttempts, 10000));
+                debugLog('error', `Closed: ${e.code} ${e.reason || ''}`);
+                const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+                reconnectAttempts++;
+                setTimeout(connect, delay);
             };
             
-            ws.onerror = (err) => debugLog('error', `Error: ${err.message || 'Connection failed'}`);
-            ws.onmessage = (e) => handleMessage(JSON.parse(e.data));
+            ws.onerror = (e) => {
+                debugLog('error', 'WebSocket error');
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    debugLog('received', data);
+                    handleMessage(data);
+                } catch (e) {
+                    debugLog('error', `Parse error: ${e.message}`);
+                }
+            };
         }
         
         function handleMessage(data) {
-            debugLog('received', data);
-            
             switch (data.type) {
+                case 'init':
+                    (data.active_calls || []).forEach(call => {
+                        activeCalls[call.call_sid] = call;
+                        if (!call.turns) call.turns = [];
+                        startCallTimer(call.call_sid, call.started_at);
+                    });
+                    updateCallList();
+                    if (Object.keys(activeCalls).length > 0 && !currentCallSid) {
+                        selectCall(Object.keys(activeCalls)[0]);
+                    }
+                    break;
+                    
                 case 'call_started':
                     activeCalls[data.call_sid] = {
                         call_sid: data.call_sid,
                         caller: data.caller,
                         called: data.called,
-                        timestamp: data.timestamp,
+                        started_at: data.timestamp,
                         turns: []
                     };
                     startCallTimer(data.call_sid, data.timestamp);
@@ -486,131 +435,10 @@
                         currentCallSid = null;
                         showEmptyState();
                     }
-                    // Hide location banner if it was for this call
-                    if (locationPendingCallSid === data.call_sid) {
-                        hideLocationBanner();
-                    }
-                    break;
-                
-                // 📍 Location SMS events
-                case 'location_suggested':
-                    if (currentCallSid === data.call_sid) {
-                        showLocationBanner(data);
-                    }
-                    break;
-                    
-                case 'location_countdown':
-                    if (currentCallSid === data.call_sid) {
-                        updateLocationCountdown(data.seconds_remaining);
-                    }
-                    break;
-                    
-                case 'location_sent':
-                    if (currentCallSid === data.call_sid) {
-                        showLocationSent(data);
-                    }
-                    break;
-                    
-                case 'location_cancelled':
-                    if (currentCallSid === data.call_sid) {
-                        hideLocationBanner();
-                    }
-                    break;
-                    
-                case 'location_failed':
-                    if (currentCallSid === data.call_sid) {
-                        showLocationFailed(data);
-                    }
                     break;
                     
                 case 'heartbeat':
                     break;
-            }
-        }
-        
-        // 📍 Location banner functions
-        function showLocationBanner(data) {
-            locationPendingCallSid = data.call_sid;
-            const banner = document.getElementById('locationBanner');
-            const title = document.getElementById('locationTitle');
-            const subtitle = document.getElementById('locationSubtitle');
-            const countdown = document.getElementById('locationCountdown');
-            
-            title.textContent = 'Send location to caller?';
-            subtitle.textContent = `Auto-send in ${data.delay_seconds}s • ${formatCaller(data.to_number)}`;
-            countdown.textContent = data.delay_seconds;
-            
-            banner.classList.remove('sent');
-            banner.classList.add('visible');
-        }
-        
-        function updateLocationCountdown(seconds) {
-            document.getElementById('locationCountdown').textContent = seconds;
-        }
-        
-        function showLocationSent(data) {
-            const banner = document.getElementById('locationBanner');
-            const title = document.getElementById('locationTitle');
-            const subtitle = document.getElementById('locationSubtitle');
-            const countdown = document.getElementById('locationCountdown');
-            
-            title.textContent = '✓ Location sent!';
-            subtitle.textContent = `SMS sent to ${formatCaller(data.to_number)}`;
-            countdown.textContent = '✓';
-            
-            banner.classList.add('sent');
-            
-            // Hide after 5 seconds
-            setTimeout(hideLocationBanner, 5000);
-        }
-        
-        function showLocationFailed(data) {
-            const banner = document.getElementById('locationBanner');
-            const title = document.getElementById('locationTitle');
-            const subtitle = document.getElementById('locationSubtitle');
-            const countdown = document.getElementById('locationCountdown');
-            
-            title.textContent = '✗ Failed to send';
-            subtitle.textContent = data.error || 'Unknown error';
-            countdown.textContent = '!';
-            
-            banner.style.borderColor = 'var(--accent-red)';
-            
-            setTimeout(hideLocationBanner, 5000);
-        }
-        
-        function hideLocationBanner() {
-            document.getElementById('locationBanner').classList.remove('visible', 'sent');
-            locationPendingCallSid = null;
-        }
-        
-        async function sendLocationNow() {
-            if (!locationPendingCallSid) return;
-            
-            try {
-                const response = await fetch(`/api/messaging/send-now/${locationPendingCallSid}`, {
-                    method: 'POST'
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    console.error('Send failed:', error);
-                }
-            } catch (err) {
-                console.error('Send error:', err);
-            }
-        }
-        
-        async function cancelLocationSend() {
-            if (!locationPendingCallSid) return;
-            
-            try {
-                await fetch(`/api/messaging/queue/${locationPendingCallSid}`, {
-                    method: 'DELETE'
-                });
-                hideLocationBanner();
-            } catch (err) {
-                console.error('Cancel error:', err);
             }
         }
         
@@ -663,17 +491,11 @@
             (call.turns || []).forEach(turn => addTranscriptTurn(turn, false));
             scrollToBottom(true);
             updateCallList();
-            
-            // Hide location banner when switching calls (unless it's for this call)
-            if (locationPendingCallSid && locationPendingCallSid !== callSid) {
-                hideLocationBanner();
-            }
         }
         
         function showEmptyState() {
             document.getElementById('emptyState').style.display = 'flex';
             document.getElementById('callView').classList.remove('active');
-            hideLocationBanner();
         }
         
         function addTranscriptTurn(turn, animate = true) {

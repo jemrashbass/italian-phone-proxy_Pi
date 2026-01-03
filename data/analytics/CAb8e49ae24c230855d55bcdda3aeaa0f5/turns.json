@@ -1,0 +1,207 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-03T14:17:26.983492",
+    "ended_at": "2026-01-03T14:17:35.984022",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8315,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 1473,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 1473,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:17:37.195341",
+    "ended_at": "2026-01-03T14:17:45.929088",
+    "transcript": "Grazie a tutti",
+    "anchor_words": [
+      "Grazie",
+      "tutti"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 3080,
+    "confidence": 0.0,
+    "response": "Prego. Con chi sto parlando? Come posso aiutarla?",
+    "response_anchor_words": [
+      "Prego",
+      "chi",
+      "sto",
+      "parlando",
+      "posso"
+    ],
+    "response_audio_duration_ms": 3131,
+    "tokens_in": 1887,
+    "tokens_out": 22,
+    "latency": {
+      "total_ms": 4277,
+      "silence_detection_ms": 2,
+      "whisper_ms": 754,
+      "claude_ms": 2605,
+      "tts_ms": 918,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:17:57.415207",
+    "ended_at": "2026-01-03T14:18:07.498968",
+    "transcript": "Buongiorno Jeremy, sono il Corriere, sto cercando Via Barachini 86, ma il navigatore mi manda in una strada spagliata.",
+    "anchor_words": [
+      "Buongiorno",
+      "Jeremy",
+      "Corriere",
+      "sto",
+      "cercando"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 12040,
+    "confidence": 0.0,
+    "response": "Ah sì, il navigatore sbaglia sempre! Deve seguire via Paolo Barachini dal centro di Asciano. Vede la macelleria sulla sinistra?",
+    "response_anchor_words": [
+      "Ah",
+      "navigatore",
+      "sbaglia",
+      "sempre",
+      "Deve"
+    ],
+    "response_audio_duration_ms": 8302,
+    "tokens_in": 1952,
+    "tokens_out": 44,
+    "latency": {
+      "total_ms": 7254,
+      "silence_detection_ms": 3,
+      "whisper_ms": 2166,
+      "claude_ms": 2815,
+      "tts_ms": 2273,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:18:10.694358",
+    "ended_at": "2026-01-03T14:18:18.940852",
+    "transcript": "Sto arrivando in asciano",
+    "anchor_words": [
+      "Sto",
+      "arrivando",
+      "asciano"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2680,
+    "confidence": 0.0,
+    "response": "Perfetto. Dal centro segua via Paolo Barachini dritto, con la macelleria sulla sinistra. Poi giri a sinistra in salita.",
+    "response_anchor_words": [
+      "Perfetto",
+      "Dal",
+      "centro",
+      "segua",
+      "via"
+    ],
+    "response_audio_duration_ms": 7618,
+    "tokens_in": 2008,
+    "tokens_out": 42,
+    "latency": {
+      "total_ms": 5659,
+      "silence_detection_ms": 1,
+      "whisper_ms": 937,
+      "claude_ms": 2595,
+      "tts_ms": 2127,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 4,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:18:20.176303",
+    "ended_at": "2026-01-03T14:18:31.168759",
+    "transcript": "Sì, sì, ci lo faccio.",
+    "anchor_words": [
+      "faccio"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2660,
+    "confidence": 0.0,
+    "response": "Bene. In salita vedrá il rubinetto dell'acquedotto all'angolo. Continui dritto, i numeri civici sono confusi. L'86 è la casa rosa sulla destra in cima alla collina.",
+    "response_anchor_words": [
+      "Bene",
+      "salita",
+      "vedrá",
+      "rubinetto",
+      "dellacquedotto"
+    ],
+    "response_audio_duration_ms": 11092,
+    "tokens_in": 2066,
+    "tokens_out": 60,
+    "latency": {
+      "total_ms": 7234,
+      "silence_detection_ms": 2,
+      "whisper_ms": 541,
+      "claude_ms": 3223,
+      "tts_ms": 3470,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 5,
+    "speaker": "caller",
+    "started_at": "2026-01-03T14:18:31.175544",
+    "ended_at": "2026-01-03T14:18:37.887867",
+    "transcript": "Grazie mille, a presto!",
+    "anchor_words": [
+      "Grazie",
+      "mille",
+      "presto"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2240,
+    "confidence": 0.0,
+    "response": "Prego! A presto, grazie.",
+    "response_anchor_words": [
+      "Prego",
+      "presto",
+      "grazie"
+    ],
+    "response_audio_duration_ms": 1368,
+    "tokens_in": 2083,
+    "tokens_out": 14,
+    "latency": {
+      "total_ms": 3973,
+      "silence_detection_ms": 2,
+      "whisper_ms": 778,
+      "claude_ms": 2051,
+      "tts_ms": 1144,
+      "overhead_ms": 0
+    },
+    "flags": []
+  }
+]

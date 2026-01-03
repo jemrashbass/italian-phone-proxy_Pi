@@ -1,0 +1,277 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-03T10:51:14.718939",
+    "ended_at": "2026-01-03T10:51:30.657739",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8315,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 1904,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 1904,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:51:44.659851",
+    "ended_at": "2026-01-03T10:52:05.901395",
+    "transcript": "Buongiorno, sono il Corriere, sto cercando Via Barachini 86, ma il navigatore mi manda in una strada sabagliata.",
+    "anchor_words": [
+      "Buongiorno",
+      "Corriere",
+      "sto",
+      "cercando",
+      "Via"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 14000,
+    "confidence": 0.0,
+    "response": "Ah sì, il navigatore spesso sbaglia. Deve seguire via Paolo Barachini dal centro di Asciano - continui dritto fino in cima alla collina. La casa è quella rosa sulla destra, numero 86.",
+    "response_anchor_words": [
+      "Ah",
+      "navigatore",
+      "spesso",
+      "sbaglia",
+      "Deve"
+    ],
+    "response_audio_duration_ms": 12407,
+    "tokens_in": 1913,
+    "tokens_out": 58,
+    "latency": {
+      "total_ms": 6977,
+      "silence_detection_ms": 5,
+      "whisper_ms": 1398,
+      "claude_ms": 3375,
+      "tts_ms": 2204,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:52:14.286169",
+    "ended_at": "2026-01-03T10:52:38.037698",
+    "transcript": "Ah, perfetto. Sì, sono vicino alla piazza, ma non vedo il numero.",
+    "anchor_words": [
+      "Ah",
+      "perfetto",
+      "vicino",
+      "piazza",
+      "vedo"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 8400,
+    "confidence": 0.0,
+    "response": "Dal centro con la macelleria sulla sinistra, continui dritto. Poi giri a sinistra su per la collina - vedrà il rubinetto dell'acquedotto all'angolo. Continui fino in cima - 86 è la casa rosa sulla destra.",
+    "response_anchor_words": [
+      "Dal",
+      "centro",
+      "macelleria",
+      "sulla",
+      "sinistra"
+    ],
+    "response_audio_duration_ms": 13723,
+    "tokens_in": 1998,
+    "tokens_out": 70,
+    "latency": {
+      "total_ms": 8939,
+      "silence_detection_ms": 3,
+      "whisper_ms": 2868,
+      "claude_ms": 3681,
+      "tts_ms": 2390,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:52:49.900525",
+    "ended_at": "2026-01-03T10:52:59.457503",
+    "transcript": "Ah, perfetto. Sono arrivato alla casa regiale. Questa è la casa?",
+    "anchor_words": [
+      "Ah",
+      "perfetto",
+      "arrivato",
+      "casa",
+      "regiale"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 11880,
+    "confidence": 0.0,
+    "response": "Scusi, può ripetere? Non ho capito \"casa regiale\". È arrivato alla casa rosa in cima alla collina? Quello è il numero 86.",
+    "response_anchor_words": [
+      "Scusi",
+      "può",
+      "ripetere",
+      "capito",
+      "casa"
+    ],
+    "response_audio_duration_ms": 8250,
+    "tokens_in": 2093,
+    "tokens_out": 43,
+    "latency": {
+      "total_ms": 5355,
+      "silence_detection_ms": 4,
+      "whisper_ms": 1237,
+      "claude_ms": 2802,
+      "tts_ms": 1316,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 4,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:53:01.158255",
+    "ended_at": "2026-01-03T10:53:08.815302",
+    "transcript": "a scuola.",
+    "anchor_words": [
+      "scuola"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 1720,
+    "confidence": 0.0,
+    "response": "Mi scusi, non ho capito bene. È arrivato in cima alla collina? La casa 86 è quella rosa sulla destra in cima alla salita.",
+    "response_anchor_words": [
+      "scusi",
+      "capito",
+      "bene",
+      "arrivato",
+      "cima"
+    ],
+    "response_audio_duration_ms": 7986,
+    "tokens_in": 2144,
+    "tokens_out": 43,
+    "latency": {
+      "total_ms": 4931,
+      "silence_detection_ms": 1,
+      "whisper_ms": 841,
+      "claude_ms": 2591,
+      "tts_ms": 1499,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 5,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:53:10.020974",
+    "ended_at": "2026-01-03T10:53:15.297959",
+    "transcript": "Perfetto.",
+    "anchor_words": [
+      "Perfetto"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2860,
+    "confidence": 0.0,
+    "response": "Perfetto. Grazie e buona giornata!",
+    "response_anchor_words": [
+      "Perfetto",
+      "Grazie",
+      "buona",
+      "giornata"
+    ],
+    "response_audio_duration_ms": 2105,
+    "tokens_in": 2104,
+    "tokens_out": 17,
+    "latency": {
+      "total_ms": 4521,
+      "silence_detection_ms": 1,
+      "whisper_ms": 1246,
+      "claude_ms": 2338,
+      "tts_ms": 937,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 6,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:53:16.556957",
+    "ended_at": "2026-01-03T10:53:21.338730",
+    "transcript": "Grazie a tutti",
+    "anchor_words": [
+      "Grazie",
+      "tutti"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 1260,
+    "confidence": 0.0,
+    "response": "Prego, arrivederci!",
+    "response_anchor_words": [
+      "Prego",
+      "arrivederci"
+    ],
+    "response_audio_duration_ms": 1157,
+    "tokens_in": 2044,
+    "tokens_out": 12,
+    "latency": {
+      "total_ms": 4370,
+      "silence_detection_ms": 1,
+      "whisper_ms": 1379,
+      "claude_ms": 2009,
+      "tts_ms": 982,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 7,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:53:21.340217",
+    "ended_at": "2026-01-03T10:53:35.482296",
+    "transcript": "Arrivederci.",
+    "anchor_words": [
+      "Arrivederci"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 1860,
+    "confidence": 0.0,
+    "response": "Arrivederci.",
+    "response_anchor_words": [
+      "Arrivederci"
+    ],
+    "response_audio_duration_ms": 710,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 2244,
+      "silence_detection_ms": 2,
+      "whisper_ms": 663,
+      "claude_ms": 0,
+      "tts_ms": 1581,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "ECHO"
+    ]
+  }
+]

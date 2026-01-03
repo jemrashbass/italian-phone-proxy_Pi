@@ -24,7 +24,7 @@ from app.services.whisper import get_whisper_service
 from app.services.tts import get_tts_service
 from app.services.claude import get_claude_service
 from app.services.knowledge import KnowledgeService
-from app.services.analytics import get_analytics_service, EventType  # 📊 ANALYTICS
+from app.services.analytics import get_analytics_service, EventType  # ðŸ“Š ANALYTICS
 
 from app.routers.dashboard import broadcaster
 
@@ -44,7 +44,7 @@ def save_transcript(call_sid: str, call_data: dict):
     try:
         with open(filepath, "w") as f:
             json.dump(call_data, f, indent=2, ensure_ascii=False)
-        logger.info(f"📝 Saved transcript to {filepath}")
+        logger.info(f"ðŸ“ Saved transcript to {filepath}")
     except Exception as e:
         logger.error(f"Failed to save transcript: {e}")
 
@@ -62,6 +62,40 @@ GOODBYE_PHRASES = [
 ]
 
 
+def is_goodbye(text: str) -> bool:
+    """Check if text contains a goodbye phrase."""
+    if not text:
+        return False
+    text_lower = text.lower()
+    return any(phrase in text_lower for phrase in GOODBYE_PHRASES)
+
+
+async def hangup_call(call_sid: str) -> bool:
+    """
+    Hang up a call using Twilio REST API.
+    
+    Called after the AI says goodbye to properly end the call.
+    """
+    try:
+        account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+        auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+        
+        if not account_sid or not auth_token:
+            logger.error("Twilio credentials not configured for hangup")
+            return False
+        
+        client = TwilioClient(account_sid, auth_token)
+        
+        # Update call status to completed - this hangs up
+        call = client.calls(call_sid).update(status="completed")
+        logger.info(f"📞 Hung up call {call_sid}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to hang up call {call_sid}: {e}")
+        return False
+
+
 @router.post("/voice")
 async def handle_incoming_call(request: Request):
     """Handle incoming voice call from Twilio."""
@@ -71,9 +105,9 @@ async def handle_incoming_call(request: Request):
     caller = form_data.get("From", "Unknown")
     called = form_data.get("To", "Unknown")
     
-    logger.info(f"📞 Incoming call: {call_sid} from {caller} to {called}")
+    logger.info(f"ðŸ“ž Incoming call: {call_sid} from {caller} to {called}")
     
-    # 📊 ANALYTICS: Start tracking this call
+    # ðŸ“Š ANALYTICS: Start tracking this call
     analytics = get_analytics_service()
     analytics.start_call(call_sid, caller, called)
     await analytics.emit(call_sid, EventType.CALL_STARTED, {
@@ -138,7 +172,7 @@ async def media_stream(websocket: WebSocket):
     claude = get_claude_service()
     knowledge_service = KnowledgeService()
     knowledge_service.load()
-    analytics = get_analytics_service()  # 📊 ANALYTICS
+    analytics = get_analytics_service()  # ðŸ“Š ANALYTICS
     
     # State for this call
     call_sid: Optional[str] = None
@@ -148,7 +182,7 @@ async def media_stream(websocket: WebSocket):
     
     processing_lock = asyncio.Lock()
     is_speaking = False
-    speech_detected = False  # 📊 ANALYTICS: Track if we've emitted speech_started
+    speech_detected = False  # ðŸ“Š ANALYTICS: Track if we've emitted speech_started
     
     logger.info("WebSocket connection accepted")
     
@@ -163,7 +197,7 @@ async def media_stream(websocket: WebSocket):
         
         is_speaking = True
         
-        # 📊 ANALYTICS: Track playback
+        # ðŸ“Š ANALYTICS: Track playback
         playback_start = time.time()
         audio_duration_ms = int(len(audio_data) / 24 / 2)  # Estimate from 24kHz 16-bit
         await analytics.playback_started(call_sid, expected_duration_ms=audio_duration_ms)
@@ -182,7 +216,7 @@ async def media_stream(websocket: WebSocket):
                 await websocket.send_text(json.dumps(message))
                 await asyncio.sleep(0.02)
             
-            # 📊 ANALYTICS: Playback completed
+            # ðŸ“Š ANALYTICS: Playback completed
             playback_duration = int((time.time() - playback_start) * 1000)
             await analytics.playback_completed(call_sid, actual_duration_ms=playback_duration)
             
@@ -199,7 +233,7 @@ async def media_stream(websocket: WebSocket):
             if not call_sid:
                 return
             
-            # 📊 ANALYTICS: Start new turn and mark silence detected
+            # ðŸ“Š ANALYTICS: Start new turn and mark silence detected
             turn_index = analytics.start_turn(call_sid)
             speech_duration_ms = int(len(audio_data) / 8)  # Estimate from 8kHz
             await analytics.silence_detected(
@@ -214,7 +248,7 @@ async def media_stream(websocket: WebSocket):
             # 1. Prepare audio for Whisper
             wav_audio = prepare_audio_for_whisper(audio_data)
             
-            # 📊 ANALYTICS: Whisper started
+            # ðŸ“Š ANALYTICS: Whisper started
             whisper_start = time.time()
             await analytics.whisper_started(
                 call_sid,
@@ -225,7 +259,7 @@ async def media_stream(websocket: WebSocket):
             # 2. Transcribe with Whisper
             transcript = await whisper.transcribe(wav_audio)
             
-            # 📊 ANALYTICS: Whisper completed
+            # ðŸ“Š ANALYTICS: Whisper completed
             whisper_duration = int((time.time() - whisper_start) * 1000)
             confidence = getattr(whisper, 'last_confidence', 0.0)  # If available
             await analytics.whisper_completed(
@@ -239,7 +273,7 @@ async def media_stream(websocket: WebSocket):
                 await broadcaster.processing_status(call_sid, "listening")
                 return
             
-            logger.info(f"🎤 Caller said: {transcript}")
+            logger.info(f"ðŸŽ¤ Caller said: {transcript}")
             
             # Broadcast caller transcript
             await broadcaster.transcript_update(call_sid, "caller", transcript, turn_index)
@@ -252,7 +286,7 @@ async def media_stream(websocket: WebSocket):
                     "timestamp": datetime.now().isoformat()
                 })
             
-            # 📊 ANALYTICS: Claude started
+            # ðŸ“Š ANALYTICS: Claude started
             claude_start = time.time()
             context_turns = len(claude.get_conversation(call_sid).history) if claude.get_conversation(call_sid) else 0
             await analytics.claude_started(
@@ -264,7 +298,7 @@ async def media_stream(websocket: WebSocket):
             # 3. Get Claude response
             response_text = await claude.respond(call_sid, transcript)
             
-            # 📊 ANALYTICS: Claude completed with accurate token counts
+            # ðŸ“Š ANALYTICS: Claude completed with accurate token counts
             claude_duration = int((time.time() - claude_start) * 1000)
             usage = claude.last_usage
             await analytics.claude_completed(
@@ -279,7 +313,7 @@ async def media_stream(websocket: WebSocket):
                 await broadcaster.processing_status(call_sid, "listening")
                 return
             
-            logger.info(f"🤖 AI response: {response_text}")
+            logger.info(f"ðŸ¤– AI response: {response_text}")
             
             # Calculate latency and broadcast
             latency_ms = whisper_duration + claude_duration
@@ -294,7 +328,7 @@ async def media_stream(websocket: WebSocket):
                     "latency_ms": latency_ms
                 })
             
-            # 📊 ANALYTICS: TTS started
+            # ðŸ“Š ANALYTICS: TTS started
             tts_start = time.time()
             await analytics.tts_started(call_sid, text=response_text)
             
@@ -302,7 +336,7 @@ async def media_stream(websocket: WebSocket):
             await broadcaster.processing_status(call_sid, "speaking")
             audio_response = await tts.synthesize(response_text)
             
-            # 📊 ANALYTICS: TTS completed
+            # ðŸ“Š ANALYTICS: TTS completed
             tts_duration = int((time.time() - tts_start) * 1000)
             if audio_response:
                 audio_duration_ms = int(len(audio_response) / 24 / 2)  # 24kHz 16-bit estimate
@@ -323,8 +357,16 @@ async def media_stream(websocket: WebSocket):
             
             await broadcaster.processing_status(call_sid, "listening")
             
-            # 6. Check for goodbye (existing code)
-            # ...
+            # 6. Check for goodbye - if AI said farewell, hang up after audio plays
+            if is_goodbye(response_text):
+                logger.info(f"👋 Goodbye detected in AI response, hanging up call {call_sid}")
+                # Wait for audio to actually play to the caller
+                # audio_duration_ms was calculated earlier from the TTS response
+                wait_time = (audio_duration_ms / 1000) + 0.5  # Add 0.5s buffer
+                logger.info(f"⏳ Waiting {wait_time:.1f}s for goodbye audio to play")
+                await asyncio.sleep(wait_time)
+                await hangup_call(call_sid)
+                return  # Exit process_speech, call is ending
     
     try:
         async for message in websocket.iter_text():
@@ -343,7 +385,7 @@ async def media_stream(websocket: WebSocket):
                     
                     logger.info(f"Stream started: {stream_sid} for call {call_sid}")
                     
-                    # 📊 ANALYTICS: Stream connected
+                    # ðŸ“Š ANALYTICS: Stream connected
                     if call_sid:
                         await analytics.emit(call_sid, EventType.STREAM_CONNECTED, {
                             "stream_sid": stream_sid
@@ -360,14 +402,14 @@ async def media_stream(websocket: WebSocket):
                             active_calls[call_sid]["status"] = "connected"
                             active_calls[call_sid]["stream_sid"] = stream_sid
                         
-                        # 📊 ANALYTICS: Greeting started
+                        # ðŸ“Š ANALYTICS: Greeting started
                         await analytics.emit(call_sid, EventType.GREETING_STARTED, {}, turn_index=0)
                         
                         # Send greeting
                         await broadcaster.processing_status(call_sid, "speaking")
                         greeting = claude.get_opening_greeting(knowledge_service.data)
                         
-                        # 📊 ANALYTICS: TTS for greeting
+                        # ðŸ“Š ANALYTICS: TTS for greeting
                         tts_start = time.time()
                         await analytics.tts_started(call_sid, text=greeting)
                         
@@ -392,7 +434,7 @@ async def media_stream(websocket: WebSocket):
                             
                             await send_audio_to_twilio(greeting_audio)
                             
-                            # 📊 ANALYTICS: Greeting completed
+                            # ðŸ“Š ANALYTICS: Greeting completed
                             await analytics.emit(call_sid, EventType.GREETING_COMPLETED, {
                                 "audio_duration_ms": int(len(greeting_audio) / 24 / 2)
                             }, turn_index=0)
@@ -401,7 +443,7 @@ async def media_stream(websocket: WebSocket):
                 
                 elif event == "media":
                     if is_speaking:
-                        # 📊 ANALYTICS: Detect interrupt attempts
+                        # ðŸ“Š ANALYTICS: Detect interrupt attempts
                         if call_sid and not speech_detected:
                             media_data = data.get("media", {})
                             # Could check RMS level here for significant interrupt
@@ -413,7 +455,7 @@ async def media_stream(websocket: WebSocket):
                     if payload:
                         audio_chunk = base64_decode_audio(payload)
                         
-                        # 📊 ANALYTICS: Emit speech_started on first audio above threshold
+                        # ðŸ“Š ANALYTICS: Emit speech_started on first audio above threshold
                         if not speech_detected and audio_buffer.is_speech(audio_chunk):
                             speech_detected = True
                             await analytics.speech_started(call_sid, rms_level=audio_buffer.get_rms(audio_chunk))
@@ -425,7 +467,7 @@ async def media_stream(websocket: WebSocket):
                 
                 elif event == "mark":
                     mark_name = data.get("mark", {}).get("name")
-                    # 📊 ANALYTICS: Mark received
+                    # ðŸ“Š ANALYTICS: Mark received
                     if call_sid:
                         await analytics.emit(call_sid, EventType.MARK_RECEIVED, {
                             "mark_name": mark_name
@@ -461,7 +503,7 @@ async def media_stream(websocket: WebSocket):
                 active_calls[call_sid]["ended_at"] = datetime.now().isoformat()
                 active_calls[call_sid]["duration_seconds"] = duration_seconds
             
-            # 📊 ANALYTICS: End call tracking and compute metrics
+            # ðŸ“Š ANALYTICS: End call tracking and compute metrics
             analytics.end_call(call_sid, reason="stream_ended")
             
             await broadcaster.call_ended(call_sid, duration_seconds)

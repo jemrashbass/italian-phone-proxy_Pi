@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Configuration - Italian Phone Proxy</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e; 
+            color: #eee;
+            min-height: 100vh;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: #16213e;
+            padding: 12px 20px;
+            border-bottom: 1px solid #0f3460;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        .nav a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.2s;
+        }
+        .nav a:hover { color: #00d9ff; }
+        .nav a.active { color: #00d9ff; }
+        
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-header h1 {
+            font-size: 1.5em;
+            color: #00d9ff;
+            margin-bottom: 8px;
+        }
+        .page-header p {
+            color: #888;
+            font-size: 0.9em;
+        }
+        
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 1000px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        
+        /* Cards */
+        .card {
+            background: #16213e;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #0f3460;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h2 {
+            font-size: 1em;
+            color: #fff;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        
+        /* Config Sections */
+        .config-section {
+            margin-bottom: 24px;
+        }
+        .config-section:last-child {
+            margin-bottom: 0;
+        }
+        .config-section h3 {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            color: #00d9ff;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Config Items */
+        .config-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #0f3460;
+            align-items: center;
+        }
+        .config-item:last-child {
+            border-bottom: none;
+        }
+        .config-item .label {
+            font-size: 0.9em;
+            color: #ddd;
+        }
+        .config-item .description {
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 2px;
+        }
+        .config-item input[type="number"],
+        .config-item input[type="text"],
+        .config-item select {
+            background: #1a1a2e;
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 0.9em;
+            width: 140px;
+            text-align: right;
+        }
+        .config-item input:focus,
+        .config-item select:focus {
+            outline: none;
+            border-color: #00d9ff;
+        }
+        .config-item .unit {
+            font-size: 0.75em;
+            color: #888;
+            margin-left: 4px;
+        }
+        .config-item .input-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #00d9ff;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #00c4e6;
+        }
+        .btn-secondary {
+            background: #0f3460;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #1a4a7a;
+        }
+        .btn-success {
+            background: #26de81;
+            color: #000;
+        }
+        .btn-success:hover {
+            background: #20c474;
+        }
+        .btn-danger {
+            background: #eb3b5a;
+            color: #fff;
+        }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 0.75em;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Recommendations */
+        .recommendation-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 3px solid #00d9ff;
+        }
+        .recommendation-card.high { border-left-color: #26de81; }
+        .recommendation-card.medium { border-left-color: #f7b731; }
+        .recommendation-card.low { border-left-color: #888; }
+        
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .recommendation-param {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #00d9ff;
+        }
+        .recommendation-priority {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #0f3460;
+            color: #888;
+        }
+        .recommendation-priority.p1 { background: #26de81; color: #000; }
+        .recommendation-priority.p2 { background: #f7b731; color: #000; }
+        
+        .recommendation-values {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        .recommendation-values .current {
+            color: #888;
+            text-decoration: line-through;
+        }
+        .recommendation-values .arrow {
+            color: #00d9ff;
+        }
+        .recommendation-values .recommended {
+            color: #26de81;
+            font-weight: 600;
+        }
+        
+        .recommendation-reasoning {
+            font-size: 0.85em;
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+        
+        .recommendation-impact {
+            font-size: 0.8em;
+            color: #26de81;
+            margin-bottom: 12px;
+        }
+        
+        .recommendation-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Assessment */
+        .assessment {
+            padding: 16px;
+            background: #1a1a2e;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .assessment-text {
+            font-size: 0.9em;
+            color: #ddd;
+            line-height: 1.5;
+        }
+        .rating-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+        .rating-badge.good { background: #26de81; color: #000; }
+        .rating-badge.acceptable { background: #f7b731; color: #000; }
+        .rating-badge.needs_improvement { background: #ff6b35; color: #fff; }
+        .rating-badge.poor { background: #eb3b5a; color: #fff; }
+        
+        /* Quick Wins & Issues */
+        .list-section {
+            margin-top: 16px;
+        }
+        .list-section h4 {
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        .list-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .list-section li {
+            font-size: 0.85em;
+            color: #ddd;
+            padding: 6px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+        .list-section li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #00d9ff;
+        }
+        .list-section.issues li::before { color: #eb3b5a; }
+        .list-section.quick-wins li::before { color: #26de81; }
+        
+        /* History */
+        .history-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #0f3460;
+            font-size: 0.85em;
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .history-item .time {
+            color: #888;
+            font-size: 0.8em;
+        }
+        .history-item .change {
+            color: #ddd;
+            margin-top: 4px;
+        }
+        .history-item .values {
+            color: #888;
+            font-size: 0.8em;
+            margin-top: 2px;
+        }
+        
+        /* Status */
+        .status {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            margin-bottom: 16px;
+        }
+        .status.success { background: rgba(38, 222, 129, 0.2); color: #26de81; }
+        .status.error { background: rgba(235, 59, 90, 0.2); color: #eb3b5a; }
+        .status.info { background: rgba(0, 217, 255, 0.2); color: #00d9ff; }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+        .empty-state .icon {
+            font-size: 2em;
+            margin-bottom: 12px;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        
+        /* Analyze Button */
+        .analyze-section {
+            margin-bottom: 24px;
+        }
+        .call-selector {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .call-selector select {
+            flex: 1;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 0.9em;
+        }
+        
+        /* Unsaved indicator */
+        .unsaved-indicator {
+            color: #f7b731;
+            font-size: 0.8em;
+            margin-left: 12px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/dashboard/">🔴 Live</a>
+        <a href="/dashboard/calls.html">📞 History</a>
+        <a href="/dashboard/documents.html">📄 Docs</a>
+        <a href="/dashboard/config.html">⚙️ Knowledge</a>
+        <a href="/dashboard/analytics.html">📊 Analytics</a>
+        <a href="/dashboard/system.html" class="active">🔧 System</a>
+    </nav>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1>🔧 System Configuration</h1>
+            <p>Adjust system parameters and view AI-powered optimization recommendations</p>
+        </div>
+        
+        <div id="statusMessage"></div>
+        
+        <!-- Call Selector for Analysis -->
+        <div class="analyze-section">
+            <div class="call-selector">
+                <select id="callSelect">
+                    <option value="">Select a call to analyze...</option>
+                </select>
+                <button class="btn btn-primary" onclick="analyzeCall()" id="analyzeBtn">
+                    🔍 Analyze Call
+                </button>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <!-- Left Column: Current Settings -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Current Settings</h2>
+                        <div>
+                            <span id="unsavedIndicator" class="unsaved-indicator" style="display: none;">
+                                ● Unsaved changes
+                            </span>
+                            <button class="btn btn-success btn-sm" onclick="saveChanges()" id="saveBtn" disabled>
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" id="settingsContainer">
+                        <div class="loading">Loading configuration...</div>
+                    </div>
+                </div>
+                
+                <!-- History -->
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h2>Change History</h2>
+                    </div>
+                    <div class="card-body" id="historyContainer">
+                        <div class="loading">Loading history...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Recommendations -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>AI Recommendations</h2>
+                    </div>
+                    <div class="card-body" id="recommendationsContainer">
+                        <div class="empty-state">
+                            <div class="icon">🔍</div>
+                            <p>Select a call and click "Analyze" to get AI-powered recommendations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // State
+        let config = {};
+        let metadata = {};
+        let pendingChanges = {};
+        let currentInsights = null;
+        
+        // Load initial data
+        async function init() {
+            await Promise.all([
+                loadConfig(),
+                loadCalls(),
+                loadHistory()
+            ]);
+        }
+        
+        // Load configuration
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config/system');
+                const data = await response.json();
+                
+                config = data.flat;
+                metadata = data.metadata;
+                
+                renderSettings();
+            } catch (error) {
+                console.error('Failed to load config:', error);
+                showStatus('Failed to load configuration', 'error');
+            }
+        }
+        
+        // Load recent calls for dropdown
+        async function loadCalls() {
+            try {
+                const response = await fetch('/api/analytics/calls?limit=20');
+                const data = await response.json();
+                
+                const select = document.getElementById('callSelect');
+                select.innerHTML = '<option value="">Select a call to analyze...</option>';
+                
+                for (const call of data.calls) {
+                    const date = new Date(call.started_at).toLocaleDateString();
+                    const time = new Date(call.started_at).toLocaleTimeString();
+                    const latency = call.avg_latency_ms ? `${(call.avg_latency_ms/1000).toFixed(1)}s` : 'N/A';
+                    
+                    select.innerHTML += `
+                        <option value="${call.call_sid}">
+                            ${date} ${time} - ${call.turns} turns - ${latency} avg
+                        </option>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load calls:', error);
+            }
+        }
+        
+        // Load change history
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/config/system/history?limit=10');
+                const data = await response.json();
+                
+                renderHistory(data.history);
+            } catch (error) {
+                console.error('Failed to load history:', error);
+            }
+        }
+        
+        // Render settings panel
+        function renderSettings() {
+            const container = document.getElementById('settingsContainer');
+            
+            // Group by section
+            const sections = {
+                'Audio': Object.entries(config).filter(([k]) => k.startsWith('audio.')),
+                'Claude (LLM)': Object.entries(config).filter(([k]) => k.startsWith('claude.')),
+                'TTS (Speech)': Object.entries(config).filter(([k]) => k.startsWith('tts.')),
+                'Analytics': Object.entries(config).filter(([k]) => k.startsWith('analytics.'))
+            };
+            
+            container.innerHTML = Object.entries(sections).map(([sectionName, items]) => `
+                <div class="config-section">
+                    <h3>${sectionName}</h3>
+                    ${items.map(([key, value]) => renderConfigItem(key, value)).join('')}
+                </div>
+            `).join('');
+        }
+        
+        // Render a single config item
+        function renderConfigItem(key, value) {
+            const meta = metadata[key] || {};
+            const inputId = `config-${key.replace(/\./g, '-')}`;
+            
+            let inputHtml;
+            if (meta.type === 'select') {
+                const options = meta.options || [];
+                inputHtml = `
+                    <select id="${inputId}" onchange="handleChange('${key}', this.value)">
+                        ${options.map(opt => `
+                            <option value="${opt.value}" ${opt.value === value ? 'selected' : ''}>
+                                ${opt.label}
+                            </option>
+                        `).join('')}
+                    </select>
+                `;
+            } else if (meta.type === 'float') {
+                inputHtml = `
+                    <div class="input-group">
+                        <input type="number" 
+                               id="${inputId}"
+                               value="${value}" 
+                               step="${meta.step || 0.1}"
+                               min="${meta.min || 0}"
+                               max="${meta.max || 100}"
+                               onchange="handleChange('${key}', parseFloat(this.value))">
+                        ${meta.unit ? `<span class="unit">${meta.unit}</span>` : ''}
+                    </div>
+                `;
+            } else {
+                inputHtml = `
+                    <div class="input-group">
+                        <input type="number" 
+                               id="${inputId}"
+                               value="${value}"
+                               min="${meta.min || 0}"
+                               max="${meta.max || 10000}"
+                               onchange="handleChange('${key}', parseInt(this.value))">
+                        ${meta.unit ? `<span class="unit">${meta.unit}</span>` : ''}
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="config-item">
+                    <div>
+                        <div class="label">${meta.label || key}</div>
+                        <div class="description">${meta.description || ''}</div>
+                    </div>
+                    ${inputHtml}
+                </div>
+            `;
+        }
+        
+        // Handle config value change
+        function handleChange(key, value) {
+            if (config[key] !== value) {
+                pendingChanges[key] = value;
+                document.getElementById('unsavedIndicator').style.display = 'inline';
+                document.getElementById('saveBtn').disabled = false;
+            } else {
+                delete pendingChanges[key];
+                if (Object.keys(pendingChanges).length === 0) {
+                    document.getElementById('unsavedIndicator').style.display = 'none';
+                    document.getElementById('saveBtn').disabled = true;
+                }
+            }
+        }
+        
+        // Save pending changes
+        async function saveChanges() {
+            const updates = Object.entries(pendingChanges).map(([path, value]) => ({
+                path,
+                value
+            }));
+            
+            if (updates.length === 0) return;
+            
+            try {
+                const response = await fetch('/api/config/system/batch', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ updates, source: 'manual' })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Failed to save');
+                }
+                
+                // Update local state
+                for (const [key, value] of Object.entries(pendingChanges)) {
+                    config[key] = value;
+                }
+                pendingChanges = {};
+                
+                document.getElementById('unsavedIndicator').style.display = 'none';
+                document.getElementById('saveBtn').disabled = true;
+                
+                showStatus('Configuration saved successfully!', 'success');
+                loadHistory();
+                
+            } catch (error) {
+                showStatus(`Failed to save: ${error.message}`, 'error');
+            }
+        }
+        
+        // Analyze call
+        async function analyzeCall() {
+            const callSid = document.getElementById('callSelect').value;
+            if (!callSid) {
+                showStatus('Please select a call to analyze', 'info');
+                return;
+            }
+            
+            const btn = document.getElementById('analyzeBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Analyzing...';
+            
+            const container = document.getElementById('recommendationsContainer');
+            container.innerHTML = '<div class="loading">Analyzing call with AI...</div>';
+            
+            try {
+                const response = await fetch(`/api/analytics/call/${callSid}/insights`);
+                if (!response.ok) {
+                    throw new Error('Analysis failed');
+                }
+                
+                currentInsights = await response.json();
+                renderInsights(currentInsights);
+                
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <p>Failed to analyze call: ${error.message}</p>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Analyze Call';
+            }
+        }
+        
+        // Render insights
+        function renderInsights(insights) {
+            const container = document.getElementById('recommendationsContainer');
+            
+            const ratingClass = insights.performance_rating || 'unknown';
+            
+            let html = `
+                <!-- Assessment -->
+                <div class="assessment">
+                    <div class="assessment-text">${insights.assessment}</div>
+                    <span class="rating-badge ${ratingClass}">${ratingClass.replace('_', ' ')}</span>
+                </div>
+            `;
+            
+            // Issues
+            if (insights.issues && insights.issues.length > 0) {
+                html += `
+                    <div class="list-section issues">
+                        <h4>⚠️ Issues Identified</h4>
+                        <ul>
+                            ${insights.issues.map(issue => `<li>${issue}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            // Recommendations
+            if (insights.recommendations && insights.recommendations.length > 0) {
+                html += `<h4 style="margin: 16px 0 12px; font-size: 0.9em; color: #fff;">Recommendations</h4>`;
+                
+                for (const rec of insights.recommendations) {
+                    html += renderRecommendation(rec);
+                }
+            }
+            
+            // Quick Wins
+            if (insights.quick_wins && insights.quick_wins.length > 0) {
+                html += `
+                    <div class="list-section quick-wins">
+                        <h4>⚡ Quick Wins</h4>
+                        <ul>
+                            ${insights.quick_wins.map(win => `<li>${win}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            // Requires Investigation
+            if (insights.requires_investigation && insights.requires_investigation.length > 0) {
+                html += `
+                    <div class="list-section">
+                        <h4>🔬 Requires Investigation</h4>
+                        <ul>
+                            ${insights.requires_investigation.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Render a recommendation card
+        function renderRecommendation(rec) {
+            const priorityClass = rec.priority === 1 ? 'p1' : rec.priority === 2 ? 'p2' : '';
+            const confidenceClass = rec.confidence || 'medium';
+            
+            return `
+                <div class="recommendation-card ${confidenceClass}">
+                    <div class="recommendation-header">
+                        <span class="recommendation-param">${rec.parameter}</span>
+                        <span class="recommendation-priority ${priorityClass}">
+                            Priority ${rec.priority} · ${rec.confidence}
+                        </span>
+                    </div>
+                    <div class="recommendation-values">
+                        <span class="current">${rec.current_value}</span>
+                        <span class="arrow">→</span>
+                        <span class="recommended">${rec.recommended_value}</span>
+                    </div>
+                    <div class="recommendation-reasoning">${rec.reasoning}</div>
+                    <div class="recommendation-impact">Expected: ${rec.expected_impact}</div>
+                    <div class="recommendation-actions">
+                        <button class="btn btn-success btn-sm" onclick="applyRecommendation('${rec.id}', '${rec.parameter}', ${JSON.stringify(rec.recommended_value).replace(/"/g, '&quot;')})">
+                            ✓ Apply
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="dismissRecommendation('${rec.id}')">
+                            Dismiss
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Apply a recommendation
+        async function applyRecommendation(recId, parameter, value) {
+            try {
+                const response = await fetch('/api/config/system', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        path: parameter,
+                        value: value,
+                        source: 'recommendation',
+                        recommendation_id: recId
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Failed to apply');
+                }
+                
+                showStatus(`Applied: ${parameter} = ${value}`, 'success');
+                
+                // Refresh config and history
+                await loadConfig();
+                await loadHistory();
+                
+                // Remove the recommendation from UI
+                if (currentInsights) {
+                    currentInsights.recommendations = currentInsights.recommendations.filter(r => r.id !== recId);
+                    renderInsights(currentInsights);
+                }
+                
+            } catch (error) {
+                showStatus(`Failed to apply: ${error.message}`, 'error');
+            }
+        }
+        
+        // Dismiss a recommendation
+        function dismissRecommendation(recId) {
+            if (currentInsights) {
+                currentInsights.recommendations = currentInsights.recommendations.filter(r => r.id !== recId);
+                renderInsights(currentInsights);
+            }
+        }
+        
+        // Render history
+        function renderHistory(history) {
+            const container = document.getElementById('historyContainer');
+            
+            if (!history || history.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No configuration changes yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = history.map(change => {
+                const date = new Date(change.timestamp);
+                const timeStr = date.toLocaleString();
+                const sourceIcon = change.source === 'recommendation' ? '🤖' : 
+                                   change.source === 'manual' ? '👤' : '⚙️';
+                
+                return `
+                    <div class="history-item">
+                        <div class="time">${sourceIcon} ${timeStr}</div>
+                        <div class="change">${change.parameter}</div>
+                        <div class="values">${change.old_value} → ${change.new_value}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Show status message
+        function showStatus(message, type = 'info') {
+            const container = document.getElementById('statusMessage');
+            container.innerHTML = `<div class="status ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+        
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

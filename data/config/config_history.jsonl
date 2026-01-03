@@ -1,0 +1,6 @@
+{"timestamp": "2026-01-03T09:23:16.727491Z", "parameter": "claude.max_tokens", "old_value": 80, "new_value": 60, "source": "recommendation", "recommendation_id": "rec_1"}
+{"timestamp": "2026-01-03T09:28:21.186288Z", "parameter": "claude.max_tokens", "old_value": 60, "new_value": 40, "source": "recommendation", "recommendation_id": "rec_1"}
+{"timestamp": "2026-01-03T09:28:24.488742Z", "parameter": "tts.speed", "old_value": 0.9, "new_value": 1.0, "source": "recommendation", "recommendation_id": "rec_3"}
+{"timestamp": "2026-01-03T09:28:56.577324Z", "parameter": "analytics.slow_response_threshold_ms", "old_value": 4000, "new_value": 3500, "source": "recommendation", "recommendation_id": "rec_4"}
+{"timestamp": "2026-01-03T09:29:11.184971Z", "parameter": "claude.context_turns", "old_value": 4, "new_value": 2, "source": "recommendation", "recommendation_id": "rec_2"}
+{"timestamp": "2026-01-03T10:49:00.395907Z", "parameter": "audio.silence_duration_ms", "old_value": 1200, "new_value": 800, "source": "recommendation", "recommendation_id": null}

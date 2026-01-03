@@ -1,0 +1,89 @@
+{"id": "evt_0000", "type": "call_started", "timestamp": "2026-01-03T10:44:28.379006", "turn_index": 0, "data": {"caller": "+447796315426", "called": "+442070460437"}}
+{"id": "evt_0001", "type": "stream_connected", "timestamp": "2026-01-03T10:44:33.464359", "turn_index": 0, "data": {"stream_sid": "MZ117a795159d78bf3b8d18811189123ff"}}
+{"id": "evt_0002", "type": "greeting_started", "timestamp": "2026-01-03T10:44:33.465153", "turn_index": 0, "data": {}}
+{"id": "evt_0003", "type": "tts_started", "timestamp": "2026-01-03T10:44:33.465891", "turn_index": 0, "data": {"text": "Pronto. Sì, sono JEREMY. Mi scusi, sono inglese e il mio italiano non è perfetto — parlo lentamente ", "text_length": 130, "voice": "onyx"}}
+{"id": "evt_0004", "type": "tts_completed", "timestamp": "2026-01-03T10:44:36.306622", "turn_index": 0, "data": {"duration_ms": 2840, "audio_bytes": 392842, "audio_duration_ms": 8184}}
+{"id": "evt_0005", "type": "playback_started", "timestamp": "2026-01-03T10:44:36.307824", "turn_index": 0, "data": {"expected_duration_ms": 8184}}
+{"id": "evt_0006", "type": "playback_completed", "timestamp": "2026-01-03T10:44:39.074839", "turn_index": 0, "data": {"actual_duration_ms": 2767}}
+{"id": "evt_0007", "type": "greeting_completed", "timestamp": "2026-01-03T10:44:39.075581", "turn_index": 0, "data": {"audio_duration_ms": 8184}}
+{"id": "evt_0008", "type": "speech_started", "timestamp": "2026-01-03T10:44:45.569081", "turn_index": 0, "data": {"rms_level": 920}}
+{"id": "evt_0009", "type": "silence_detected", "timestamp": "2026-01-03T10:44:53.892343", "turn_index": 1, "data": {"speech_duration_ms": 8340, "audio_bytes": 66720, "peak_rms": 0}}
+{"id": "evt_0010", "type": "whisper_started", "timestamp": "2026-01-03T10:44:53.895992", "turn_index": 1, "data": {"audio_bytes": 266922, "audio_duration_ms": 8340}}
+{"id": "evt_0011", "type": "whisper_completed", "timestamp": "2026-01-03T10:44:56.360028", "turn_index": 1, "data": {"transcript": "Buongiorno, chiamo per confermare un appuntamento per domani alla 10.", "duration_ms": 2464, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0012", "type": "claude_started", "timestamp": "2026-01-03T10:44:56.361213", "turn_index": 1, "data": {"input_tokens_estimate": 50, "context_turns": 1}}
+{"id": "evt_0013", "type": "claude_completed", "timestamp": "2026-01-03T10:44:59.014776", "turn_index": 1, "data": {"response": "Buongiorno. Mi scusi, ma di quale appuntamento parla? Non ho notizia di appuntamenti per domani.", "duration_ms": 2653, "input_tokens": 1896, "output_tokens": 35}}
+{"id": "evt_0014", "type": "tts_started", "timestamp": "2026-01-03T10:44:59.016062", "turn_index": 1, "data": {"text": "Buongiorno. Mi scusi, ma di quale appuntamento parla? Non ho notizia di appuntamenti per domani.", "text_length": 96, "voice": "onyx"}}
+{"id": "evt_0015", "type": "tts_completed", "timestamp": "2026-01-03T10:45:00.989954", "turn_index": 1, "data": {"duration_ms": 1973, "audio_bytes": 296842, "audio_duration_ms": 6184}}
+{"id": "evt_0016", "type": "playback_started", "timestamp": "2026-01-03T10:45:00.990837", "turn_index": 1, "data": {"expected_duration_ms": 6184}}
+{"id": "evt_0017", "type": "playback_completed", "timestamp": "2026-01-03T10:45:03.098466", "turn_index": 1, "data": {"actual_duration_ms": 2107}}
+{"id": "evt_0018", "type": "speech_started", "timestamp": "2026-01-03T10:45:08.229070", "turn_index": 1, "data": {"rms_level": 1553}}
+{"id": "evt_0019", "type": "silence_detected", "timestamp": "2026-01-03T10:45:19.109961", "turn_index": 2, "data": {"speech_duration_ms": 10900, "audio_bytes": 87200, "peak_rms": 0}}
+{"id": "evt_0020", "type": "whisper_started", "timestamp": "2026-01-03T10:45:19.114497", "turn_index": 2, "data": {"audio_bytes": 348842, "audio_duration_ms": 10900}}
+{"id": "evt_0021", "type": "whisper_completed", "timestamp": "2026-01-03T10:45:20.401182", "turn_index": 2, "data": {"transcript": "Sì, si conferma l'appuntamento per gas. Domani alle ore 10.", "duration_ms": 1286, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0022", "type": "claude_started", "timestamp": "2026-01-03T10:45:20.403616", "turn_index": 2, "data": {"input_tokens_estimate": 150, "context_turns": 3}}
+{"id": "evt_0023", "type": "claude_completed", "timestamp": "2026-01-03T10:45:22.910374", "turn_index": 2, "data": {"response": "Ah sì, per il gas. Sì, confermo. Domani alle 10 va bene.", "duration_ms": 2506, "input_tokens": 1957, "output_tokens": 30}}
+{"id": "evt_0024", "type": "tts_started", "timestamp": "2026-01-03T10:45:22.911461", "turn_index": 2, "data": {"text": "Ah sì, per il gas. Sì, confermo. Domani alle 10 va bene.", "text_length": 56, "voice": "onyx"}}
+{"id": "evt_0025", "type": "tts_completed", "timestamp": "2026-01-03T10:45:23.951583", "turn_index": 2, "data": {"duration_ms": 1040, "audio_bytes": 173684, "audio_duration_ms": 3618}}
+{"id": "evt_0026", "type": "playback_started", "timestamp": "2026-01-03T10:45:23.952377", "turn_index": 2, "data": {"expected_duration_ms": 3618}}
+{"id": "evt_0027", "type": "playback_completed", "timestamp": "2026-01-03T10:45:25.188662", "turn_index": 2, "data": {"actual_duration_ms": 1236}}
+{"id": "evt_0028", "type": "speech_started", "timestamp": "2026-01-03T10:45:28.969660", "turn_index": 2, "data": {"rms_level": 2502}}
+{"id": "evt_0029", "type": "silence_detected", "timestamp": "2026-01-03T10:45:33.669690", "turn_index": 3, "data": {"speech_duration_ms": 4720, "audio_bytes": 37760, "peak_rms": 0}}
+{"id": "evt_0030", "type": "whisper_started", "timestamp": "2026-01-03T10:45:33.671331", "turn_index": 3, "data": {"audio_bytes": 151082, "audio_duration_ms": 4720}}
+{"id": "evt_0031", "type": "whisper_completed", "timestamp": "2026-01-03T10:45:35.147947", "turn_index": 3, "data": {"transcript": "Perfetto, è sempre lo stesso il riso?", "duration_ms": 1476, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0032", "type": "claude_started", "timestamp": "2026-01-03T10:45:35.149770", "turn_index": 3, "data": {"input_tokens_estimate": 250, "context_turns": 5}}
+{"id": "evt_0033", "type": "claude_completed", "timestamp": "2026-01-03T10:45:37.961582", "turn_index": 3, "data": {"response": "Mi scusi, può ripetere? Non ho capito bene \"il riso\".", "duration_ms": 2811, "input_tokens": 2002, "output_tokens": 23}}
+{"id": "evt_0034", "type": "tts_started", "timestamp": "2026-01-03T10:45:37.962726", "turn_index": 3, "data": {"text": "Mi scusi, può ripetere? Non ho capito bene \"il riso\".", "text_length": 53, "voice": "onyx"}}
+{"id": "evt_0035", "type": "tts_completed", "timestamp": "2026-01-03T10:45:39.968233", "turn_index": 3, "data": {"duration_ms": 2005, "audio_bytes": 162948, "audio_duration_ms": 3394}}
+{"id": "evt_0036", "type": "playback_started", "timestamp": "2026-01-03T10:45:39.969078", "turn_index": 3, "data": {"expected_duration_ms": 3394}}
+{"id": "evt_0037", "type": "playback_completed", "timestamp": "2026-01-03T10:45:41.121479", "turn_index": 3, "data": {"actual_duration_ms": 1152}}
+{"id": "evt_0038", "type": "speech_started", "timestamp": "2026-01-03T10:45:43.609066", "turn_index": 3, "data": {"rms_level": 1013}}
+{"id": "evt_0039", "type": "silence_detected", "timestamp": "2026-01-03T10:45:50.291171", "turn_index": 4, "data": {"speech_duration_ms": 6700, "audio_bytes": 53600, "peak_rms": 0}}
+{"id": "evt_0040", "type": "whisper_started", "timestamp": "2026-01-03T10:45:50.294655", "turn_index": 4, "data": {"audio_bytes": 214442, "audio_duration_ms": 6700}}
+{"id": "evt_0041", "type": "whisper_completed", "timestamp": "2026-01-03T10:45:51.932119", "turn_index": 4, "data": {"transcript": "indirizzo di signora Rashbas.", "duration_ms": 1637, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0042", "type": "claude_started", "timestamp": "2026-01-03T10:45:51.934392", "turn_index": 4, "data": {"input_tokens_estimate": 350, "context_turns": 7}}
+{"id": "evt_0043", "type": "claude_completed", "timestamp": "2026-01-03T10:45:54.881722", "turn_index": 4, "data": {"response": "Ah sì, l'indirizzo. È sempre VIA PAOLO BARACHINI 86, 56017 SAN GIULIANO TERME PI.", "duration_ms": 2947, "input_tokens": 2039, "output_tokens": 40}}
+{"id": "evt_0044", "type": "tts_started", "timestamp": "2026-01-03T10:45:54.883221", "turn_index": 4, "data": {"text": "Ah sì, l'indirizzo. È sempre VIA PAOLO BARACHINI 86, 56017 SAN GIULIANO TERME PI.", "text_length": 81, "voice": "onyx"}}
+{"id": "evt_0045", "type": "tts_completed", "timestamp": "2026-01-03T10:45:56.005130", "turn_index": 4, "data": {"duration_ms": 1121, "audio_bytes": 315790, "audio_duration_ms": 6578}}
+{"id": "evt_0046", "type": "playback_started", "timestamp": "2026-01-03T10:45:56.005875", "turn_index": 4, "data": {"expected_duration_ms": 6578}}
+{"id": "evt_0047", "type": "playback_completed", "timestamp": "2026-01-03T10:45:58.230412", "turn_index": 4, "data": {"actual_duration_ms": 2224}}
+{"id": "evt_0048", "type": "speech_started", "timestamp": "2026-01-03T10:46:03.770428", "turn_index": 4, "data": {"rms_level": 1024}}
+{"id": "evt_0049", "type": "silence_detected", "timestamp": "2026-01-03T10:46:05.994880", "turn_index": 5, "data": {"speech_duration_ms": 2240, "audio_bytes": 17920, "peak_rms": 0}}
+{"id": "evt_0050", "type": "whisper_started", "timestamp": "2026-01-03T10:46:05.996477", "turn_index": 5, "data": {"audio_bytes": 71722, "audio_duration_ms": 2240}}
+{"id": "evt_0051", "type": "whisper_completed", "timestamp": "2026-01-03T10:46:06.638379", "turn_index": 5, "data": {"transcript": "autentici", "duration_ms": 641, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0052", "type": "claude_started", "timestamp": "2026-01-03T10:46:06.640402", "turn_index": 5, "data": {"input_tokens_estimate": 450, "context_turns": 9}}
+{"id": "evt_0053", "type": "claude_completed", "timestamp": "2026-01-03T10:46:09.202494", "turn_index": 5, "data": {"response": "Mi scusi, non ho capito. Può ripetere?", "duration_ms": 2562, "input_tokens": 2012, "output_tokens": 18}}
+{"id": "evt_0054", "type": "tts_started", "timestamp": "2026-01-03T10:46:09.203765", "turn_index": 5, "data": {"text": "Mi scusi, non ho capito. Può ripetere?", "text_length": 38, "voice": "onyx"}}
+{"id": "evt_0055", "type": "tts_completed", "timestamp": "2026-01-03T10:46:10.176387", "turn_index": 5, "data": {"duration_ms": 972, "audio_bytes": 93474, "audio_duration_ms": 1947}}
+{"id": "evt_0056", "type": "playback_started", "timestamp": "2026-01-03T10:46:10.177116", "turn_index": 5, "data": {"expected_duration_ms": 1947}}
+{"id": "evt_0057", "type": "playback_completed", "timestamp": "2026-01-03T10:46:10.848490", "turn_index": 5, "data": {"actual_duration_ms": 671}}
+{"id": "evt_0058", "type": "speech_started", "timestamp": "2026-01-03T10:46:12.889023", "turn_index": 5, "data": {"rms_level": 1583}}
+{"id": "evt_0059", "type": "silence_detected", "timestamp": "2026-01-03T10:46:16.390263", "turn_index": 6, "data": {"speech_duration_ms": 3520, "audio_bytes": 28160, "peak_rms": 0}}
+{"id": "evt_0060", "type": "whisper_started", "timestamp": "2026-01-03T10:46:16.392233", "turn_index": 6, "data": {"audio_bytes": 112682, "audio_duration_ms": 3520}}
+{"id": "evt_0061", "type": "whisper_completed", "timestamp": "2026-01-03T10:46:17.211652", "turn_index": 6, "data": {"transcript": "86, il numero", "duration_ms": 819, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0062", "type": "claude_started", "timestamp": "2026-01-03T10:46:17.214192", "turn_index": 6, "data": {"input_tokens_estimate": 550, "context_turns": 11}}
+{"id": "evt_0063", "type": "claude_completed", "timestamp": "2026-01-03T10:46:19.719459", "turn_index": 6, "data": {"response": "Esatto, il numero è 86. VIA PAOLO BARACHINI 86.", "duration_ms": 2505, "input_tokens": 1977, "output_tokens": 24}}
+{"id": "evt_0064", "type": "tts_started", "timestamp": "2026-01-03T10:46:19.720582", "turn_index": 6, "data": {"text": "Esatto, il numero è 86. VIA PAOLO BARACHINI 86.", "text_length": 47, "voice": "onyx"}}
+{"id": "evt_0065", "type": "tts_completed", "timestamp": "2026-01-03T10:46:20.851664", "turn_index": 6, "data": {"duration_ms": 1131, "audio_bytes": 172422, "audio_duration_ms": 3592}}
+{"id": "evt_0066", "type": "playback_started", "timestamp": "2026-01-03T10:46:20.852415", "turn_index": 6, "data": {"expected_duration_ms": 3592}}
+{"id": "evt_0067", "type": "playback_completed", "timestamp": "2026-01-03T10:46:22.068095", "turn_index": 6, "data": {"actual_duration_ms": 1215}}
+{"id": "evt_0068", "type": "speech_started", "timestamp": "2026-01-03T10:46:27.209952", "turn_index": 6, "data": {"rms_level": 542}}
+{"id": "evt_0069", "type": "silence_detected", "timestamp": "2026-01-03T10:46:29.489130", "turn_index": 7, "data": {"speech_duration_ms": 2300, "audio_bytes": 18400, "peak_rms": 0}}
+{"id": "evt_0070", "type": "whisper_started", "timestamp": "2026-01-03T10:46:29.490909", "turn_index": 7, "data": {"audio_bytes": 73642, "audio_duration_ms": 2300}}
+{"id": "evt_0071", "type": "whisper_completed", "timestamp": "2026-01-03T10:46:30.481320", "turn_index": 7, "data": {"transcript": "ripeto", "duration_ms": 990, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0072", "type": "claude_started", "timestamp": "2026-01-03T10:46:30.483342", "turn_index": 7, "data": {"input_tokens_estimate": 650, "context_turns": 13}}
+{"id": "evt_0073", "type": "claude_completed", "timestamp": "2026-01-03T10:46:32.782804", "turn_index": 7, "data": {"response": "Sì, mi dica pure.", "duration_ms": 2299, "input_tokens": 1961, "output_tokens": 12}}
+{"id": "evt_0074", "type": "tts_started", "timestamp": "2026-01-03T10:46:32.783955", "turn_index": 7, "data": {"text": "Sì, mi dica pure.", "text_length": 17, "voice": "onyx"}}
+{"id": "evt_0075", "type": "tts_completed", "timestamp": "2026-01-03T10:46:33.593145", "turn_index": 7, "data": {"duration_ms": 809, "audio_bytes": 48000, "audio_duration_ms": 1000}}
+{"id": "evt_0076", "type": "playback_started", "timestamp": "2026-01-03T10:46:33.593781", "turn_index": 7, "data": {"expected_duration_ms": 1000}}
+{"id": "evt_0077", "type": "playback_completed", "timestamp": "2026-01-03T10:46:33.937406", "turn_index": 7, "data": {"actual_duration_ms": 343}}
+{"id": "evt_0078", "type": "speech_started", "timestamp": "2026-01-03T10:46:36.509721", "turn_index": 7, "data": {"rms_level": 785}}
+{"id": "evt_0079", "type": "silence_detected", "timestamp": "2026-01-03T10:46:39.173496", "turn_index": 8, "data": {"speech_duration_ms": 2680, "audio_bytes": 21440, "peak_rms": 0}}
+{"id": "evt_0080", "type": "whisper_started", "timestamp": "2026-01-03T10:46:39.176114", "turn_index": 8, "data": {"audio_bytes": 85802, "audio_duration_ms": 2680}}
+{"id": "evt_0081", "type": "whisper_completed", "timestamp": "2026-01-03T10:46:39.806096", "turn_index": 8, "data": {"transcript": "Grazie, arrivederci.", "duration_ms": 629, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0082", "type": "claude_started", "timestamp": "2026-01-03T10:46:39.808533", "turn_index": 8, "data": {"input_tokens_estimate": 750, "context_turns": 15}}
+{"id": "evt_0083", "type": "claude_completed", "timestamp": "2026-01-03T10:46:42.524254", "turn_index": 8, "data": {"response": "Prego, arrivederci.", "duration_ms": 2715, "input_tokens": 1948, "output_tokens": 12}}
+{"id": "evt_0084", "type": "tts_started", "timestamp": "2026-01-03T10:46:42.526289", "turn_index": 8, "data": {"text": "Prego, arrivederci.", "text_length": 19, "voice": "onyx"}}
+{"id": "evt_0085", "type": "tts_completed", "timestamp": "2026-01-03T10:46:44.060738", "turn_index": 8, "data": {"duration_ms": 1534, "audio_bytes": 49264, "audio_duration_ms": 1026}}
+{"id": "evt_0086", "type": "playback_started", "timestamp": "2026-01-03T10:46:44.061576", "turn_index": 8, "data": {"expected_duration_ms": 1026}}
+{"id": "evt_0087", "type": "playback_completed", "timestamp": "2026-01-03T10:46:44.426225", "turn_index": 8, "data": {"actual_duration_ms": 364}}
+{"id": "evt_0088", "type": "call_ended", "timestamp": "2026-01-03T10:46:49.418556", "turn_index": 8, "data": {"reason": "stream_ended", "total_turns": 8}}

@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 import logging
 import os
 
-from app.routers import documents, config, twilio, calls, dashboard, analytics
+from app.routers import documents, config, twilio, calls, dashboard, analytics, system_config
 from app.services.knowledge import KnowledgeService
 
 # Configure logging
@@ -38,6 +38,12 @@ async def lifespan(app: FastAPI):
     analytics_service.set_broadcaster(broadcaster)
     logger.info("📊 Analytics service connected to broadcaster")
     
+    # Initialize system config service
+    from app.services.system_config import get_system_config_service
+    config_service = get_system_config_service()
+    config_service.load()
+    logger.info(f"⚙️ System config loaded (v{config_service.config.version})")
+    
     # Log configuration
     logger.info(f"🔑 Anthropic API: {'configured' if os.getenv('ANTHROPIC_API_KEY') else 'MISSING'}")
     logger.info(f"🔑 OpenAI API: {'configured' if os.getenv('OPENAI_API_KEY') else 'MISSING'}")
@@ -51,7 +57,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Italian Phone Proxy",
     description="AI Voice Agent for Managing Italian Phone Calls",
-    version="0.2.0",
+    version="0.3.0",
     lifespan=lifespan
 )
 
@@ -67,6 +73,7 @@ app.add_middleware(
 # API routes
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 app.include_router(config.router, prefix="/api/config", tags=["Configuration"])
+app.include_router(system_config.router, prefix="/api/config", tags=["System Configuration"])
 app.include_router(twilio.router, prefix="/api/twilio", tags=["Twilio"])
 app.include_router(calls.router, prefix="/api/calls", tags=["Calls"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
@@ -88,21 +95,27 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "italian-phone-proxy",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "features": {
             "documents": True,
             "telephony": True,
             "whisper": bool(os.getenv("OPENAI_API_KEY")),
             "claude": bool(os.getenv("ANTHROPIC_API_KEY")),
-            "twilio": bool(os.getenv("TWILIO_ACCOUNT_SID"))
+            "twilio": bool(os.getenv("TWILIO_ACCOUNT_SID")),
+            "analytics": True,
+            "system_config": True
         }
     }
+
 
 @app.get("/api/status")
 async def api_status():
     """Detailed API status including knowledge, active calls, and dashboard."""
     from app.routers.twilio import active_calls as twilio_calls
     from app.routers.dashboard import active_calls as dashboard_calls, dashboard_clients
+    from app.services.system_config import get_system_config_service
+    
+    config_service = get_system_config_service()
     
     return {
         "service": "italian-phone-proxy",
@@ -111,5 +124,6 @@ async def api_status():
         "identity": app.state.knowledge.data.get("identity", {}).get("name") if hasattr(app.state, 'knowledge') else None,
         "active_calls": len(dashboard_calls),
         "dashboard_clients": len(dashboard_clients),
-        "calls": list(dashboard_calls.values())
+        "calls": list(dashboard_calls.values()),
+        "config_version": config_service.config.version
     }

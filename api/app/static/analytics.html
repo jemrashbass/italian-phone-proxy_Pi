@@ -515,6 +515,185 @@
         .refresh-btn:hover {
             background: #1a3a6e;
         }
+        /* AI Insights Button */
+        .analyze-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            margin-left: auto;
+        }
+        .analyze-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Insights Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal {
+            background: #16213e;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #0f3460;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #16213e;
+        }
+        .modal-header h2 {
+            font-size: 1.1em;
+            color: #fff;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        
+        /* Insights Styles */
+        .insights-assessment {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .insights-assessment p {
+            color: #ddd;
+            line-height: 1.6;
+        }
+        .rating-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 12px;
+        }
+        .rating-badge.good { background: #26de81; color: #000; }
+        .rating-badge.acceptable { background: #f7b731; color: #000; }
+        .rating-badge.needs_improvement { background: #ff6b35; color: #fff; }
+        .rating-badge.poor { background: #eb3b5a; color: #fff; }
+        
+        .insights-section {
+            margin-top: 16px;
+        }
+        .insights-section h4 {
+            font-size: 0.85em;
+            color: #00d9ff;
+            margin-bottom: 12px;
+        }
+        
+        .recommendation-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-left: 3px solid #6366f1;
+        }
+        .recommendation-param {
+            font-family: monospace;
+            color: #00d9ff;
+            font-size: 0.9em;
+        }
+        .recommendation-change {
+            margin: 8px 0;
+            font-size: 0.9em;
+        }
+        .recommendation-change .old { color: #888; text-decoration: line-through; }
+        .recommendation-change .new { color: #26de81; font-weight: 600; }
+        .recommendation-reasoning {
+            color: #aaa;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+        .recommendation-impact {
+            color: #26de81;
+            font-size: 0.8em;
+            margin-top: 6px;
+        }
+        
+        .insights-list {
+            list-style: none;
+            padding: 0;
+        }
+        .insights-list li {
+            padding: 6px 0 6px 16px;
+            position: relative;
+            color: #ddd;
+            font-size: 0.9em;
+        }
+        .insights-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #00d9ff;
+        }
+        .insights-list.issues li::before { color: #eb3b5a; }
+        .insights-list.quick-wins li::before { color: #26de81; }
+        
+        .btn-apply-rec {
+            background: #26de81;
+            color: #000;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-apply-rec:hover {
+            background: #20c474;
+        }
     </style>
 </head>
 <body>
@@ -525,13 +704,27 @@
         <a href="documents.html">📄 Docs</a>
         <a href="config.html">⚙️ Config</a>
         <a href="analytics.html" class="active">📊 Analytics</a>
-        <button class="refresh-btn" onclick="loadCalls()">↻ Refresh</button>
+        <a href="system.html">🔧 System</a>
+        <button class="refresh-btn" onclick="loadCalls()">â†» Refresh</button>
     </nav>
+    
+    <!-- Insights Modal -->
+    <div class="modal-overlay" id="insightsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🔮 AI Analysis</h2>
+                <button class="modal-close" onclick="closeInsightsModal()">×</button>
+            </div>
+            <div class="modal-body" id="insightsContent">
+                <div class="loading">Analyzing call with AI...</div>
+            </div>
+        </div>
+    </div>
     
     <div class="app-container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h1>📊 Call Analytics</h1>
+                <h1>ðŸ“Š Call Analytics</h1>
                 <p>Performance & quality metrics</p>
             </div>
             <div class="call-list" id="callList">
@@ -541,7 +734,7 @@
         
         <main class="main-content" id="mainContent">
             <div class="no-selection">
-                <p>← Select a call to view analytics</p>
+                <p>â† Select a call to view analytics</p>
             </div>
         </main>
     </div>
@@ -589,7 +782,7 @@
                 if (calls.length === 0) {
                     listEl.innerHTML = `
                         <div class="empty-state">
-                            <div class="icon">📞</div>
+                            <div class="icon">ðŸ“ž</div>
                             <p>No calls yet</p>
                         </div>
                     `;
@@ -630,7 +823,7 @@
                 console.error('Failed to load calls:', error);
                 listEl.innerHTML = `
                     <div class="empty-state">
-                        <div class="icon">⚠️</div>
+                        <div class="icon">âš ï¸</div>
                         <p>Failed to load calls</p>
                     </div>
                 `;
@@ -658,7 +851,7 @@
                 console.error('Failed to load call:', error);
                 mainEl.innerHTML = `
                     <div class="empty-state">
-                        <div class="icon">⚠️</div>
+                        <div class="icon">âš ï¸</div>
                         <p>Failed to load call analytics</p>
                     </div>
                 `;
@@ -713,7 +906,7 @@
                 
                 <!-- Component Breakdown -->
                 <div class="component-breakdown">
-                    <h2>Average Latency by Component</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center;"><h2>Average Latency by Component</h2><button class="analyze-btn" onclick="analyzeCurrentCall()">🔮 Analyze with AI</button></div>
                     <div class="breakdown-bars">
                         <div class="breakdown-item">
                             <div class="bar-container">
@@ -797,17 +990,17 @@
                             <div class="latency ${latencyClass}">
                                 <strong>${(totalLatency / 1000).toFixed(2)}s</strong>
                             </div>
-                            <div class="expand-icon">▼</div>
+                            <div class="expand-icon">â–¼</div>
                         </div>
                     </div>
                     <div class="turn-details">
                         <div class="turn-transcript">
                             <div class="transcript-box caller">
-                                <div class="label">📞 Caller</div>
+                                <div class="label">ðŸ“ž Caller</div>
                                 <div class="text">${turn.transcript || '(greeting turn)'}</div>
                             </div>
                             <div class="transcript-box ai">
-                                <div class="label">🤖 AI Response</div>
+                                <div class="label">ðŸ¤– AI Response</div>
                                 <div class="text">${turn.response || '(no response)'}</div>
                             </div>
                         </div>
@@ -843,6 +1036,134 @@
         
         // Auto-refresh every 30 seconds
         setInterval(loadCalls, 30000);
+
+        // Insights Modal Functions
+        async function analyzeCurrentCall() {
+            if (!selectedCallSid) {
+                alert('Please select a call first');
+                return;
+            }
+            
+            const modal = document.getElementById('insightsModal');
+            const content = document.getElementById('insightsContent');
+            
+            modal.classList.add('active');
+            content.innerHTML = '<div class="loading">Analyzing call with AI... This may take a moment.</div>';
+            
+            try {
+                const response = await fetch(`/api/analytics/call/${selectedCallSid}/insights`);
+                if (!response.ok) throw new Error('Analysis failed');
+                
+                const insights = await response.json();
+                renderInsights(insights);
+            } catch (error) {
+                content.innerHTML = `<div class="empty-state"><p>Failed to analyze call: ${error.message}</p></div>`;
+            }
+        }
+        
+        function closeInsightsModal() {
+            document.getElementById('insightsModal').classList.remove('active');
+        }
+        
+        function renderInsights(insights) {
+            const content = document.getElementById('insightsContent');
+            
+            let html = `
+                <div class="insights-assessment">
+                    <p>${insights.assessment}</p>
+                    <span class="rating-badge ${insights.performance_rating}">${insights.performance_rating.replace('_', ' ')}</span>
+                </div>
+            `;
+            
+            if (insights.issues && insights.issues.length > 0) {
+                html += `
+                    <div class="insights-section">
+                        <h4>⚠️ Issues Identified</h4>
+                        <ul class="insights-list issues">
+                            ${insights.issues.map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (insights.recommendations && insights.recommendations.length > 0) {
+                html += `<div class="insights-section"><h4>💡 Recommendations</h4>`;
+                for (const rec of insights.recommendations) {
+                    html += `
+                        <div class="recommendation-card">
+                            <div class="recommendation-param">${rec.parameter}</div>
+                            <div class="recommendation-change">
+                                <span class="old">${rec.current_value}</span> → 
+                                <span class="new">${rec.recommended_value}</span>
+                            </div>
+                            <div class="recommendation-reasoning">${rec.reasoning}</div>
+                            <div class="recommendation-impact">Expected: ${rec.expected_impact}</div>
+                            <button class="btn-apply-rec" onclick="applyRecommendation('${rec.parameter}', ${JSON.stringify(rec.recommended_value).replace(/"/g, '&quot;')})">
+                                Apply Change
+                            </button>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+            }
+            
+            if (insights.quick_wins && insights.quick_wins.length > 0) {
+                html += `
+                    <div class="insights-section">
+                        <h4>⚡ Quick Wins</h4>
+                        <ul class="insights-list quick-wins">
+                            ${insights.quick_wins.map(w => `<li>${w}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (insights.requires_investigation && insights.requires_investigation.length > 0) {
+                html += `
+                    <div class="insights-section">
+                        <h4>🔬 Requires Investigation</h4>
+                        <ul class="insights-list">
+                            ${insights.requires_investigation.map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div style="margin-top: 20px; text-align: center;">
+                    <a href="system.html" style="color: #00d9ff; text-decoration: none;">
+                        → Go to System Config for more options
+                    </a>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+        }
+        
+        async function applyRecommendation(parameter, value) {
+            try {
+                const response = await fetch('/api/config/system', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        path: parameter,
+                        value: value,
+                        source: 'recommendation'
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to apply');
+                
+                alert(`Applied: ${parameter} = ${value}`);
+            } catch (error) {
+                alert(`Failed to apply: ${error.message}`);
+            }
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('insightsModal').addEventListener('click', function(e) {
+            if (e.target === this) closeInsightsModal();
+        });
     </script>
 </body>
 </html>

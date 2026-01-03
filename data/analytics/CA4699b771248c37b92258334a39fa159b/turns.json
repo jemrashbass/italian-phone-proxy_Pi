@@ -1,0 +1,315 @@
+[
+  {
+    "turn_index": 0,
+    "speaker": "ai",
+    "started_at": "2026-01-03T10:44:28.379006",
+    "ended_at": "2026-01-03T10:44:45.569081",
+    "transcript": "",
+    "anchor_words": [],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 0,
+    "confidence": 0.0,
+    "response": "",
+    "response_anchor_words": [],
+    "response_audio_duration_ms": 8184,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "latency": {
+      "total_ms": 2840,
+      "silence_detection_ms": 0,
+      "whisper_ms": 0,
+      "claude_ms": 0,
+      "tts_ms": 2840,
+      "overhead_ms": 0
+    },
+    "flags": []
+  },
+  {
+    "turn_index": 1,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:44:53.892343",
+    "ended_at": "2026-01-03T10:45:08.229070",
+    "transcript": "Buongiorno, chiamo per confermare un appuntamento per domani alla 10.",
+    "anchor_words": [
+      "Buongiorno",
+      "chiamo",
+      "confermare",
+      "appuntamento",
+      "domani"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 8340,
+    "confidence": 0.0,
+    "response": "Buongiorno. Mi scusi, ma di quale appuntamento parla? Non ho notizia di appuntamenti per domani.",
+    "response_anchor_words": [
+      "Buongiorno",
+      "scusi",
+      "quale",
+      "appuntamento",
+      "parla"
+    ],
+    "response_audio_duration_ms": 6184,
+    "tokens_in": 1896,
+    "tokens_out": 35,
+    "latency": {
+      "total_ms": 7090,
+      "silence_detection_ms": 3,
+      "whisper_ms": 2464,
+      "claude_ms": 2653,
+      "tts_ms": 1973,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 2,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:45:19.109961",
+    "ended_at": "2026-01-03T10:45:28.969660",
+    "transcript": "Sì, si conferma l'appuntamento per gas. Domani alle ore 10.",
+    "anchor_words": [
+      "conferma",
+      "lappuntamento",
+      "gas",
+      "Domani",
+      "ore"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 10900,
+    "confidence": 0.0,
+    "response": "Ah sì, per il gas. Sì, confermo. Domani alle 10 va bene.",
+    "response_anchor_words": [
+      "Ah",
+      "gas",
+      "confermo",
+      "Domani",
+      "10"
+    ],
+    "response_audio_duration_ms": 3618,
+    "tokens_in": 1957,
+    "tokens_out": 30,
+    "latency": {
+      "total_ms": 4832,
+      "silence_detection_ms": 4,
+      "whisper_ms": 1286,
+      "claude_ms": 2506,
+      "tts_ms": 1040,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 3,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:45:33.669690",
+    "ended_at": "2026-01-03T10:45:43.609066",
+    "transcript": "Perfetto, è sempre lo stesso il riso?",
+    "anchor_words": [
+      "Perfetto",
+      "sempre",
+      "stesso",
+      "riso"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 4720,
+    "confidence": 0.0,
+    "response": "Mi scusi, può ripetere? Non ho capito bene \"il riso\".",
+    "response_anchor_words": [
+      "scusi",
+      "può",
+      "ripetere",
+      "capito",
+      "bene"
+    ],
+    "response_audio_duration_ms": 3394,
+    "tokens_in": 2002,
+    "tokens_out": 23,
+    "latency": {
+      "total_ms": 6292,
+      "silence_detection_ms": 1,
+      "whisper_ms": 1476,
+      "claude_ms": 2811,
+      "tts_ms": 2005,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 4,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:45:50.291171",
+    "ended_at": "2026-01-03T10:46:03.770428",
+    "transcript": "indirizzo di signora Rashbas.",
+    "anchor_words": [
+      "indirizzo",
+      "signora",
+      "Rashbas"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 6700,
+    "confidence": 0.0,
+    "response": "Ah sì, l'indirizzo. È sempre VIA PAOLO BARACHINI 86, 56017 SAN GIULIANO TERME PI.",
+    "response_anchor_words": [
+      "Ah",
+      "lindirizzo",
+      "sempre",
+      "VIA",
+      "PAOLO"
+    ],
+    "response_audio_duration_ms": 6578,
+    "tokens_in": 2039,
+    "tokens_out": 40,
+    "latency": {
+      "total_ms": 5705,
+      "silence_detection_ms": 3,
+      "whisper_ms": 1637,
+      "claude_ms": 2947,
+      "tts_ms": 1121,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 5,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:46:05.994880",
+    "ended_at": "2026-01-03T10:46:12.889023",
+    "transcript": "autentici",
+    "anchor_words": [
+      "autentici"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2240,
+    "confidence": 0.0,
+    "response": "Mi scusi, non ho capito. Può ripetere?",
+    "response_anchor_words": [
+      "scusi",
+      "capito",
+      "Può",
+      "ripetere"
+    ],
+    "response_audio_duration_ms": 1947,
+    "tokens_in": 2012,
+    "tokens_out": 18,
+    "latency": {
+      "total_ms": 4175,
+      "silence_detection_ms": 1,
+      "whisper_ms": 641,
+      "claude_ms": 2562,
+      "tts_ms": 972,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 6,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:46:16.390263",
+    "ended_at": "2026-01-03T10:46:27.209952",
+    "transcript": "86, il numero",
+    "anchor_words": [
+      "86",
+      "numero"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 3520,
+    "confidence": 0.0,
+    "response": "Esatto, il numero è 86. VIA PAOLO BARACHINI 86.",
+    "response_anchor_words": [
+      "Esatto",
+      "numero",
+      "86",
+      "VIA",
+      "PAOLO"
+    ],
+    "response_audio_duration_ms": 3592,
+    "tokens_in": 1977,
+    "tokens_out": 24,
+    "latency": {
+      "total_ms": 4455,
+      "silence_detection_ms": 1,
+      "whisper_ms": 819,
+      "claude_ms": 2505,
+      "tts_ms": 1131,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 7,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:46:29.489130",
+    "ended_at": "2026-01-03T10:46:36.509721",
+    "transcript": "ripeto",
+    "anchor_words": [
+      "ripeto"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2300,
+    "confidence": 0.0,
+    "response": "Sì, mi dica pure.",
+    "response_anchor_words": [
+      "dica",
+      "pure"
+    ],
+    "response_audio_duration_ms": 1000,
+    "tokens_in": 1961,
+    "tokens_out": 12,
+    "latency": {
+      "total_ms": 4098,
+      "silence_detection_ms": 1,
+      "whisper_ms": 990,
+      "claude_ms": 2299,
+      "tts_ms": 809,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  },
+  {
+    "turn_index": 8,
+    "speaker": "caller",
+    "started_at": "2026-01-03T10:46:39.173496",
+    "ended_at": "2026-01-03T10:46:49.418556",
+    "transcript": "Grazie, arrivederci.",
+    "anchor_words": [
+      "Grazie",
+      "arrivederci"
+    ],
+    "audio_duration_ms": 0,
+    "speech_duration_ms": 2680,
+    "confidence": 0.0,
+    "response": "Prego, arrivederci.",
+    "response_anchor_words": [
+      "Prego",
+      "arrivederci"
+    ],
+    "response_audio_duration_ms": 1026,
+    "tokens_in": 1948,
+    "tokens_out": 12,
+    "latency": {
+      "total_ms": 4878,
+      "silence_detection_ms": 2,
+      "whisper_ms": 629,
+      "claude_ms": 2715,
+      "tts_ms": 1534,
+      "overhead_ms": 0
+    },
+    "flags": [
+      "SLOW_RESPONSE"
+    ]
+  }
+]

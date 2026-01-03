@@ -1,0 +1,90 @@
+{"id": "evt_0000", "type": "call_started", "timestamp": "2026-01-03T11:07:42.065608", "turn_index": 0, "data": {"caller": "+447796315426", "called": "+442070460437"}}
+{"id": "evt_0001", "type": "stream_connected", "timestamp": "2026-01-03T11:07:47.005826", "turn_index": 0, "data": {"stream_sid": "MZdb41a23be54ea55930a1143c6554e11b"}}
+{"id": "evt_0002", "type": "greeting_started", "timestamp": "2026-01-03T11:07:47.006960", "turn_index": 0, "data": {}}
+{"id": "evt_0003", "type": "tts_started", "timestamp": "2026-01-03T11:07:47.008053", "turn_index": 0, "data": {"text": "Pronto. Sì, sono JEREMY. Mi scusi, sono inglese e il mio italiano non è perfetto — parlo lentamente ", "text_length": 130, "voice": "onyx"}}
+{"id": "evt_0004", "type": "tts_completed", "timestamp": "2026-01-03T11:07:50.425308", "turn_index": 0, "data": {"duration_ms": 3417, "audio_bytes": 397894, "audio_duration_ms": 8289}}
+{"id": "evt_0005", "type": "playback_started", "timestamp": "2026-01-03T11:07:50.426324", "turn_index": 0, "data": {"expected_duration_ms": 8289}}
+{"id": "evt_0006", "type": "playback_completed", "timestamp": "2026-01-03T11:07:53.230033", "turn_index": 0, "data": {"actual_duration_ms": 2803}}
+{"id": "evt_0007", "type": "greeting_completed", "timestamp": "2026-01-03T11:07:53.230714", "turn_index": 0, "data": {"audio_duration_ms": 8289}}
+{"id": "evt_0008", "type": "speech_started", "timestamp": "2026-01-03T11:08:00.119826", "turn_index": 0, "data": {"rms_level": 1841}}
+{"id": "evt_0009", "type": "silence_detected", "timestamp": "2026-01-03T11:08:03.439808", "turn_index": 1, "data": {"speech_duration_ms": 3340, "audio_bytes": 26720, "peak_rms": 0}}
+{"id": "evt_0010", "type": "whisper_started", "timestamp": "2026-01-03T11:08:03.442092", "turn_index": 1, "data": {"audio_bytes": 106922, "audio_duration_ms": 3340}}
+{"id": "evt_0011", "type": "speech_started", "timestamp": "2026-01-03T11:08:03.595705", "turn_index": 1, "data": {"rms_level": 1480}}
+{"id": "evt_0012", "type": "whisper_completed", "timestamp": "2026-01-03T11:08:04.267158", "turn_index": 1, "data": {"transcript": "buongiorno", "duration_ms": 825, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0013", "type": "claude_started", "timestamp": "2026-01-03T11:08:04.269682", "turn_index": 1, "data": {"input_tokens_estimate": 50, "context_turns": 1}}
+{"id": "evt_0014", "type": "claude_completed", "timestamp": "2026-01-03T11:08:04.271143", "turn_index": 1, "data": {"response": "Buongiorno. Mi dica pure.", "duration_ms": 1, "input_tokens": 0, "output_tokens": 0}}
+{"id": "evt_0015", "type": "tts_started", "timestamp": "2026-01-03T11:08:04.273294", "turn_index": 1, "data": {"text": "Buongiorno. Mi dica pure.", "text_length": 25, "voice": "onyx"}}
+{"id": "evt_0016", "type": "tts_completed", "timestamp": "2026-01-03T11:08:05.198426", "turn_index": 1, "data": {"duration_ms": 925, "audio_bytes": 75158, "audio_duration_ms": 1565}}
+{"id": "evt_0017", "type": "playback_started", "timestamp": "2026-01-03T11:08:05.199351", "turn_index": 1, "data": {"expected_duration_ms": 1565}}
+{"id": "evt_0018", "type": "playback_completed", "timestamp": "2026-01-03T11:08:05.744410", "turn_index": 1, "data": {"actual_duration_ms": 545}}
+{"id": "evt_0019", "type": "silence_detected", "timestamp": "2026-01-03T11:08:07.321100", "turn_index": 2, "data": {"speech_duration_ms": 3200, "audio_bytes": 25600, "peak_rms": 0}}
+{"id": "evt_0020", "type": "whisper_started", "timestamp": "2026-01-03T11:08:07.323331", "turn_index": 2, "data": {"audio_bytes": 102442, "audio_duration_ms": 3200}}
+{"id": "evt_0021", "type": "speech_started", "timestamp": "2026-01-03T11:08:07.944324", "turn_index": 2, "data": {"rms_level": 597}}
+{"id": "evt_0022", "type": "whisper_completed", "timestamp": "2026-01-03T11:08:08.232381", "turn_index": 2, "data": {"transcript": "buongiorno, ciao.", "duration_ms": 909, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0023", "type": "echo_detected", "timestamp": "2026-01-03T11:08:08.233178", "turn_index": 2, "data": {"similarity_score": 0.6842105263157895, "matched_text": "buongiorno, ciao."}}
+{"id": "evt_0024", "type": "repeat_detected", "timestamp": "2026-01-03T11:08:08.233836", "turn_index": 2, "data": {"similarity_score": 0.8, "original_turn": 1}}
+{"id": "evt_0025", "type": "claude_started", "timestamp": "2026-01-03T11:08:08.234700", "turn_index": 2, "data": {"input_tokens_estimate": 150, "context_turns": 3}}
+{"id": "evt_0026", "type": "claude_completed", "timestamp": "2026-01-03T11:08:10.557478", "turn_index": 2, "data": {"response": "Sì, mi dica. In che posso aiutarla?", "duration_ms": 2322, "input_tokens": 1903, "output_tokens": 20}}
+{"id": "evt_0027", "type": "tts_started", "timestamp": "2026-01-03T11:08:10.558246", "turn_index": 2, "data": {"text": "Sì, mi dica. In che posso aiutarla?", "text_length": 35, "voice": "onyx"}}
+{"id": "evt_0028", "type": "tts_completed", "timestamp": "2026-01-03T11:08:11.486113", "turn_index": 2, "data": {"duration_ms": 927, "audio_bytes": 105474, "audio_duration_ms": 2197}}
+{"id": "evt_0029", "type": "playback_started", "timestamp": "2026-01-03T11:08:11.486655", "turn_index": 2, "data": {"expected_duration_ms": 2197}}
+{"id": "evt_0030", "type": "playback_completed", "timestamp": "2026-01-03T11:08:12.240567", "turn_index": 2, "data": {"actual_duration_ms": 753}}
+{"id": "evt_0031", "type": "silence_detected", "timestamp": "2026-01-03T11:08:23.263898", "turn_index": 3, "data": {"speech_duration_ms": 14580, "audio_bytes": 116640, "peak_rms": 0}}
+{"id": "evt_0032", "type": "whisper_started", "timestamp": "2026-01-03T11:08:23.269664", "turn_index": 3, "data": {"audio_bytes": 466602, "audio_duration_ms": 14580}}
+{"id": "evt_0033", "type": "whisper_completed", "timestamp": "2026-01-03T11:08:25.370305", "turn_index": 3, "data": {"transcript": "Grazie, grazie. Buongiorno, chiamo dall'azienda del gas. Devo verificare alcuni dati dell'utenza?", "duration_ms": 2100, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0034", "type": "claude_started", "timestamp": "2026-01-03T11:08:25.373303", "turn_index": 3, "data": {"input_tokens_estimate": 250, "context_turns": 5}}
+{"id": "evt_0035", "type": "claude_completed", "timestamp": "2026-01-03T11:08:27.440100", "turn_index": 3, "data": {"response": "Sì, va bene. Proceda pure.", "duration_ms": 2066, "input_tokens": 1962, "output_tokens": 16}}
+{"id": "evt_0036", "type": "tts_started", "timestamp": "2026-01-03T11:08:27.441157", "turn_index": 3, "data": {"text": "Sì, va bene. Proceda pure.", "text_length": 26, "voice": "onyx"}}
+{"id": "evt_0037", "type": "tts_completed", "timestamp": "2026-01-03T11:08:29.614920", "turn_index": 3, "data": {"duration_ms": 2173, "audio_bytes": 68842, "audio_duration_ms": 1434}}
+{"id": "evt_0038", "type": "playback_started", "timestamp": "2026-01-03T11:08:29.615660", "turn_index": 3, "data": {"expected_duration_ms": 1434}}
+{"id": "evt_0039", "type": "playback_completed", "timestamp": "2026-01-03T11:08:30.101007", "turn_index": 3, "data": {"actual_duration_ms": 485}}
+{"id": "evt_0040", "type": "speech_started", "timestamp": "2026-01-03T11:08:32.880662", "turn_index": 3, "data": {"rms_level": 850}}
+{"id": "evt_0041", "type": "silence_detected", "timestamp": "2026-01-03T11:08:43.002437", "turn_index": 4, "data": {"speech_duration_ms": 10140, "audio_bytes": 81120, "peak_rms": 0}}
+{"id": "evt_0042", "type": "whisper_started", "timestamp": "2026-01-03T11:08:43.005165", "turn_index": 4, "data": {"audio_bytes": 324522, "audio_duration_ms": 10140}}
+{"id": "evt_0043", "type": "whisper_completed", "timestamp": "2026-01-03T11:08:44.322751", "turn_index": 4, "data": {"transcript": "Va bene, posso rispondere a domande generali, ma non posso fornire dati sensibili al telefono.", "duration_ms": 1317, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0044", "type": "claude_started", "timestamp": "2026-01-03T11:08:44.325058", "turn_index": 4, "data": {"input_tokens_estimate": 350, "context_turns": 7}}
+{"id": "evt_0045", "type": "claude_completed", "timestamp": "2026-01-03T11:08:46.628339", "turn_index": 4, "data": {"response": "Va bene, perfetto. Allora mi dica che cosa devo verificare.", "duration_ms": 2303, "input_tokens": 2009, "output_tokens": 23}}
+{"id": "evt_0046", "type": "tts_started", "timestamp": "2026-01-03T11:08:46.630439", "turn_index": 4, "data": {"text": "Va bene, perfetto. Allora mi dica che cosa devo verificare.", "text_length": 59, "voice": "onyx"}}
+{"id": "evt_0047", "type": "tts_completed", "timestamp": "2026-01-03T11:08:48.165544", "turn_index": 4, "data": {"duration_ms": 1535, "audio_bytes": 171790, "audio_duration_ms": 3578}}
+{"id": "evt_0048", "type": "playback_started", "timestamp": "2026-01-03T11:08:48.166270", "turn_index": 4, "data": {"expected_duration_ms": 3578}}
+{"id": "evt_0049", "type": "playback_completed", "timestamp": "2026-01-03T11:08:49.376846", "turn_index": 4, "data": {"actual_duration_ms": 1210}}
+{"id": "evt_0050", "type": "speech_started", "timestamp": "2026-01-03T11:08:53.319939", "turn_index": 4, "data": {"rms_level": 1040}}
+{"id": "evt_0051", "type": "silence_detected", "timestamp": "2026-01-03T11:09:00.221569", "turn_index": 5, "data": {"speech_duration_ms": 6920, "audio_bytes": 55360, "peak_rms": 0}}
+{"id": "evt_0052", "type": "whisper_started", "timestamp": "2026-01-03T11:09:00.224647", "turn_index": 5, "data": {"audio_bytes": 221482, "audio_duration_ms": 6920}}
+{"id": "evt_0053", "type": "whisper_completed", "timestamp": "2026-01-03T11:09:01.925714", "turn_index": 5, "data": {"transcript": "Il nome è Jeremy Rashbath e il comune è San Giuliano Terme.", "duration_ms": 1701, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0054", "type": "claude_started", "timestamp": "2026-01-03T11:09:01.928986", "turn_index": 5, "data": {"input_tokens_estimate": 450, "context_turns": 9}}
+{"id": "evt_0055", "type": "claude_completed", "timestamp": "2026-01-03T11:09:04.355610", "turn_index": 5, "data": {"response": "Sì, esatto. RASHBASS, con due S alla fine. San Giuliano Terme è corretto.", "duration_ms": 2426, "input_tokens": 1999, "output_tokens": 31}}
+{"id": "evt_0056", "type": "tts_started", "timestamp": "2026-01-03T11:09:04.356707", "turn_index": 5, "data": {"text": "Sì, esatto. RASHBASS, con due S alla fine. San Giuliano Terme è corretto.", "text_length": 73, "voice": "onyx"}}
+{"id": "evt_0057", "type": "tts_completed", "timestamp": "2026-01-03T11:09:05.857018", "turn_index": 5, "data": {"duration_ms": 1500, "audio_bytes": 217894, "audio_duration_ms": 4539}}
+{"id": "evt_0058", "type": "playback_started", "timestamp": "2026-01-03T11:09:05.857761", "turn_index": 5, "data": {"expected_duration_ms": 4539}}
+{"id": "evt_0059", "type": "playback_completed", "timestamp": "2026-01-03T11:09:07.397298", "turn_index": 5, "data": {"actual_duration_ms": 1539}}
+{"id": "evt_0060", "type": "speech_started", "timestamp": "2026-01-03T11:09:11.459491", "turn_index": 5, "data": {"rms_level": 1597}}
+{"id": "evt_0061", "type": "silence_detected", "timestamp": "2026-01-03T11:09:14.499661", "turn_index": 6, "data": {"speech_duration_ms": 3060, "audio_bytes": 24480, "peak_rms": 0}}
+{"id": "evt_0062", "type": "whisper_started", "timestamp": "2026-01-03T11:09:14.501725", "turn_index": 6, "data": {"audio_bytes": 97962, "audio_duration_ms": 3060}}
+{"id": "evt_0063", "type": "whisper_completed", "timestamp": "2026-01-03T11:09:15.499084", "turn_index": 6, "data": {"transcript": "numero IBAN", "duration_ms": 997, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0064", "type": "claude_started", "timestamp": "2026-01-03T11:09:15.501394", "turn_index": 6, "data": {"input_tokens_estimate": 550, "context_turns": 11}}
+{"id": "evt_0065", "type": "claude_completed", "timestamp": "2026-01-03T11:09:18.219307", "turn_index": 6, "data": {"response": "Mi scusi, ma i dati bancari non li posso dare al telefono. Su questo punto preferisco far parlare direttamente il proprietario. Posso richiamarvi?", "duration_ms": 2717, "input_tokens": 2012, "output_tokens": 45}}
+{"id": "evt_0066", "type": "tts_started", "timestamp": "2026-01-03T11:09:18.220756", "turn_index": 6, "data": {"text": "Mi scusi, ma i dati bancari non li posso dare al telefono. Su questo punto preferisco far parlare di", "text_length": 146, "voice": "onyx"}}
+{"id": "evt_0067", "type": "tts_completed", "timestamp": "2026-01-03T11:09:20.042259", "turn_index": 6, "data": {"duration_ms": 1821, "audio_bytes": 451578, "audio_duration_ms": 9407}}
+{"id": "evt_0068", "type": "playback_started", "timestamp": "2026-01-03T11:09:20.043413", "turn_index": 6, "data": {"expected_duration_ms": 9407}}
+{"id": "evt_0069", "type": "playback_completed", "timestamp": "2026-01-03T11:09:23.215378", "turn_index": 6, "data": {"actual_duration_ms": 3171}}
+{"id": "evt_0070", "type": "speech_started", "timestamp": "2026-01-03T11:09:28.765832", "turn_index": 6, "data": {"rms_level": 521}}
+{"id": "evt_0071", "type": "silence_detected", "timestamp": "2026-01-03T11:09:30.084625", "turn_index": 7, "data": {"speech_duration_ms": 1340, "audio_bytes": 10720, "peak_rms": 0}}
+{"id": "evt_0072", "type": "whisper_started", "timestamp": "2026-01-03T11:09:30.085979", "turn_index": 7, "data": {"audio_bytes": 42922, "audio_duration_ms": 1340}}
+{"id": "evt_0073", "type": "speech_started", "timestamp": "2026-01-03T11:09:30.420045", "turn_index": 7, "data": {"rms_level": 1453}}
+{"id": "evt_0074", "type": "whisper_completed", "timestamp": "2026-01-03T11:09:31.187804", "turn_index": 7, "data": {"transcript": "Grazie a tutti", "duration_ms": 1101, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0075", "type": "claude_started", "timestamp": "2026-01-03T11:09:31.190401", "turn_index": 7, "data": {"input_tokens_estimate": 650, "context_turns": 13}}
+{"id": "evt_0076", "type": "claude_completed", "timestamp": "2026-01-03T11:09:33.686229", "turn_index": 7, "data": {"response": "Prego, arrivederci.", "duration_ms": 2495, "input_tokens": 2006, "output_tokens": 12}}
+{"id": "evt_0077", "type": "tts_started", "timestamp": "2026-01-03T11:09:33.687496", "turn_index": 7, "data": {"text": "Prego, arrivederci.", "text_length": 19, "voice": "onyx"}}
+{"id": "evt_0078", "type": "tts_completed", "timestamp": "2026-01-03T11:09:35.055834", "turn_index": 7, "data": {"duration_ms": 1368, "audio_bytes": 56210, "audio_duration_ms": 1171}}
+{"id": "evt_0079", "type": "playback_started", "timestamp": "2026-01-03T11:09:35.056538", "turn_index": 7, "data": {"expected_duration_ms": 1171}}
+{"id": "evt_0080", "type": "playback_completed", "timestamp": "2026-01-03T11:09:35.460285", "turn_index": 7, "data": {"actual_duration_ms": 403}}
+{"id": "evt_0081", "type": "silence_detected", "timestamp": "2026-01-03T11:09:36.801772", "turn_index": 8, "data": {"speech_duration_ms": 5960, "audio_bytes": 47680, "peak_rms": 0}}
+{"id": "evt_0082", "type": "whisper_started", "timestamp": "2026-01-03T11:09:36.804589", "turn_index": 8, "data": {"audio_bytes": 190762, "audio_duration_ms": 5960}}
+{"id": "evt_0083", "type": "whisper_completed", "timestamp": "2026-01-03T11:09:37.970652", "turn_index": 8, "data": {"transcript": "grazie, e date tale.", "duration_ms": 1166, "confidence": 0.0, "language": "it"}}
+{"id": "evt_0084", "type": "claude_started", "timestamp": "2026-01-03T11:09:37.972939", "turn_index": 8, "data": {"input_tokens_estimate": 750, "context_turns": 15}}
+{"id": "evt_0085", "type": "claude_completed", "timestamp": "2026-01-03T11:09:42.257317", "turn_index": 8, "data": {"response": "Prego, arrivederci e buona giornata.", "duration_ms": 4284, "input_tokens": 1981, "output_tokens": 18}}
+{"id": "evt_0086", "type": "tts_started", "timestamp": "2026-01-03T11:09:42.258375", "turn_index": 8, "data": {"text": "Prego, arrivederci e buona giornata.", "text_length": 36, "voice": "onyx"}}
+{"id": "evt_0087", "type": "tts_completed", "timestamp": "2026-01-03T11:09:43.766869", "turn_index": 8, "data": {"duration_ms": 1508, "audio_bytes": 108000, "audio_duration_ms": 2250}}
+{"id": "evt_0088", "type": "playback_started", "timestamp": "2026-01-03T11:09:43.767553", "turn_index": 8, "data": {"expected_duration_ms": 2250}}
+{"id": "evt_0089", "type": "call_ended", "timestamp": "2026-01-03T11:09:44.942774", "turn_index": 8, "data": {"reason": "stream_ended", "total_turns": 8}}

@@ -2,7 +2,7 @@
   "identity": {
     "name": "JEREMY RASHBASS",
     "codice_fiscale": "RSHJMY61H29Z114D",
-    "opening_phrase": "Mi scusi, sono inglese e il mio italiano non è perfetto"
+    "opening_phrase": "Excuse me - I am English and my Italian is not very good.  I am using a translation helper so there will be a short gap between my replies."
   },
   "location": {
     "address": {
@@ -366,7 +366,7 @@
     }
   },
   "metadata": {
-    "last_updated": "2026-01-02T09:53:00.294550",
+    "last_updated": "2026-01-03T11:06:09.724754",
     "extraction_history": [
       {
         "date": "2026-01-01T10:16:30",

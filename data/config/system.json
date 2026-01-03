@@ -1,0 +1,26 @@
+{
+  "audio": {
+    "silence_duration_ms": 800,
+    "min_speech_duration_ms": 500,
+    "silence_threshold": 500
+  },
+  "claude": {
+    "model": "claude-sonnet-4-20250514",
+    "max_tokens": 40,
+    "context_turns": 2
+  },
+  "tts": {
+    "provider": "openai",
+    "voice": "onyx",
+    "speed": 1.0
+  },
+  "analytics": {
+    "slow_response_threshold_ms": 3500,
+    "confidence_threshold": 0.8,
+    "echo_similarity_threshold": 0.6,
+    "repeat_similarity_threshold": 0.8
+  },
+  "version": 7,
+  "updated_at": "2026-01-03T10:49:00.395345Z",
+  "updated_by": "recommendation"
+}

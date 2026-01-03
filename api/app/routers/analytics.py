@@ -1,56 +1,39 @@
 """
-Analytics API router.
+Analytics API Router.
 
-Provides endpoints for:
-- Listing calls with analytics summaries
-- Getting detailed analytics for a specific call
-- Retrieving raw event streams
-- Aggregate statistics across calls
+Provides endpoints for accessing call analytics data and insights.
 """
-import logging
+from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Query
-
 from app.services.analytics import get_analytics_service
+from app.services.insights import get_insights_service
+from app.services.system_config import get_system_config_service
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
 
 @router.get("/calls")
-async def list_calls(
-    limit: int = Query(default=50, ge=1, le=200, description="Maximum calls to return")
-):
+async def list_calls(limit: int = Query(50, ge=1, le=200)):
     """
     List calls with analytics summaries.
     
-    Returns most recent calls first with key metrics:
-    - call_sid, caller, started_at
-    - duration, turns, avg_latency_ms
-    - quality_flags (issues detected)
+    Returns most recent calls first with key metrics.
     """
-    analytics = get_analytics_service()
-    calls = analytics.list_calls(limit=limit)
-    
-    return {
-        "calls": calls,
-        "count": len(calls)
-    }
+    service = get_analytics_service()
+    calls = service.list_calls(limit=limit)
+    return {"calls": calls, "count": len(calls)}
 
 
 @router.get("/call/{call_sid}")
-async def get_call_analytics(call_sid: str):
+async def get_call(call_sid: str):
     """
     Get full analytics for a specific call.
     
-    Returns:
-    - events: Raw event stream
-    - turns: Computed turn metrics with latency breakdown
-    - analytics: Call-level summary statistics
+    Returns events, turns, and summary.
     """
-    analytics = get_analytics_service()
-    call_data = analytics.get_call(call_sid)
+    service = get_analytics_service()
+    call_data = service.get_call(call_sid)
     
     if not call_data:
         raise HTTPException(status_code=404, detail=f"Call {call_sid} not found")
@@ -63,19 +46,15 @@ async def get_call_events(call_sid: str):
     """
     Get raw event stream for a call.
     
-    Useful for detailed timeline rendering.
+    Returns chronological list of all instrumentation events.
     """
-    analytics = get_analytics_service()
-    events = analytics.get_events(call_sid)
+    service = get_analytics_service()
+    events = service.get_events(call_sid)
     
     if not events:
-        raise HTTPException(status_code=404, detail=f"No events found for call {call_sid}")
+        raise HTTPException(status_code=404, detail=f"Events for call {call_sid} not found")
     
-    return {
-        "call_sid": call_sid,
-        "events": events,
-        "count": len(events)
-    }
+    return {"call_sid": call_sid, "events": events}
 
 
 @router.get("/call/{call_sid}/turns")
@@ -83,106 +62,122 @@ async def get_call_turns(call_sid: str):
     """
     Get computed turn metrics for a call.
     
-    Each turn includes:
-    - transcript and anchor words
-    - latency breakdown (whisper, claude, tts)
-    - quality flags
+    Returns turn-by-turn latency breakdown and quality flags.
     """
-    analytics = get_analytics_service()
-    call_data = analytics.get_call(call_sid)
+    service = get_analytics_service()
+    call_data = service.get_call(call_sid)
     
     if not call_data:
         raise HTTPException(status_code=404, detail=f"Call {call_sid} not found")
     
-    return {
-        "call_sid": call_sid,
-        "turns": call_data.get("turns", []),
-        "count": len(call_data.get("turns", []))
-    }
+    return {"call_sid": call_sid, "turns": call_data.get("turns", [])}
 
 
 @router.get("/aggregate")
-async def get_aggregate_stats(
-    days: int = Query(default=7, ge=1, le=30, description="Number of days to aggregate")
-):
+async def get_aggregate_stats(days: int = Query(7, ge=1, le=30)):
     """
     Get aggregate statistics across recent calls.
     
-    Useful for identifying systemic issues:
-    - Average latency trends
-    - Common quality flags
-    - Call volume
+    Useful for identifying systemic issues and trends.
     """
-    analytics = get_analytics_service()
-    stats = analytics.get_aggregate_stats(days=days)
-    
-    return stats
-
-
-@router.get("/health")
-async def analytics_health():
-    """
-    Check analytics service health.
-    
-    Verifies storage is accessible.
-    """
-    analytics = get_analytics_service()
-    
-    try:
-        # Try listing calls as a health check
-        calls = analytics.list_calls(limit=1)
-        return {
-            "status": "healthy",
-            "calls_stored": len(calls) > 0
-        }
-    except Exception as e:
-        logger.error(f"Analytics health check failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    service = get_analytics_service()
+    return service.get_aggregate_stats(days=days)
 
 
 @router.get("/compare")
-async def compare_calls(
-    call_sids: str = Query(..., description="Comma-separated call SIDs to compare")
-):
+async def compare_calls(call_sids: str = Query(..., description="Comma-separated call SIDs")):
     """
-    Compare analytics across multiple calls.
+    Side-by-side comparison of multiple calls.
     
-    Useful for A/B testing parameter changes.
+    Useful for A/B testing configuration changes.
     """
-    analytics = get_analytics_service()
+    service = get_analytics_service()
+    sids = [s.strip() for s in call_sids.split(",")]
     
-    sids = [s.strip() for s in call_sids.split(",") if s.strip()]
-    
-    if len(sids) < 2:
-        raise HTTPException(status_code=400, detail="Provide at least 2 call SIDs to compare")
-    
-    if len(sids) > 10:
-        raise HTTPException(status_code=400, detail="Maximum 10 calls can be compared")
-    
-    comparison = []
+    results = []
     for sid in sids:
-        call_data = analytics.get_call(sid)
-        if call_data and "analytics" in call_data:
-            summary = call_data["analytics"]
-            comparison.append({
+        call_data = service.get_call(sid)
+        if call_data:
+            results.append({
                 "call_sid": sid,
-                "duration_seconds": summary.get("duration_seconds", 0),
-                "turns": summary.get("total_turns", 0),
-                "avg_total_ms": summary.get("avg_total_ms", 0),
-                "avg_whisper_ms": summary.get("avg_whisper_ms", 0),
-                "avg_claude_ms": summary.get("avg_claude_ms", 0),
-                "avg_tts_ms": summary.get("avg_tts_ms", 0),
-                "avg_confidence": summary.get("avg_whisper_confidence", 0),
-                "flags": list(summary.get("flags_summary", {}).keys())
+                "analytics": call_data.get("analytics", {}),
+                "turn_count": len(call_data.get("turns", []))
             })
     
-    if not comparison:
-        raise HTTPException(status_code=404, detail="No valid calls found")
+    return {"calls": results}
+
+
+# =============================================================================
+# INSIGHTS ENDPOINTS
+# =============================================================================
+
+@router.get("/call/{call_sid}/insights")
+async def get_call_insights(call_sid: str):
+    """
+    Get AI-powered insights and recommendations for a call.
     
-    return {
-        "calls": comparison,
-        "summary": {
-            "avg_latency_range": f"{min(c['avg_total_ms'] for c in comparison)}-{max(c['avg_total_ms'] for c in comparison)}ms",
-            "total_turns": sum(c["turns"] for c in comparison)
-        }
-    }
+    Uses Claude to analyze the call's performance data and suggest
+    parameter changes for optimization.
+    
+    Returns:
+        - Assessment summary
+        - Performance rating
+        - Specific recommendations with priority
+        - Quick wins
+        - Items requiring investigation
+    """
+    analytics_service = get_analytics_service()
+    insights_service = get_insights_service()
+    config_service = get_system_config_service()
+    
+    # Get call data
+    call_data = analytics_service.get_call(call_sid)
+    if not call_data:
+        raise HTTPException(status_code=404, detail=f"Call {call_sid} not found")
+    
+    # Get current config
+    current_config = config_service.get_flat_config()
+    
+    # Generate insights
+    insights = await insights_service.analyze_call(call_data, current_config)
+    
+    return insights.to_dict()
+
+
+@router.post("/compare-impact")
+async def compare_call_impact(
+    before_call_sid: str = Query(..., description="Call SID before config changes"),
+    after_call_sid: str = Query(..., description="Call SID after config changes")
+):
+    """
+    Compare two calls to measure impact of configuration changes.
+    
+    Provides before/after metrics and calculated deltas.
+    """
+    analytics_service = get_analytics_service()
+    insights_service = get_insights_service()
+    config_service = get_system_config_service()
+    
+    # Get call data
+    before_call = analytics_service.get_call(before_call_sid)
+    after_call = analytics_service.get_call(after_call_sid)
+    
+    if not before_call:
+        raise HTTPException(status_code=404, detail=f"Call {before_call_sid} not found")
+    if not after_call:
+        raise HTTPException(status_code=404, detail=f"Call {after_call_sid} not found")
+    
+    # Get config changes between calls
+    history = config_service.get_history(limit=20)
+    
+    # Filter to changes between the two calls
+    # (This is a simplified approach - could be more precise with timestamps)
+    recent_changes = history[:5] if history else []
+    
+    comparison = await insights_service.compare_calls(
+        before_call=before_call,
+        after_call=after_call,
+        config_changes=recent_changes
+    )
+    
+    return comparison

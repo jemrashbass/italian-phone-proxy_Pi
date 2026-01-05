@@ -1,0 +1,32 @@
+{
+  "call_sid": "CA77727cb557b33ca95444d07af21e2932",
+  "caller": "+447745310075",
+  "called": "+447886078862",
+  "started_at": "2026-01-04T14:03:21.327301",
+  "ended_at": "2026-01-04T14:03:57.850897",
+  "duration_seconds": 36,
+  "status": "ended",
+  "total_turns": 5,
+  "caller_turns": 4,
+  "ai_turns": 1,
+  "total_talk_time_ms": 0,
+  "total_silence_time_ms": 0,
+  "avg_total_ms": 4516,
+  "avg_whisper_ms": 1939,
+  "avg_claude_ms": 2477,
+  "avg_tts_ms": 1823,
+  "p95_total_ms": 7829,
+  "slowest_turn": 1,
+  "slowest_component": "whisper",
+  "avg_whisper_confidence": 0.0,
+  "low_confidence_turns": [],
+  "echo_events": 0,
+  "interruptions": 0,
+  "repeats": 0,
+  "flags_summary": {
+    "SLOW_RESPONSE": 2
+  },
+  "total_input_tokens": 3798,
+  "total_output_tokens": 30,
+  "avg_response_tokens": 15
+}

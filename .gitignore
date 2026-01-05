@@ -17,6 +17,8 @@ data/documents/processed/*
 data/extractions/*
 data/transcripts/*
 data/whatsapp-session/*
+/home/pi/italian-phone-proxy/api/flattened_export/*
+
 
 # Keep empty dirs
 !data/documents/raw/.gitkeep

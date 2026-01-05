@@ -4,7 +4,7 @@ Dashboard WebSocket router for real-time call monitoring.
 Broadcasts call events to connected dashboard clients.
 Includes location send notifications for delivery drivers.
 """
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from typing import Set, Dict, Any, Optional
 import asyncio
 import json
@@ -247,19 +247,26 @@ async def schedule_location_send(
             if call_sid in active_calls and active_calls[call_sid].get("location_send_pending"):
                 logger.info(f"📍 Auto-sending location to {caller} (timeout)")
                 
-                messaging = get_messaging_service()
-                result = messaging.send_location_sms(
-                    to_number=caller,
-                    call_sid=call_sid,
-                    trigger="timeout"
-                )
-                
-                await broadcaster.location_sent(
-                    call_sid, 
-                    caller, 
-                    "timeout", 
-                    result.get("success", False)
-                )
+                # For TEST calls, simulate success without actually sending SMS
+                if call_sid.startswith("TEST-"):
+                    logger.info(f"📍 TEST: Simulating auto SMS send to {caller}")
+                    await broadcaster.location_sent(
+                        call_sid, 
+                        caller, 
+                        "timeout", 
+                        True  # Simulate success
+                    )
+                else:
+                    # Real call - actually send SMS
+                    messaging = get_messaging_service()
+                    result = messaging.send_sms(to_number=caller)
+                    
+                    await broadcaster.location_sent(
+                        call_sid, 
+                        caller, 
+                        "timeout", 
+                        result.success
+                    )
         except asyncio.CancelledError:
             logger.info(f"📍 Location send cancelled for {call_sid}")
         except Exception as e:
@@ -320,30 +327,52 @@ async def dashboard_websocket(websocket: WebSocket):
                         }))
                     
                     elif msg_type == "send_location":
-                        # Manual send from dashboard
+                        # Manual send from dashboard/app
                         call_sid = data.get("call_sid")
                         caller = data.get("caller")
                         
+                        logger.info(f"📍 Received send_location request: call_sid={call_sid}, caller={caller}")
+                        
                         if call_sid and caller:
-                            from app.services.messaging import get_messaging_service
-                            
-                            # Cancel timeout task
-                            cancel_location_send(call_sid)
-                            
-                            # Send immediately
-                            messaging = get_messaging_service()
-                            result = messaging.send_location_sms(
-                                to_number=caller,
-                                call_sid=call_sid,
-                                trigger="manual"
-                            )
-                            
-                            await broadcaster.location_sent(
-                                call_sid,
-                                caller,
-                                "manual",
-                                result.get("success", False)
-                            )
+                            try:
+                                # Cancel timeout task
+                                cancel_location_send(call_sid)
+                                
+                                # For TEST calls, simulate success without actually sending SMS
+                                if call_sid.startswith("TEST-"):
+                                    logger.info(f"📍 TEST: Simulating SMS send to {caller}")
+                                    await broadcaster.location_sent(
+                                        call_sid,
+                                        caller,
+                                        "manual",
+                                        True  # Simulate success
+                                    )
+                                else:
+                                    # Real call - actually send SMS
+                                    from app.services.messaging import get_messaging_service
+                                    
+                                    messaging = get_messaging_service()
+                                    result = messaging.send_sms(to_number=caller)
+                                    
+                                    logger.info(f"📍 SMS send result: success={result.success}, error={result.error}")
+                                    
+                                    await broadcaster.location_sent(
+                                        call_sid,
+                                        caller,
+                                        "manual",
+                                        result.success
+                                    )
+                            except Exception as e:
+                                logger.error(f"📍 Error handling send_location: {e}", exc_info=True)
+                                # Still try to notify about failure
+                                await broadcaster.location_sent(
+                                    call_sid,
+                                    caller,
+                                    "manual",
+                                    False
+                                )
+                        else:
+                            logger.warning(f"📍 send_location missing call_sid or caller")
                     
                     elif msg_type == "cancel_location":
                         # Cancel location send
@@ -386,6 +415,10 @@ async def dashboard_status():
     }
 
 
+# =============================================================================
+# TEST ENDPOINTS
+# =============================================================================
+
 @router.post("/test")
 async def test_broadcast():
     """
@@ -394,6 +427,7 @@ async def test_broadcast():
     Usage: curl -X POST https://phone.rashbass.org/api/dashboard/test
     
     This simulates a complete call flow to verify the dashboard receives messages.
+    Quick test - completes in about 3 seconds.
     """
     import uuid
     
@@ -465,6 +499,333 @@ async def test_broadcast():
     }
 
 
+@router.post("/test-extended")
+async def test_extended_call(
+    duration: str = Query("medium", pattern="^(short|medium|long)$"),
+    auto_end: bool = Query(True),
+    location_timeout: int = Query(30, ge=10, le=120)
+):
+    """
+    EXTENDED TEST: Simulate a realistic delivery driver conversation.
+    
+    Usage: 
+        curl -X POST "https://phone.rashbass.org/api/dashboard/test-extended"
+        curl -X POST "https://phone.rashbass.org/api/dashboard/test-extended?duration=long"
+        curl -X POST "https://phone.rashbass.org/api/dashboard/test-extended?auto_end=false"
+    
+    Parameters:
+        - duration: "short" (30s), "medium" (60s), "long" (90s)
+        - auto_end: Whether to automatically end the call (default: true)
+        - location_timeout: Seconds for SMS countdown (default: 30)
+    
+    This simulates a full delivery driver conversation with realistic timing,
+    giving you time to test SMS send/cancel and other interactive features.
+    """
+    import uuid
+    
+    # Timing based on duration
+    timings = {
+        "short": {"pause": 2, "thinking": 1, "speaking": 1.5},
+        "medium": {"pause": 4, "thinking": 2, "speaking": 2.5},
+        "long": {"pause": 6, "thinking": 3, "speaking": 3.5}
+    }
+    t = timings[duration]
+    
+    test_call_sid = f"TEST-{uuid.uuid4().hex[:8]}"
+    test_caller = "+39 328 232 8203"  # Realistic Italian mobile
+    test_called = "+44 207 046 0437"
+    
+    logger.info(f"🧪 EXTENDED TEST: Starting {duration} call {test_call_sid}")
+    
+    # ========== CALL START ==========
+    await broadcaster.call_started(test_call_sid, test_caller, test_called)
+    await asyncio.sleep(1)
+    
+    # ========== TURN 0: AI Greeting ==========
+    await broadcaster.processing_status(test_call_sid, "speaking")
+    await asyncio.sleep(0.5)
+    
+    greeting = (
+        "Pronto. Sì, sono Jeremy. "
+        "Mi scusi, sono inglese e il mio italiano non è perfetto — "
+        "parlo lentamente ma capisco bene. Mi dica pure."
+    )
+    await broadcaster.transcript_update(test_call_sid, "ai", greeting, 0)
+    await asyncio.sleep(t["speaking"])
+    
+    await broadcaster.processing_status(test_call_sid, "listening")
+    await asyncio.sleep(t["pause"])
+    
+    # ========== TURN 1: Caller introduces themselves ==========
+    await broadcaster.processing_status(test_call_sid, "transcribing")
+    await asyncio.sleep(0.8)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "caller",
+        "Buongiorno, sono il corriere di Amazon. Ho un pacco per Via Paolo Barachini 86.",
+        1
+    )
+    await asyncio.sleep(0.5)
+    
+    # ========== LOCATION DETECTION - This is what we want to test! ==========
+    await broadcaster.location_send_pending(
+        test_call_sid,
+        test_caller,
+        confidence=0.92,
+        reason="Corriere Amazon asking about Via Barachini - likely needs directions",
+        timeout_seconds=location_timeout
+    )
+    
+    await asyncio.sleep(0.3)
+    await broadcaster.processing_status(test_call_sid, "thinking")
+    await asyncio.sleep(t["thinking"])
+    
+    # ========== TURN 2: AI confirms address ==========
+    await broadcaster.processing_status(test_call_sid, "speaking")
+    await asyncio.sleep(0.3)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "ai",
+        "Sì, è l'indirizzo giusto. Sono a casa. Dove si trova adesso?",
+        2,
+        latency_ms=1850
+    )
+    await asyncio.sleep(t["speaking"])
+    
+    await broadcaster.processing_status(test_call_sid, "listening")
+    await asyncio.sleep(t["pause"])
+    
+    # ========== TURN 3: Caller asks for directions ==========
+    await broadcaster.processing_status(test_call_sid, "transcribing")
+    await asyncio.sleep(0.6)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "caller",
+        "Sono sulla strada principale, vicino alla chiesa. Ma non trovo Via Barachini. Mi può aiutare?",
+        3
+    )
+    await asyncio.sleep(0.5)
+    
+    await broadcaster.processing_status(test_call_sid, "thinking")
+    await asyncio.sleep(t["thinking"])
+    
+    # ========== TURN 4: AI gives directions ==========
+    await broadcaster.processing_status(test_call_sid, "speaking")
+    await asyncio.sleep(0.3)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "ai",
+        "Dalla chiesa, giri a destra. Dopo il bar, la seconda a sinistra. Cancello verde, numero 86.",
+        4,
+        latency_ms=2150
+    )
+    await asyncio.sleep(t["speaking"])
+    
+    await broadcaster.processing_status(test_call_sid, "listening")
+    await asyncio.sleep(t["pause"])
+    
+    # ========== TURN 5: Caller confirms ==========
+    await broadcaster.processing_status(test_call_sid, "transcribing")
+    await asyncio.sleep(0.5)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "caller",
+        "Ah sì, ho capito. Cancello verde. Arrivo tra cinque minuti.",
+        5
+    )
+    await asyncio.sleep(0.5)
+    
+    await broadcaster.processing_status(test_call_sid, "thinking")
+    await asyncio.sleep(t["thinking"] * 0.5)  # Shorter for simple response
+    
+    # ========== TURN 6: AI confirms and goodbye ==========
+    await broadcaster.processing_status(test_call_sid, "speaking")
+    await asyncio.sleep(0.3)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "ai",
+        "Perfetto, l'aspetto. A tra poco!",
+        6,
+        latency_ms=980
+    )
+    await asyncio.sleep(t["speaking"])
+    
+    await broadcaster.processing_status(test_call_sid, "listening")
+    await asyncio.sleep(t["pause"] * 0.5)
+    
+    # ========== TURN 7: Caller goodbye ==========
+    await broadcaster.processing_status(test_call_sid, "transcribing")
+    await asyncio.sleep(0.4)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "caller",
+        "Grazie mille. Arrivederci!",
+        7
+    )
+    await asyncio.sleep(0.5)
+    
+    await broadcaster.processing_status(test_call_sid, "thinking")
+    await asyncio.sleep(0.8)
+    
+    # ========== TURN 8: AI goodbye ==========
+    await broadcaster.processing_status(test_call_sid, "speaking")
+    await asyncio.sleep(0.3)
+    
+    await broadcaster.transcript_update(
+        test_call_sid,
+        "ai",
+        "Arrivederci!",
+        8,
+        latency_ms=650
+    )
+    await asyncio.sleep(1.5)
+    
+    # ========== CALL END (if auto_end) ==========
+    if auto_end:
+        # Calculate approximate duration
+        total_duration = int(
+            1 +  # initial
+            t["speaking"] + t["pause"] +  # turn 0
+            0.8 + 0.5 + 0.3 + t["thinking"] +  # turn 1
+            0.3 + t["speaking"] + t["pause"] +  # turn 2
+            0.6 + 0.5 + t["thinking"] +  # turn 3
+            0.3 + t["speaking"] + t["pause"] +  # turn 4
+            0.5 + 0.5 + t["thinking"] * 0.5 +  # turn 5
+            0.3 + t["speaking"] + t["pause"] * 0.5 +  # turn 6
+            0.4 + 0.5 + 0.8 +  # turn 7
+            0.3 + 1.5  # turn 8
+        )
+        
+        await broadcaster.call_ended(test_call_sid, duration_seconds=total_duration)
+        logger.info(f"🧪 EXTENDED TEST: Completed call {test_call_sid} ({total_duration}s)")
+        
+        return {
+            "status": "test_complete",
+            "call_sid": test_call_sid,
+            "duration": duration,
+            "duration_seconds": total_duration,
+            "location_timeout": location_timeout,
+            "message": f"Extended {duration} test call completed. Check your app!"
+        }
+    else:
+        logger.info(f"🧪 EXTENDED TEST: Call {test_call_sid} left active (auto_end=false)")
+        
+        return {
+            "status": "call_active",
+            "call_sid": test_call_sid,
+            "duration": duration,
+            "location_timeout": location_timeout,
+            "message": (
+                f"Call left active for testing. "
+                f"End manually with: curl -X POST 'https://phone.rashbass.org/api/dashboard/test-end/{test_call_sid}'"
+            )
+        }
+
+
+@router.post("/test-end/{call_sid}")
+async def test_end_call(call_sid: str, duration_seconds: int = Query(60)):
+    """
+    Manually end a test call that was started with auto_end=false.
+    
+    Usage: curl -X POST "https://phone.rashbass.org/api/dashboard/test-end/TEST-abc123"
+    """
+    if call_sid not in active_calls:
+        return {"status": "not_found", "call_sid": call_sid}
+    
+    await broadcaster.call_ended(call_sid, duration_seconds=duration_seconds)
+    
+    logger.info(f"🧪 TEST: Manually ended call {call_sid}")
+    
+    return {
+        "status": "ended",
+        "call_sid": call_sid,
+        "duration_seconds": duration_seconds
+    }
+
+
+@router.post("/test-location-event/{call_sid}")
+async def test_location_event(
+    call_sid: str,
+    event: str = Query(..., pattern="^(pending|sent|cancelled)$"),
+    timeout: int = Query(30)
+):
+    """
+    Trigger a location event on an active test call.
+    
+    Usage:
+        curl -X POST "https://phone.rashbass.org/api/dashboard/test-location-event/TEST-abc?event=pending"
+        curl -X POST "https://phone.rashbass.org/api/dashboard/test-location-event/TEST-abc?event=sent"
+        curl -X POST "https://phone.rashbass.org/api/dashboard/test-location-event/TEST-abc?event=cancelled"
+    """
+    if call_sid not in active_calls:
+        return {"status": "not_found", "call_sid": call_sid}
+    
+    caller = active_calls[call_sid].get("caller", "+39 328 TEST")
+    
+    if event == "pending":
+        await broadcaster.location_send_pending(
+            call_sid,
+            caller,
+            confidence=0.88,
+            reason="Manual test trigger",
+            timeout_seconds=timeout
+        )
+    elif event == "sent":
+        await broadcaster.location_sent(call_sid, caller, trigger="manual", success=True)
+    elif event == "cancelled":
+        await broadcaster.location_cancelled(call_sid)
+    
+    return {
+        "status": "event_sent",
+        "call_sid": call_sid,
+        "event": event
+    }
+
+
+@router.post("/test-transcript/{call_sid}")
+async def test_add_transcript(
+    call_sid: str,
+    speaker: str = Query(..., pattern="^(caller|ai)$"),
+    text: str = Query(...),
+    latency_ms: int = Query(None)
+):
+    """
+    Add a transcript turn to an active test call.
+    
+    Usage:
+        curl -X POST "https://phone.rashbass.org/api/dashboard/test-transcript/TEST-abc?speaker=caller&text=Sono%20arrivato"
+        curl -X POST "https://phone.rashbass.org/api/dashboard/test-transcript/TEST-abc?speaker=ai&text=Perfetto!&latency_ms=850"
+    """
+    if call_sid not in active_calls:
+        return {"status": "not_found", "call_sid": call_sid}
+    
+    # Get current turn count
+    turns = active_calls[call_sid].get("turns", [])
+    turn_index = len(turns)
+    
+    await broadcaster.transcript_update(
+        call_sid,
+        speaker,
+        text,
+        turn_index,
+        latency_ms=latency_ms
+    )
+    
+    return {
+        "status": "transcript_added",
+        "call_sid": call_sid,
+        "speaker": speaker,
+        "turn_index": turn_index
+    }
+
+
 @router.post("/test-location")
 async def test_location_send():
     """
@@ -479,12 +840,6 @@ async def test_location_send():
     messaging = get_messaging_service()
     
     return {
-        "service_enabled": messaging.client is not None,
-        "from_number": messaging.from_number,
-        "preview": messaging.format_location_message(),
-        "location": {
-            "address": messaging.location.address,
-            "landmark": messaging.location.landmark,
-            "maps_url": messaging.location.get_maps_url()
-        }
+        "service_enabled": messaging._twilio_client is not None,
+        "preview": messaging.get_message_preview()
     }

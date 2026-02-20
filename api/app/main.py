@@ -4,6 +4,7 @@ Italian Phone Proxy - Main FastAPI Application
 AI Voice Agent for Managing Italian Phone Calls.
 """
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -96,6 +97,12 @@ if os.path.isdir(static_dir):
     app.mount("/dashboard", StaticFiles(directory=static_dir, html=True), name="static")
 else:
     logger.warning(f"Static directory not found: {static_dir}")
+
+
+@app.get("/")
+async def root():
+    """Redirect root to dashboard."""
+    return RedirectResponse(url="/dashboard")
 
 
 @app.get("/health")
